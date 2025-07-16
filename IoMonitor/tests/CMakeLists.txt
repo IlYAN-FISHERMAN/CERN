@@ -9,3 +9,11 @@ target_link_libraries(io_monitor_tests io_monitor GTest::gtest
                       GTest::gtest_main pthread)
 
 add_test(NAME IoMonitorTests COMMAND io_monitor_tests)
+
+include(FetchContent)
+
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/release-1.12.1.zip)
+
+FetchContent_MakeAvailable(googletest)

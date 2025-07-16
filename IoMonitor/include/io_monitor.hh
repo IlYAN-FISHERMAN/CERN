@@ -1,9 +1,6 @@
-#pragma once
-
 #include <chrono>
 #include <deque>
 #include <unordered_map>
-#include <unordered_multimap>
 #include <unordered_set>
 #include <vector>
 #include <string>
@@ -16,13 +13,17 @@
 #include <cstdint>
 #include <sys/types.h>
 
-// -------- IoMark --------
 struct IoMark {
-    std::chrono::steady_clock::time_point io_time;
+	struct timespec io_time;
     size_t bytes;
 
-    IoMark(size_t b)
-        : io_time(std::chrono::steady_clock::now()), bytes(b) {}
+    IoMark(size_t bytes) : bytes(bytes){
+		timespec_get(&io_time, TIME_UTC);
+	}
+
+    IoMark() : bytes(0){
+		timespec_get(&io_time, TIME_UTC);
+	}
 };
 
 // -------- IoStatSummary --------
@@ -32,6 +33,9 @@ struct IoStatSummary {
     double avg_write = 0.0;
     double sigma_write = 0.0;
 };
+
+
+
 
 // -------- IoStat --------
 class IoStat {
@@ -77,6 +81,18 @@ class IoStat {
 
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
 // -------- IoMap --------
 class IoMap {
 public:
@@ -92,7 +108,6 @@ public:
 
     std::optional<std::pair<double, double>> getBandwidth(const std::string& app, size_t past_seconds = 10);
     std::optional<std::pair<double, double>> getBandwidth(uid_t uid, size_t past_seconds = 10);
-    std::optional<std::pair<double, double>> getBandwidth(gid_t gid, size_t past_seconds = 10);
 
     std::unordered_multimap<uint64_t, std::shared_ptr<IoStat>> GetAllStatsSnapshot() const;
 
@@ -144,7 +159,6 @@ public:
 
     std::optional<IoStatSummary> getBandwidth(const std::string& app, size_t past_seconds);
     std::optional<IoStatSummary> getBandwidth(uid_t uid, size_t past_seconds);
-    std::optional<IoStatSummary> getBandwidth(gid_t gid, size_t past_seconds);
 
     std::vector<size_t> getAvailableWindows() const;
 
