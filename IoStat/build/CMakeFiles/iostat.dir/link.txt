@@ -1,1 +1,0 @@
-/usr/lib64/ccache/c++ CMakeFiles/iostat.dir/srcs/IoStat_lib/IoStat.cc.o CMakeFiles/iostat.dir/srcs/main.cc.o -o iostat 

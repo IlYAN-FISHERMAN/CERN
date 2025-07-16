@@ -1,3 +1,0 @@
-/devwork/local/task/IoStat/build/CMakeFiles/iostat.dir
-/devwork/local/task/IoStat/build/CMakeFiles/edit_cache.dir
-/devwork/local/task/IoStat/build/CMakeFiles/rebuild_cache.dir
