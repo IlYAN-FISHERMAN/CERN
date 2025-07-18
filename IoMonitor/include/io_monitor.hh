@@ -47,8 +47,8 @@ class IoStat {
 
 		mutable std::mutex _mutex;
 
-		std::deque<IoMark> readMarks;
-		std::deque<IoMark> writeMarks;
+		std::deque<IoMark> _readMarks;
+		std::deque<IoMark> _writeMarks;
 
 		void cleanOldsMarks(std::deque<IoMark> &mark, size_t seconds) const;
 		std::pair<double, double> ComputeStats(const std::deque<IoMark> &mark, size_t seconds) const;
@@ -69,10 +69,8 @@ class IoStat {
 		void addWrite(size_t wBytes);
 
 
-		std::pair<double, double> bandWidthRead(size_t seconds = 10) const;
-		std::pair<double, double> bandWidthWrite(size_t seconds = 10) const;
-
-		std::chrono::steady_clock::time_point lastActivityTime() const;
+		std::pair<double, double> bandWidthRead(size_t seconds) const;
+		std::pair<double, double> bandWidthWrite(size_t seconds) const;
 
 		uid_t getUid() const;
 		gid_t getGid() const;
@@ -80,18 +78,6 @@ class IoStat {
 		const std::string& getApp() const;
 
 };
-
-
-
-
-
-
-
-
-
-
-
-
 
 // -------- IoMap --------
 class IoMap {

@@ -1,6 +1,10 @@
 #include <gtest/gtest.h>
+#include "test.hh"
 
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+int main(int ac, char **av) {
+	(void)ac;
+	(void)av;
+	testIoStat();
+    // ::testing::InitGoogleTest(&argc, argv);
+    // return RUN_ALL_TESTS();
 }
