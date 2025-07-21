@@ -1,5 +1,15 @@
 #include "../include/io_monitor.hh"
 
+const char* getCurrentTime(){
+	time_t timestamp;
+	std::time(&timestamp);
+	char *time = std::ctime(&timestamp);
+	if (!time)
+		exit (EXIT_FAILURE);
+	time[strlen(time) - 1] = 0;
+	return (time);
+}
+
 IoStat::~IoStat(){}
 
 IoStat::IoStat(const IoStat &other) :
@@ -18,6 +28,15 @@ IoStat& IoStat::operator=(const IoStat &other){
 	}
 	return (*this);
 }
+void	IoStat::printInfo(std::ostream &os, const char *msg){
+	const char *time = getCurrentTime();
+	os << IOSTAT_NAME << " [" << time << "]: " << msg << std::endl;
+}
+
+void	IoStat::printInfo(std::ostream &os, const std::string &msg){
+	const char *time = getCurrentTime();
+	os << IOSTAT_NAME << " [" << time << "]: " << msg << std::endl;
+}
 
 IoStat::IoStat(uint64_t fileId, const std::string& app, uid_t uid, gid_t gid) :
 	_fileId(fileId), _app(app), _uid(uid), _gid(gid){}
@@ -32,28 +51,82 @@ void IoStat::addWrite(size_t wBytes){
 	_writeMarks.push_back(io);
 }
 
-void IoStat::cleanOldsMarks(std::deque<IoMark> &mark, size_t seconds) const{
-	(void)mark;
-	(void)seconds;
+int IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
+	if ((enumMark != Marks::READ && enumMark != Marks::WRITE) || seconds == 0){
+		IoStat::printInfo(std::cerr, "No marks found for");
+		return -1;
+	}
+
+	std::deque<IoMark> &mark = (enumMark == Marks::READ ? _readMarks : _writeMarks);
+
+	std::deque<IoMark>::const_iterator begin = mark.begin();
+	std::deque<IoMark>::const_iterator end = mark.end();
+	struct timespec	currentTime;
+
+	clock_gettime(CLOCK_REALTIME, &currentTime);
+	for (std::deque<IoMark>::const_iterator it = begin; it != mark.end(); it++){
+		if ((difftime(currentTime.tv_sec, it->io_time.tv_sec) < seconds))
+			break;
+		end = it;
+	}
+	if (end == mark.end())
+		return 1;
+
+	std::cout << "Clean Range(" << std::distance(begin, end) << "/" << mark.size() << "):" << std::endl;
+	// std::cout << "{ \n";
+	// for (auto it = begin; it != end; it++)
+	// 	std::cout << "\t" << it->bytes << std::endl;
+	// std::cout << "}\n" << std::endl;	
+	
+	size_t size = std::distance(begin, end);
+	mark.erase(begin, end);
+
+	return size;
 }
 
-std::pair<double, double> IoStat::ComputeStats(const std::deque<IoMark> &mark, size_t seconds) const{
-	(void)mark;
-	(void)seconds;
-	return (std::pair(0, 0));
+std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t seconds) const{
+	if ((enumMark != Marks::READ && enumMark != Marks::WRITE) || seconds == 0){
+		IoStat::printInfo(std::cerr, "No marks found for");
+		return (std::pair(0, 0));
+	}
+
+	const std::deque<IoMark> &mark = (enumMark == Marks::READ ? _readMarks : _writeMarks);
+	double avrg = 0;
+	double deviation = 0;
+	std::deque<IoMark>::const_iterator begin = mark.end();
+	std::deque<IoMark>::const_iterator end = mark.end();
+	struct timespec	currentTime;
+
+	// Get the range of Marks
+	clock_gettime(CLOCK_REALTIME, &currentTime);
+	for (std::deque<IoMark>::const_iterator it = end; it != mark.begin();){
+		it--;
+		if ((difftime(currentTime.tv_sec, it->io_time.tv_sec) > seconds))
+			break;
+		begin = it;
+	}
+	std::cout << "Range(" << std::distance(begin, end) << "/" << mark.size() << "):" << std::endl;
+	// std::cout << "{ \n";
+	// for (auto it = begin; it != end; it++)
+	// 	std::cout << "\t" << it->bytes << std::endl;
+	// std::cout << "}\n" << std::endl;
+
+	if (begin == end)
+		return (std::pair(0, 0));
+
+	// Calcule average and standard deviation
+	for (std::deque<IoMark>::const_iterator it = begin; it < end; it++)
+		avrg += static_cast<double>(it->bytes);
+	avrg = avrg / std::distance(begin, end);
+
+	for (std::deque<IoMark>::const_iterator it = begin; it < end; it++){
+		double nbr = static_cast<double>(it->bytes - avrg);
+		deviation += (nbr * nbr);
+	}
+	deviation = sqrt(deviation / (std::distance(begin, end)));
+
+	return (std::pair<double, double>(avrg, deviation));
 }
-
-std::pair<double, double> IoStat::bandWidthRead(size_t seconds = 10) const{
-	(void)seconds;
-	return (std::pair(0, 0));
-}
-
-std::pair<double, double> IoStat::bandWidthWrite(size_t seconds = 10) const{
-	(void)seconds;
-	return (std::pair(0, 0));
-
-}
-
 
 uid_t IoStat::getUid() const {return (_uid);}
 

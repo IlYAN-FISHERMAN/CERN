@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-  add_compile_options(-Wall -Wextra -Werror -Wpedantic)
+  add_compile_options(-Wall -Wextra -Werror -Wpedantic -O2 -g3)
 endif()
 
 include_directories(include)

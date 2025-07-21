@@ -1,28 +1,34 @@
 #include <chrono>
 #include <deque>
+#include <thread>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
 #include <string>
 #include <mutex>
-#include <thread>
 #include <optional>
 #include <atomic>
 #include <condition_variable>
 #include <memory>
 #include <cstdint>
 #include <sys/types.h>
+#include <cmath>
+#include <iostream>
+#include <ctime>
+#include <string.h>
+
+#define IOSTAT_NAME "IoStat"
 
 struct IoMark {
 	struct timespec io_time;
     size_t bytes;
 
     IoMark(size_t bytes) : bytes(bytes){
-		timespec_get(&io_time, TIME_UTC);
+		clock_gettime(CLOCK_REALTIME, &io_time);
 	}
 
     IoMark() : bytes(0){
-		timespec_get(&io_time, TIME_UTC);
+		clock_gettime(CLOCK_REALTIME, &io_time);
 	}
 };
 
@@ -39,6 +45,12 @@ struct IoStatSummary {
 
 // -------- IoStat --------
 class IoStat {
+	// Enum
+	public: enum class Marks{
+		READ,
+		WRITE
+	};
+
 	private:
 		uint64_t _fileId;
 		std::string _app;
@@ -50,8 +62,6 @@ class IoStat {
 		std::deque<IoMark> _readMarks;
 		std::deque<IoMark> _writeMarks;
 
-		void cleanOldsMarks(std::deque<IoMark> &mark, size_t seconds) const;
-		std::pair<double, double> ComputeStats(const std::deque<IoMark> &mark, size_t seconds) const;
 
 		IoStat();
 
@@ -68,14 +78,21 @@ class IoStat {
 		void addRead(size_t rBytes);
 		void addWrite(size_t wBytes);
 
+		// clean old mark oldest than <seconds>
+		int cleanOldsMarks(Marks mark, size_t seconds = 10);
 
-		std::pair<double, double> bandWidthRead(size_t seconds) const;
-		std::pair<double, double> bandWidthWrite(size_t seconds) const;
+		// return the average and the standard derivation in the seconds range
+		std::pair<double, double> bandWidth(Marks EnumMark, size_t seconds = 10) const;
 
+		// PrintInfo
+		static void	printInfo(std::ostream &os, const char *);
+		static void	printInfo(std::ostream &os, const std::string &);
+
+		// Getters
 		uid_t getUid() const;
 		gid_t getGid() const;
-
 		const std::string& getApp() const;
+
 
 };
 
@@ -158,3 +175,7 @@ private:
     std::thread aggregation_thread_;
     std::atomic<bool> running_;
 };
+
+
+
+const char*	getCurrentTime();
