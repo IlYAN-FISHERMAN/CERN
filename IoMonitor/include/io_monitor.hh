@@ -57,8 +57,6 @@ class IoStat {
 		uid_t _uid;
 		gid_t _gid;
 
-		mutable std::mutex _mutex;
-
 		std::deque<IoMark> _readMarks;
 		std::deque<IoMark> _writeMarks;
 

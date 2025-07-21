@@ -53,7 +53,7 @@ void IoStat::addWrite(size_t wBytes){
 
 int IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
 	if ((enumMark != Marks::READ && enumMark != Marks::WRITE) || seconds == 0){
-		IoStat::printInfo(std::cerr, "No marks found for");
+		IoStat::printInfo(std::cerr, "\033[031mNo marks found for\033[0m");
 		return -1;
 	}
 
@@ -69,8 +69,10 @@ int IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
 			break;
 		end = it;
 	}
-	if (end == mark.end())
+	if (end == mark.end()){
+		printInfo(std::cout, "\033[031mNothing to clean\033[0m");
 		return 1;
+	}
 
 	std::cout << "Clean Range(" << std::distance(begin, end) << "/" << mark.size() << "):" << std::endl;
 	// std::cout << "{ \n";
@@ -86,7 +88,7 @@ int IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
 
 std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t seconds) const{
 	if ((enumMark != Marks::READ && enumMark != Marks::WRITE) || seconds == 0){
-		IoStat::printInfo(std::cerr, "No marks found for");
+		IoStat::printInfo(std::cerr, "\033[031mNo marks found for\033[0m");
 		return (std::pair(0, 0));
 	}
 

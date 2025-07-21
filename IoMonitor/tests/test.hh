@@ -3,4 +3,4 @@
 #include <iostream>
 #include "../include/io_monitor.hh"
 
-void testIoStat();
+int testIoStat();
