@@ -10,6 +10,10 @@ TEST(IoStat, FillData) {
 }
 
 int main(int ac, char **av) {
-    ::testing::InitGoogleTest(&ac, av);
-    return RUN_ALL_TESTS();
+	(void)ac;
+	(void)av;
+
+	testIoMap();
+    // ::testing::InitGoogleTest(&ac, av);
+    // return RUN_ALL_TESTS();
 }

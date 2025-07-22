@@ -18,6 +18,7 @@
 #include <iostream>
 #include <ctime>
 #include <string.h>
+#include <map>
 
 # ifndef DEBUG
 	#define DEBUG 0
