@@ -3,7 +3,7 @@ enable_testing()
 # GTest
 find_package(GTest REQUIRED)
 
-add_executable(io_monitor_tests test_main.cc test_io_monitor.cc)
+add_executable(io_monitor_tests testMain.cc testIoMonitor.cc)
 
 target_link_libraries(io_monitor_tests io_monitor GTest::gtest
                       GTest::gtest_main pthread)

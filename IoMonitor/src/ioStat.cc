@@ -1,4 +1,4 @@
-#include "../include/io_monitor.hh"
+#include "../include/ioStat.hh"
 
 const char* getCurrentTime(){
 	time_t timestamp;
@@ -53,7 +53,8 @@ void IoStat::addWrite(size_t wBytes){
 
 int IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
 	if ((enumMark != Marks::READ && enumMark != Marks::WRITE) || seconds == 0){
-		IoStat::printInfo(std::cerr, "\033[031mNo marks found for\033[0m");
+		if (DEBUG)
+			IoStat::printInfo(std::cerr, "\033[031mNo marks found for\033[0m");
 		return -1;
 	}
 
@@ -70,15 +71,18 @@ int IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
 		end = it;
 	}
 	if (end == mark.end()){
-		printInfo(std::cout, "\033[031mNothing to clean\033[0m");
+		if (DEBUG)
+			printInfo(std::cout, "\033[031mNothing to clean\033[0m");
 		return 1;
 	}
 
-	std::cout << "Clean Range(" << std::distance(begin, end) << "/" << mark.size() << "):" << std::endl;
-	// std::cout << "{ \n";
-	// for (auto it = begin; it != end; it++)
-	// 	std::cout << "\t" << it->bytes << std::endl;
-	// std::cout << "}\n" << std::endl;	
+	if (DEBUG){
+		std::cout << "Clean Range(" << std::distance(begin, end) << "/" << mark.size() << "):" << std::endl;
+		std::cout << "{ \n";
+		for (auto it = begin; it != end; it++)
+			std::cout << "\t" << it->bytes << std::endl;
+		std::cout << "}\n" << std::endl;	
+	}
 	
 	size_t size = std::distance(begin, end);
 	mark.erase(begin, end);
@@ -88,7 +92,8 @@ int IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
 
 std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t seconds) const{
 	if ((enumMark != Marks::READ && enumMark != Marks::WRITE) || seconds == 0){
-		IoStat::printInfo(std::cerr, "\033[031mNo marks found for\033[0m");
+		if (DEBUG)
+			IoStat::printInfo(std::cerr, "\033[031mNo marks found for\033[0m");
 		return (std::pair(0, 0));
 	}
 
@@ -107,11 +112,13 @@ std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t seconds) cons
 			break;
 		begin = it;
 	}
-	std::cout << "Range(" << std::distance(begin, end) << "/" << mark.size() << "):" << std::endl;
-	// std::cout << "{ \n";
-	// for (auto it = begin; it != end; it++)
-	// 	std::cout << "\t" << it->bytes << std::endl;
-	// std::cout << "}\n" << std::endl;
+	if (DEBUG){
+		std::cout << "Range(" << std::distance(begin, end) << "/" << mark.size() << "):" << std::endl;
+		std::cout << "{ \n";
+		for (auto it = begin; it != end; it++)
+			std::cout << "\t" << it->bytes << std::endl;
+		std::cout << "}\n" << std::endl;
+	}
 
 	if (begin == end)
 		return (std::pair(0, 0));
@@ -135,3 +142,11 @@ uid_t IoStat::getUid() const {return (_uid);}
 gid_t IoStat::getGid() const {return (_gid);}
 
 const std::string& IoStat::getApp() const {return (_app);}
+
+ssize_t IoStat::getSize(Marks enumMark) const{
+	if (enumMark == Marks::READ)
+		return _readMarks.size();
+	if (enumMark == Marks::WRITE)
+		return _writeMarks.size();
+	return 0;
+}
