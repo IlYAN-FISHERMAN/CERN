@@ -2,3 +2,4 @@ build
 IoMonitor/build/
 build/
 .env
+.cache

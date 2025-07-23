@@ -1,18 +1,17 @@
 #include "ioStat.hh"
-#include <unistd.h>
 
 #define IOMAP_NAME "IoMap"
 
 class IoMap {
 	private:
 		void cleanerLoop();
-		void RemoveInactiveStats();
+		void removeInactives();
 
 		mutable std::mutex _mutex;
-		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat>> _filesMap;
-		std::unordered_set<std::string> _activeApps;
-		std::unordered_set<uid_t> _activeUids;
-		std::unordered_set<gid_t> _activeGids;
+		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> > _filesMap;
+		std::unordered_set<std::string> _apps;
+		std::unordered_set<uid_t> _uids;
+		std::unordered_set<gid_t> _gids;
 
 		std::thread _cleaner;
 		std::atomic<bool> _running;
@@ -21,6 +20,7 @@ class IoMap {
 	public:
 		// Orthodoxe Canonical Form
 		IoMap();
+		IoMap(int);
 		~IoMap();
 		IoMap(const IoMap &other);
 		IoMap& operator=(const IoMap &other);

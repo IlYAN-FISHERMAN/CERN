@@ -16,9 +16,11 @@
 #include <sys/types.h>
 #include <cmath>
 #include <iostream>
+#include <set>
 #include <ctime>
 #include <string.h>
 #include <map>
+#include <unistd.h>
 
 # ifndef DEBUG
 	#define DEBUG 0

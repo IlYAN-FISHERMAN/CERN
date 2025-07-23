@@ -4,9 +4,13 @@ IoMap::IoMap() : _cleaner(std::thread{&IoMap::cleanerLoop, this}) , _running(tru
 }
 
 IoMap::~IoMap() {
-	_running = false;
-	_cleaner.join();
+	if (_running){
+		_running = false;
+		_cleaner.join();
+	}
 }
+
+IoMap::IoMap(int){}
 
 IoMap::IoMap(const IoMap& other){(void)other;}
 
@@ -36,16 +40,19 @@ void IoMap::cleanerLoop(){
 }
 
 void IoMap::test(){
-	std::multimap<int, std::string> map = {{1, "chien"}, {2, "chat"}};
-	map.insert(std::make_pair(1, "chat"));
-	map.insert(std::make_pair(1, "chat"));
-	map.insert(std::make_pair(1, "chat?"));
-	map.insert({2, "voiture"});
-	// for (const auto &it : map){
-	// 	std::cout << it.first << " " << it.second << std::endl;
+	std::unordered_multimap<int, std::string> map;
+	// std::unordered_multiset<int> set = {1, 2, 3 ,4 ,5, 0, 10, 9 , 3414, 42};
+	// set.insert(1);
+	//
+	// for (const auto &it : set){
+	// 	if (it == 1)
+	// 		std::cout << it << std::endl;
 	// }
-	auto it = map.begin();
-	std::cout << map.size() << std::endl;
-	std::advance(it, 3);
-	std::cout << it->first << " " << it->second << std::endl;
+	for (const auto &it : map){
+		std::cout << it.first << " " << it.second << std::endl;
+	}
+	// auto it = map.begin();
+	// std::cout << map.size() << std::endl;
+	// std::advance(it, 3);
+	// std::cout << it->first << " " << it->second << std::endl;
 }
