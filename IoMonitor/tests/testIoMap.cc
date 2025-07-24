@@ -1,7 +1,7 @@
 #include "tester.hh"
 
 int testIoMap(){
-	IoMap map(0);
+	IoMap map;
 
 	map.test();
 	// for (int i = 0; i < 10; i++){

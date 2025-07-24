@@ -54,8 +54,9 @@ int testIoStatFillData(){
 	IoStat io(4, "mgm", 2, 2);
 
 	fillIoStat(io, 100000, 10000000);
-	if (getBandWidth(io, IoStat::Marks::READ, 100) < 0 ||
-		getBandWidth(io, IoStat::Marks::READ, 100) < 0 ||
+	sleeping(10);
+	if (getBandWidth(io, IoStat::Marks::READ, 2) < 0 ||
+		getBandWidth(io, IoStat::Marks::READ, 2) < 0 ||
 		getBandWidth(io, IoStat::Marks::READ, 2) < 0)
 			return -1;
 	return 0;

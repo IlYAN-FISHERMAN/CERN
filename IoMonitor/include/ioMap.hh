@@ -7,12 +7,12 @@ class IoMap {
 		void cleanerLoop();
 		void removeInactives();
 
-		mutable std::mutex _mutex;
 		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> > _filesMap;
 		std::unordered_set<std::string> _apps;
 		std::unordered_set<uid_t> _uids;
 		std::unordered_set<gid_t> _gids;
 
+		mutable std::mutex _mutex;
 		std::thread _cleaner;
 		std::atomic<bool> _running;
 		std::condition_variable _cv;
@@ -36,6 +36,4 @@ class IoMap {
 		std::optional<std::pair<double, double>> getBandwidth(uid_t uid, size_t past_seconds = 10);
 
 		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat>> GetAllStatsSnapshot() const;
-
-		void test();
 };
