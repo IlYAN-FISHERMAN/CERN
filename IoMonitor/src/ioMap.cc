@@ -9,7 +9,8 @@ IoMap::~IoMap() {
 		std::lock_guard<std::mutex> lock(_mutex);
 		_running = false;
 	}
-	_cleaner.join();
+	if (_cleaner.joinable())
+		_cleaner.join();
 }
 
 IoMap::IoMap(int) : _running(true){}
@@ -40,30 +41,67 @@ void IoMap::cleanerLoop(){
 	std::unique_lock<std::mutex> lock(_mutex);
 
 	while (true){
-		_cv.wait_for(lock, std::chrono::seconds(2), [&]{return !_running || !_filesMap.empty();});
+		_cv.wait_for(lock, std::chrono::seconds(1));
 
+		std::cout << "thread\n";
 		if (!_running)
 			break;
 
 		std::cout << "thread cleaning!\n";
-		for(auto &it : _filesMap){
-			it.second->cleanOldsMarks(IoStat::Marks::READ, 5);
-			it.second->cleanOldsMarks(IoStat::Marks::WRITE, 5);
+		for(auto it = _filesMap.begin(); it != _filesMap.end();){
+			std::pair<double, double> read;
+			std::pair<double, double> write;
+			read = it->second->bandWidth(IoStat::Marks::READ, 60);
+			write = it->second->bandWidth(IoStat::Marks::WRITE, 60);
+			if ((read.first == 0 && read.second == 0) && (write.first == 0 && write.second == 0))
+				it = _filesMap.erase(it);
+			else
+				it++;
 		}
 	}
 }
 
-void IoMap::AddRead(uint64_t inode, const std::string& app, uid_t uid, gid_t gid, size_t rbytes){
+void IoMap::AddRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes){
+	std::lock_guard<std::mutex> lock(_mutex);
+
+	auto it = _filesMap.equal_range(inode);
+	
+	for(;it.first != it.second; it.first++){
+		auto &io = it.first->second;
+		if (io->getApp() == app && io->getGid() == gid && io->getUid() == uid){
+			io->addRead(rbytes);
+			break ;
+		}
+	}
+	if (it.first == it.second){
+		auto newIo = _filesMap.insert({inode, std::make_shared<IoStat>(inode, app, uid, gid)});
+		newIo->second->addRead(rbytes);
+		_apps.insert(app);
+		_uids.insert(uid);
+		_gids.insert(gid);
+	}
 }
 
-void IoMap::AddWrite(uint64_t inode, const std::string& app, uid_t uid, gid_t gid, size_t wbytes){
+void IoMap::AddWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes){
+	std::lock_guard<std::mutex> lock(_mutex);
+
+	auto &&it = _filesMap.equal_range(inode);
+	
+	for(;it.first != it.second; it.first++){
+		auto &io = it.first->second;
+		if (io->getApp() == app && io->getGid() == gid && io->getUid() == uid){
+			io->addWrite(wbytes);
+			break ;
+		}
+	}
+	if (it.first == it.second){
+		auto &&newIo = _filesMap.insert({inode, std::make_shared<IoStat>(inode, app, uid, gid)});
+		newIo->second->addWrite(wbytes);
+		_apps.insert(app);
+		_uids.insert(uid);
+		_gids.insert(gid);
+	}
 }
-
-std::optional<std::pair<double, double>> getBandwidth(const std::string& app, size_t past_seconds = 10){}
-
-std::optional<std::pair<double, double>> getBandwidth(uid_t uid, size_t past_seconds = 10){}
-
-
 
 std::vector<std::string> IoMap::getApps(){
 	std::lock_guard<std::mutex> lock(_mutex);
