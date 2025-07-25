@@ -155,8 +155,10 @@ ssize_t IoStat::getSize(Marks enumMark) const{
 std::ostream& operator<<(std::ostream &os, const IoStat *other){
 	auto read = other->bandWidth(IoStat::Marks::READ);
 	auto write = other->bandWidth(IoStat::Marks::WRITE);
-	os << "[READ]{average: " << read.first << ", standard deviation: " << read.second << "}";
-	os << " | ";
-	os << "[WRITE]{average: " << write.first << ", standard deviation: " << write.second << "}" << std::endl;
+	os << C_BLUE << "[READ]{average: " << read.first <<
+		", standard deviation: " << read.second <<  "}";
+	os << " / ";
+	os <<  "[WRITE]{average: " << write.first <<
+		", standard deviation: " << write.second <<  "}" << C_RESET << std::endl;
 	return os;
 }

@@ -26,9 +26,15 @@ int testIoMap(){
 	map.AddRead(24, "pdf", 10, 2, 245);
 	map.AddRead(24, "pdf", 10, 2, 182);
 
+	map.AddRead(50, "pdf", 10, 2, 424);
+	map.AddRead(50, "pdf", 10, 2, 28355);
+	map.AddRead(50, "pdf", 52, 2, 325);
+	map.AddRead(50, "pdf", 52, 2, 985);
+	map.AddRead(50, "pdf", 52, 2, 4562);
+
 
 	// auto it = map.getBandwidth("mgm");
-	auto it = map.getBandwidth("lol", IoStat::Marks::READ);
+	auto it = map.getBandwidth("pdf", IoStat::Marks::READ);
 	(void)it;
 	// if (it.has_value())
 	// 	std::cout << "avrg: " << it->first << " | standard deviation: " << it->second << std::endl;

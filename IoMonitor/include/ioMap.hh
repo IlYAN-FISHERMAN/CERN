@@ -40,6 +40,7 @@ class IoMap {
 		static void	printInfo(std::ostream &os, const std::string &);
 
 		friend std::ostream& operator<<(std::ostream &os, const IoMap *other);
+		friend std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator it);
 
 		template <typename T>
 		std::optional<std::pair<double, double>> getBandwidth(T index, IoStat::Marks enumMark, size_t seconds = 10){
@@ -53,8 +54,14 @@ class IoMap {
 		(void)index;
 
 		if constexpr (std::is_same_v<T, std::string> || std::is_same_v<T, const std::string> || std::is_same_v<T, const char *>){
-			if (DEBUG == 2)
-				std::cout << this << std::endl;
+			// if (DEBUG == 2)
+			// 	std::cout << this << std::endl;
+			double average = 0;
+			for (std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator it = _filesMap.begin(); it != _filesMap.end(); it++){
+				if (it->second->getApp() == index)
+					average += it->second->bandWidth(IoStat::Marks::READ).first;
+			}
+			std::cout << average << std::endl;
 		} else if constexpr (std::is_same_v<T, uid_t>){
 		} else if constexpr (std::is_same_v<T, gid_t>){
 		}
