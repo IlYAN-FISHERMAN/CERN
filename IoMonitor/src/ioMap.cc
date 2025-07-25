@@ -41,7 +41,7 @@ void IoMap::cleanerLoop(){
 	std::unique_lock<std::mutex> lock(_mutex);
 
 	while (true){
-		_cv.wait_for(lock, std::chrono::seconds(1));
+		_cv.wait_for(lock, std::chrono::seconds(60));
 
 		std::cout << "thread\n";
 		if (!_running)
@@ -85,7 +85,7 @@ void IoMap::AddRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid
 void IoMap::AddWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes){
 	std::lock_guard<std::mutex> lock(_mutex);
 
-	auto &&it = _filesMap.equal_range(inode);
+	auto it = _filesMap.equal_range(inode);
 	
 	for(;it.first != it.second; it.first++){
 		auto &io = it.first->second;
