@@ -1,4 +1,5 @@
 #include "ioStat.hh"
+#include <iomanip>
 
 #define IOMAP_NAME "IoMap"
 
@@ -35,31 +36,33 @@ class IoMap {
 
 		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat>> GetAllStatsSnapshot() const;
 
+		static void	printInfo(std::ostream &os, const char *);
+		static void	printInfo(std::ostream &os, const std::string &);
+
+		friend std::ostream& operator<<(std::ostream &os, const IoMap *other);
+
 		template <typename T>
 		std::optional<std::pair<double, double>> getBandwidth(T index, IoStat::Marks enumMark, size_t seconds = 10){
 
 		if (seconds == 0 || (enumMark != IoStat::Marks::READ && enumMark != IoStat::Marks::WRITE))
 			return std::nullopt;
 
-		std::pair<double, double> data = {0, 0};
-		(void)index;
+		std::vector<std::pair<double, double> > data = {{0, 0}};
+		(void)data;
 		(void)seconds;
+		(void)index;
 
-		if constexpr (std::is_same_v<T, uint64_t>){
-			// auto &it = _filesMap.equal_range(index);
-			// if (it.first == it.second)
-			// 	return std::nullopt;
-			// size_t size = std::distance(it.first, it.second);
-			// for (;it.first != it.second; it.first++){
-			// 	data += it.first->second->bandWidth(enumMark, seconds);
-			// }
-			// data.first /= size;
-		} else if constexpr (std::is_same_v<T, std::string> || std::is_same_v<T, const char*>){
+		if constexpr (std::is_same_v<T, std::string> || std::is_same_v<T, const std::string> || std::is_same_v<T, const char *>){
+			if (DEBUG == 2)
+				std::cout << this << std::endl;
 		} else if constexpr (std::is_same_v<T, uid_t>){
 		} else if constexpr (std::is_same_v<T, gid_t>){
 		}
-		else
+		else{
+			std::cout << "???\n";
 			return std::nullopt;
-		return data;
+		}
+		return data[0];
 	}
+
 };

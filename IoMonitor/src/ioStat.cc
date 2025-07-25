@@ -39,7 +39,8 @@ void	IoStat::printInfo(std::ostream &os, const std::string &msg){
 }
 
 IoStat::IoStat(uint64_t fileId, const std::string& app, uid_t uid, gid_t gid) :
-	_fileId(fileId), _app(app), _uid(uid), _gid(gid){}
+	_fileId(fileId), _app(app), _uid(uid), _gid(gid){
+}
 
 void IoStat::addRead(size_t rBytes){
 	IoMark io(rBytes);
@@ -53,7 +54,7 @@ void IoStat::addWrite(size_t wBytes){
 
 int IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
 	if ((enumMark != Marks::READ && enumMark != Marks::WRITE) || seconds == 0){
-		if (DEBUG)
+		if (DEBUG == 1)
 			IoStat::printInfo(std::cerr, "\033[031mNo marks found for\033[0m");
 		return -1;
 	}
@@ -71,12 +72,12 @@ int IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
 		end = it;
 	}
 	if (end == mark.end()){
-		if (DEBUG)
+		if (DEBUG == 1)
 			printInfo(std::cout, "\033[031mNothing to clean\033[0m");
 		return 1;
 	}
 
-	if (DEBUG){
+	if (DEBUG == 1){
 		std::cout << "Clean Range(" << std::distance(begin, end) << "/" << mark.size() << "):" << std::endl;
 		std::cout << "{ \n";
 		for (auto it = begin; it != end; it++)
@@ -92,7 +93,7 @@ int IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
 
 std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t seconds) const{
 	if ((enumMark != Marks::READ && enumMark != Marks::WRITE) || seconds == 0){
-		if (DEBUG)
+		if (DEBUG == 1)
 			IoStat::printInfo(std::cerr, "\033[031mNo marks found for\033[0m");
 		return (std::pair(0, 0));
 	}
@@ -112,7 +113,7 @@ std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t seconds) cons
 			break;
 		begin = it;
 	}
-	if (DEBUG){
+	if (DEBUG == 1){
 		std::cout << "Range(" << std::distance(begin, end) << "/" << mark.size() << "):" << std::endl;
 		std::cout << "{ \n";
 		for (auto it = begin; it != end; it++)
@@ -149,4 +150,13 @@ ssize_t IoStat::getSize(Marks enumMark) const{
 	if (enumMark == Marks::WRITE)
 		return _writeMarks.size();
 	return 0;
+}
+
+std::ostream& operator<<(std::ostream &os, const IoStat *other){
+	auto read = other->bandWidth(IoStat::Marks::READ);
+	auto write = other->bandWidth(IoStat::Marks::WRITE);
+	os << "[READ]{average: " << read.first << ", standard deviation: " << read.second << "}";
+	os << " | ";
+	os << "[WRITE]{average: " << write.first << ", standard deviation: " << write.second << "}" << std::endl;
+	return os;
 }

@@ -52,6 +52,8 @@ class IoStat {
 
 };
 
+std::ostream& operator<<(std::ostream &os, const IoStat *other);
+
 struct IoStatSummary {
     double avg_read = 0.0;
     double sigma_read = 0.0;

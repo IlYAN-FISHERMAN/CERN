@@ -21,6 +21,7 @@
 #include <string.h>
 #include <map>
 #include <unistd.h>
+#include "color.hh"
 
 # ifndef DEBUG
 	#define DEBUG 0

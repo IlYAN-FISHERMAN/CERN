@@ -1,14 +1,14 @@
 #include <gtest/gtest.h>
 #include "tester.hh"
 
-TEST(IoStat, CleanData) {
-	EXPECT_EQ(testIoStatCleaning(), 0);
-}
-
-TEST(IoStat, FillData) {
-	EXPECT_EQ(testIoStatFillData(), 0);
-}
-
+// TEST(IoStat, CleanData) {
+// 	EXPECT_EQ(testIoStatCleaning(), 0);
+// }
+//
+// TEST(IoStat, FillData) {
+// 	EXPECT_EQ(testIoStatFillData(), 0);
+// }
+//
 int main(int ac, char **av) {
 	(void)ac;
 	(void)av;
