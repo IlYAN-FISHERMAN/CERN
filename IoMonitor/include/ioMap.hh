@@ -41,6 +41,7 @@ class IoMap {
 		static void	printInfo(std::ostream &os, const std::string &);
 
 		friend std::ostream& operator<<(std::ostream &os, const IoMap *other);
+		friend std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator it);
 
 
 

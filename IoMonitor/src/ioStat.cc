@@ -179,8 +179,10 @@ std::ostream& operator<<(std::ostream &os, const IoStat *other){
 	auto read = other->bandWidth(IoStat::Marks::READ, NULL);
 	auto write = other->bandWidth(IoStat::Marks::WRITE, NULL);
 	os << "[ IoStat bandwodth from last 10s] " << std::endl;
-	os << "[READ]{average: " << read.first << ", standard deviation: " << read.second << "}";
-	os << " | ";
-	os << "[WRITE]{average: " << write.first << ", standard deviation: " << write.second << "}" << std::endl;
+	os << C_BLUE << "[READ]{average: " << read.first <<
+		", standard deviation: " << read.second <<  "}";
+	os << " / ";
+	os <<  "[WRITE]{average: " << write.first <<
+		", standard deviation: " << write.second <<  "}" << C_RESET << std::endl;
 	return os;
 }

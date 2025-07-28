@@ -1,20 +1,5 @@
 #include "../include/ioMap.hh"
 
-std::ostream& operator<<(std::ostream &os, const IoMap *other){
-	for (auto it : other->_filesMap){
-		os << C_GREEN << "┌─[" << C_CYAN << "IoMap" << C_GREEN << "]" << C_RESET;
-		os << C_GREEN << "[" << C_CYAN << "id:" << C_CYAN << it.first << C_GREEN << "]" << C_RESET;
-		os << C_GREEN << "[" <<  C_CYAN << "app:" << C_CYAN << it.second->getApp() << C_GREEN << "]" << C_RESET;
-		os << C_GREEN << "[" << C_CYAN << "uid:" << C_CYAN << it.second->getUid() << C_GREEN << "]" << C_RESET;
-		os << C_GREEN << "[" << C_CYAN << "gid:" << C_CYAN << it.second->getGid() << C_GREEN << "]" << C_RESET;
-		os << C_GREEN << "[" << C_CYAN << "sR:" << C_CYAN << it.second->getSize(IoStat::Marks::READ) << C_GREEN
-			<< "/" << C_CYAN << "sW:"<< C_WHITE << it.second->getSize(IoStat::Marks::WRITE) << C_GREEN << "]" << C_RESET;
-		os << std::endl << C_GREEN << "└─[IoStat]" << C_RESET;
-		os << std::fixed << std::setprecision(3) << C_WHITE << it.second << C_RESET << std::endl;
-	}
-	return os;
-}
-
 IoMap::IoMap() : _running(true){
 	_cleaner = std::thread(&IoMap::cleanerLoop, this);
 }
@@ -158,4 +143,32 @@ std::vector<gid_t> IoMap::getGids(){
 std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> > IoMap::GetAllStatsSnapshot() const{
 	std::lock_guard<std::mutex> lock(_mutex);
 	return (_filesMap);
+}
+
+std::ostream& operator<<(std::ostream &os, const IoMap *other){
+	for (auto it : other->_filesMap){
+		os << C_GREEN << "┌─[" << C_CYAN << "IoMap" << C_GREEN << "]" << C_RESET;
+		os << C_GREEN << "[" << C_CYAN << "id:" << it.first << C_GREEN << "]" << C_RESET;
+		os << C_GREEN << "[" <<  C_CYAN << "app:"<< it.second->getApp() << C_GREEN << "]" << C_RESET;
+		os << C_GREEN << "[" << C_CYAN << "uid:" << it.second->getUid() << C_GREEN << "]" << C_RESET;
+		os << C_GREEN << "[" << C_CYAN << "gid:" << it.second->getGid() << C_GREEN << "]" << C_RESET;
+		os << C_GREEN << "[" << C_CYAN << "sR:" << it.second->getSize(IoStat::Marks::READ)
+			<< "/sW:"<< it.second->getSize(IoStat::Marks::WRITE) << C_GREEN << "]" << C_RESET;
+		os << std::endl << C_GREEN << "└─[" << C_CYAN << "IoStat" << C_GREEN << "]" << C_RESET;
+		os << std::fixed << std::setprecision(3) << C_WHITE << it.second << C_RESET << std::endl;
+	}
+	return os;
+}
+
+std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator it){
+	os << C_GREEN << "┌─[" << C_CYAN << "IoMap" << C_GREEN << "]" << C_RESET;
+	os << C_GREEN << "[" << C_CYAN << "id:" << it->first << C_GREEN << "]" << C_RESET;
+	os << C_GREEN << "[" <<  C_CYAN << "app:"<< it->second->getApp() << C_GREEN << "]" << C_RESET;
+	os << C_GREEN << "[" << C_CYAN << "uid:" << it->second->getUid() << C_GREEN << "]" << C_RESET;
+	os << C_GREEN << "[" << C_CYAN << "gid:" << it->second->getGid() << C_GREEN << "]" << C_RESET;
+	os << C_GREEN << "[" << C_CYAN << "sR:" << it->second->getSize(IoStat::Marks::READ)
+		<< "/sW:"<< it->second->getSize(IoStat::Marks::WRITE) << C_GREEN << "]" << C_RESET;
+	os << std::endl << C_GREEN << "└─[" << C_CYAN << "IoStat" << C_GREEN << "]" << C_RESET;
+	os << std::fixed << std::setprecision(3) << C_WHITE << it->second << C_RESET << std::endl;
+	return os;
 }

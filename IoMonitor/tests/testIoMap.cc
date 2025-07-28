@@ -42,6 +42,12 @@ int testIoMap(){
 	map.AddRead(24, "pdf", 10, 2, 245);
 	map.AddRead(24, "pdf", 10, 2, 182);
 
+	map.AddRead(50, "pdf", 10, 2, 424);
+	map.AddRead(50, "pdf", 10, 2, 28355);
+	map.AddRead(50, "pdf", 52, 2, 325);
+	map.AddRead(50, "pdf", 52, 2, 985);
+	map.AddRead(50, "pdf", 52, 2, 4562);
+
 
 	// std::this_thread::sleep_for(std::chrono::seconds(2));
 	std::vector<std::optional<std::pair<double, double> > > data;
