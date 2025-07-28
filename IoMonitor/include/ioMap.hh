@@ -1,5 +1,6 @@
 #include "ioStat.hh"
 #include <iomanip>
+#include <numeric>
 
 #define IOMAP_NAME "IoMap"
 
@@ -41,28 +42,73 @@ class IoMap {
 
 		friend std::ostream& operator<<(std::ostream &os, const IoMap *other);
 
+
+
+
 		template <typename T>
-		std::optional<std::pair<double, double>> getBandwidth(T index, IoStat::Marks enumMark, size_t seconds = 10){
+		std::optional<std::pair<double, double>> getBandwidth(const T index, IoStat::Marks enumMark, size_t seconds = 10){
 
 		if (seconds == 0 || (enumMark != IoStat::Marks::READ && enumMark != IoStat::Marks::WRITE))
 			return std::nullopt;
 
-		std::vector<std::pair<double, double> > data = {{0, 0}};
-		(void)data;
-		(void)seconds;
-		(void)index;
+		std::map<std::pair<double, double>, size_t> indexData;
+		std::pair<double, double> weighted = {0, 0};
+		std::pair<double, double> tmp = {0, 0};
+		size_t size = 0;
 
-		if constexpr (std::is_same_v<T, std::string> || std::is_same_v<T, const std::string> || std::is_same_v<T, const char *>){
-			if (DEBUG == 2)
-				std::cout << this << std::endl;
+		if constexpr (std::is_same_v<T, std::string> || std::is_same_v<T, const char *>){
+			for (auto it : _filesMap){
+				if (it.second->getApp() == index){
+					tmp = it.second->bandWidth(enumMark, &size, seconds);
+					indexData.insert({tmp, size});
+					size = 0;
+					tmp = {0, 0};
+				}
+			}
 		} else if constexpr (std::is_same_v<T, uid_t>){
+			for (auto it : _filesMap){
+				if (it.second->getUid() == index){
+					tmp = it.second->bandWidth(enumMark, &size, seconds);
+					indexData.insert({tmp, size});
+					size = 0;
+					tmp = {0, 0};
+				}
+			}
 		} else if constexpr (std::is_same_v<T, gid_t>){
+			for (auto it : _filesMap){
+				if (it.second->getGid() == index){
+					tmp = it.second->bandWidth(enumMark, &size, seconds);
+					indexData.insert({tmp, size});
+					size = 0;
+					tmp = {0, 0};
+				}
+			}
 		}
 		else{
-			std::cout << "???\n";
+			if (DEBUG == 2)
+				printInfo(std::cerr, "No match found for data type");
 			return std::nullopt;
 		}
-		return data[0];
+		if (indexData.size() <= 0)
+			return std::nullopt;
+
+		size_t divisor = 0;
+		size_t stdDivisor = 0;
+		std::cout << std::fixed;
+		for (const auto &it : indexData){
+			weighted.first += (it.first.first * it.second);
+			divisor += it.second;
+			if (it.second > 1){
+				stdDivisor += it.second - 1;
+				weighted.second += (it.second - 1) * (std::pow(it.first.second, 2));
+			}
+		}
+		if (divisor > 0)
+			weighted.first /= divisor;
+		if (stdDivisor > 0)
+			weighted.second = std::sqrt(weighted.second / stdDivisor);
+
+		return weighted;
 	}
 
 };

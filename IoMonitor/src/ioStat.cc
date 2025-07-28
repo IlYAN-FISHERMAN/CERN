@@ -1,3 +1,25 @@
+//  File: ioStat.cc
+//  Author: Ilkay Yanar - 42Lausanne /CERN
+//  ----------------------------------------------------------------------
+
+/*************************************************************************
+ *  EOS - the CERN Disk Storage System                                   *
+ *  Copyright (C) 2025 CERN/Switzerland                                  *
+ *                                                                       *
+ *  This program is free software: you can redistribute it and/or modify *
+ *  it under the terms of the GNU General Public License as published by *
+ *  the Free Software Foundation, either version 3 of the License, or    *
+ *  (at your option) any later version.                                  *
+ *                                                                       *
+ *  This program is distributed in the hope that it will be useful,      *
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of       *
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        *
+ *  GNU General Public License for more details.                         *
+ *                                                                       *
+ *  You should have received a copy of the GNU General Public License    *
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.*
+ *************************************************************************/
+
 #include "../include/ioStat.hh"
 
 const char* getCurrentTime(){
@@ -52,7 +74,7 @@ void IoStat::addWrite(size_t wBytes){
 	_writeMarks.push_back(io);
 }
 
-int IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
+uint64_t IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
 	if ((enumMark != Marks::READ && enumMark != Marks::WRITE) || seconds == 0){
 		if (DEBUG == 1)
 			IoStat::printInfo(std::cerr, "\033[031mNo marks found for\033[0m");
@@ -91,7 +113,7 @@ int IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
 	return size;
 }
 
-std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t seconds) const{
+std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t *range, size_t seconds) const{
 	if ((enumMark != Marks::READ && enumMark != Marks::WRITE) || seconds == 0){
 		if (DEBUG == 1)
 			IoStat::printInfo(std::cerr, "\033[031mNo marks found for\033[0m");
@@ -121,19 +143,20 @@ std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t seconds) cons
 		std::cout << "}\n" << std::endl;
 	}
 
+	if (range)
+		*range = std::distance(begin, end);
 	if (begin == end)
 		return (std::pair(0, 0));
 
-	// Calcule average and standard deviation
+	// Calcule average
 	for (std::deque<IoMark>::const_iterator it = begin; it < end; it++)
 		avrg += static_cast<double>(it->bytes);
 	avrg = avrg / std::distance(begin, end);
 
-	for (std::deque<IoMark>::const_iterator it = begin; it < end; it++){
-		double nbr = static_cast<double>(it->bytes - avrg);
-		deviation += (nbr * nbr);
-	}
-	deviation = sqrt(deviation / (std::distance(begin, end)));
+	// Calcule standard deviation
+	for (std::deque<IoMark>::const_iterator it = begin; it < end; it++)
+		deviation += std::pow(static_cast<double>(it->bytes - avrg), 2);
+	deviation = std::sqrt(deviation / (std::distance(begin, end) - 1));
 
 	return (std::pair<double, double>(avrg, deviation));
 }
@@ -153,8 +176,9 @@ ssize_t IoStat::getSize(Marks enumMark) const{
 }
 
 std::ostream& operator<<(std::ostream &os, const IoStat *other){
-	auto read = other->bandWidth(IoStat::Marks::READ);
-	auto write = other->bandWidth(IoStat::Marks::WRITE);
+	auto read = other->bandWidth(IoStat::Marks::READ, NULL);
+	auto write = other->bandWidth(IoStat::Marks::WRITE, NULL);
+	os << "[ IoStat bandwodth from last 10s] " << std::endl;
 	os << "[READ]{average: " << read.first << ", standard deviation: " << read.second << "}";
 	os << " | ";
 	os << "[WRITE]{average: " << write.first << ", standard deviation: " << write.second << "}" << std::endl;

@@ -1,3 +1,5 @@
+// File that defines all the colors for the terminal
+
 # define C_RED "\001\033[0;31m\002"
 # define C_GREEN "\001\033[0;32m\002"
 # define C_YELLOW "\001\033[0;33m\002"

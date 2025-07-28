@@ -76,8 +76,8 @@ void IoMap::cleanerLoop(){
 		for(auto it = _filesMap.begin(); it != _filesMap.end();){
 			std::pair<double, double> read;
 			std::pair<double, double> write;
-			read = it->second->bandWidth(IoStat::Marks::READ, 60);
-			write = it->second->bandWidth(IoStat::Marks::WRITE, 60);
+			read = it->second->bandWidth(IoStat::Marks::READ, NULL, 60);
+			write = it->second->bandWidth(IoStat::Marks::WRITE, NULL, 60);
 			if ((read.first == 0 && read.second == 0) && (write.first == 0 && write.second == 0))
 				it = _filesMap.erase(it);
 			else
