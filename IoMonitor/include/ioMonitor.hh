@@ -23,10 +23,6 @@
 #include <unistd.h>
 #include "color.hh"
 
-# ifndef DEBUG
-	#define DEBUG 0
-#endif
-
 struct IoMark {
 	struct timespec io_time;
     size_t bytes;
@@ -41,3 +37,9 @@ struct IoMark {
 };
 
 const char*	getCurrentTime();
+
+namespace config {
+	constexpr bool IoStatDebug = false;
+	constexpr bool IoMapDebug = false;
+	constexpr bool IoMarkDebug = false;
+}

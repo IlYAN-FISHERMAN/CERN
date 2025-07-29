@@ -1,3 +1,5 @@
+#pragma once
+
 #include "ioStat.hh"
 #include <iomanip>
 #include <numeric>
@@ -86,7 +88,7 @@ class IoMap {
 			}
 		}
 		else{
-			if (DEBUG == 2)
+			if (config::IoMapDebug)
 				printInfo(std::cerr, "No match found for data type");
 			return std::nullopt;
 		}

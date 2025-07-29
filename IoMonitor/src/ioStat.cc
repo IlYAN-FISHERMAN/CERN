@@ -1,5 +1,5 @@
 //  File: ioStat.cc
-//  Author: Ilkay Yanar - 42Lausanne /CERN
+//  Author: Ilkay Yanar - 42Lausanne / CERN
 //  ----------------------------------------------------------------------
 
 /*************************************************************************
@@ -22,6 +22,10 @@
 
 #include "../include/ioStat.hh"
 
+
+//--------------------------------------------
+/// Get the current time
+//--------------------------------------------
 const char* getCurrentTime(){
 	time_t timestamp;
 	std::time(&timestamp);
@@ -32,13 +36,9 @@ const char* getCurrentTime(){
 	return (time);
 }
 
-IoStat::~IoStat(){}
-
-IoStat::IoStat(const IoStat &other) :
-	_fileId(other._fileId), _app(other._app), _uid(other._uid),
-	_gid(other._gid), _readMarks(other._readMarks), _writeMarks(other._writeMarks){
-}
-
+//--------------------------------------------
+/// Operator = overloaded
+//--------------------------------------------
 IoStat& IoStat::operator=(const IoStat &other){
 	if (this != &other){
 		_fileId = other._fileId;
@@ -50,33 +50,68 @@ IoStat& IoStat::operator=(const IoStat &other){
 	}
 	return (*this);
 }
+
+//--------------------------------------------
+/// Display the string given as parameter in
+/// specific format with the current time
+//--------------------------------------------
 void	IoStat::printInfo(std::ostream &os, const char *msg){
 	const char *time = getCurrentTime();
 	os << IOSTAT_NAME << " [" << time << "]: " << msg << std::endl;
 }
 
+//--------------------------------------------
+/// Display the string given as parameter in
+/// specific format with the current time
+//--------------------------------------------
 void	IoStat::printInfo(std::ostream &os, const std::string &msg){
 	const char *time = getCurrentTime();
 	os << IOSTAT_NAME << " [" << time << "]: " << msg << std::endl;
 }
 
+//--------------------------------------------
+/// Constructor by copy constructor
+//--------------------------------------------
+IoStat::IoStat(const IoStat &other) :
+	_fileId(other._fileId), _app(other._app), _uid(other._uid),
+	_gid(other._gid), _readMarks(other._readMarks), _writeMarks(other._writeMarks){
+}
+
+//--------------------------------------------
+/// Main constructor
+//--------------------------------------------
 IoStat::IoStat(uint64_t fileId, const std::string& app, uid_t uid, gid_t gid) :
 	_fileId(fileId), _app(app), _uid(uid), _gid(gid){
 }
 
+//--------------------------------------------
+/// Destructor
+//--------------------------------------------
+IoStat::~IoStat(){}
+
+//--------------------------------------------
+/// Add rbytes to the read deque
+//--------------------------------------------
 void IoStat::addRead(size_t rBytes){
 	IoMark io(rBytes);
 	_readMarks.push_back(io);
 }
 
+//--------------------------------------------
+/// Add wbytes to the write deque
+//--------------------------------------------
 void IoStat::addWrite(size_t wBytes){
 		IoMark io(wBytes);
 	_writeMarks.push_back(io);
 }
 
+//--------------------------------------------
+/// Keep all I/O from the last N seconds
+/// and cleans the rest
+//--------------------------------------------
 uint64_t IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
-	if ((enumMark != Marks::READ && enumMark != Marks::WRITE) || seconds == 0){
-		if (DEBUG == 1)
+	if ((enumMark != Marks::READ && enumMark != Marks::WRITE)){
+		if (config::IoStatDebug)
 			IoStat::printInfo(std::cerr, "\033[031mNo marks found for\033[0m");
 		return -1;
 	}
@@ -85,38 +120,49 @@ uint64_t IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
 
 	std::deque<IoMark>::const_iterator begin = mark.begin();
 	std::deque<IoMark>::const_iterator end = mark.end();
+
 	struct timespec	currentTime;
 
 	clock_gettime(CLOCK_REALTIME, &currentTime);
-	for (std::deque<IoMark>::const_iterator it = begin; it != mark.end(); it++){
-		if ((difftime(currentTime.tv_sec, it->io_time.tv_sec) < seconds))
-			break;
-		end = it;
+
+	// Calculates the iterator range corresponding to the last N seconds
+	if (seconds > 0){
+		for (std::deque<IoMark>::const_iterator it = begin; it != mark.end(); it++){
+			if ((difftime(currentTime.tv_sec, it->io_time.tv_sec) < seconds))
+				break;
+			end = it;
+		}
 	}
-	if (end == mark.end()){
-		if (DEBUG == 1)
+	// checks if in case where seconds > 0 if there is something to delete
+	if (seconds > 0 && end == mark.end()){
+		if (config::IoStatDebug)
 			printInfo(std::cout, "\033[031mNothing to clean\033[0m");
 		return 1;
 	}
 
-	if (DEBUG == 1){
-		std::cout << "Clean Range(" << std::distance(begin, end) << "/" << mark.size() << "):" << std::endl;
-		std::cout << "{ \n";
-		for (auto it = begin; it != end; it++)
-			std::cout << "\t" << it->bytes << std::endl;
-		std::cout << "}\n" << std::endl;	
+	// Calculates the size of what will be erased
+	size_t size = 0;
+	if (seconds == 0){
+		size = mark.size();
+		mark.clear();
+	} else{
+		size = std::distance(begin, end);
+		mark.erase(begin, end);
 	}
-	
-	size_t size = std::distance(begin, end);
-	mark.erase(begin, end);
-
 	return size;
 }
 
+//--------------------------------------------
+/// Calculate the write or read bandwidth
+//--------------------------------------------
 std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t *range, size_t seconds) const{
 	if ((enumMark != Marks::READ && enumMark != Marks::WRITE) || seconds == 0){
-		if (DEBUG == 1)
-			IoStat::printInfo(std::cerr, "\033[031mNo marks found for\033[0m");
+		if (config::IoStatDebug){
+			if (seconds == 0)
+				IoStat::printInfo(std::cerr, "\033[031mCan't calculate bandwidth with 0s\033[0m");
+			else
+				IoStat::printInfo(std::cerr, "\033[031mNo marks found for\033[0m" + std::to_string(static_cast<uint8_t>(enumMark)));
+		}
 		return (std::pair(0, 0));
 	}
 
@@ -127,7 +173,7 @@ std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t *range, size_
 	std::deque<IoMark>::const_iterator end = mark.end();
 	struct timespec	currentTime;
 
-	// Get the range of Marks
+	// Found the bandwidth iterator range
 	clock_gettime(CLOCK_REALTIME, &currentTime);
 	for (std::deque<IoMark>::const_iterator it = end; it != mark.begin();){
 		it--;
@@ -135,14 +181,6 @@ std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t *range, size_
 			break;
 		begin = it;
 	}
-	if (DEBUG == 1){
-		std::cout << "Range(" << std::distance(begin, end) << "/" << mark.size() << "):" << std::endl;
-		std::cout << "{ \n";
-		for (auto it = begin; it != end; it++)
-			std::cout << "\t" << it->bytes << std::endl;
-		std::cout << "}\n" << std::endl;
-	}
-
 	if (range)
 		*range = std::distance(begin, end);
 	if (begin == end)
@@ -161,12 +199,25 @@ std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t *range, size_
 	return (std::pair<double, double>(avrg, deviation));
 }
 
+//--------------------------------------------
+/// Get current uid
+//--------------------------------------------
 uid_t IoStat::getUid() const {return (_uid);}
 
+//--------------------------------------------
+/// Get current gid
+//--------------------------------------------
 gid_t IoStat::getGid() const {return (_gid);}
 
+//--------------------------------------------
+/// Get current app name
+//--------------------------------------------
 const std::string& IoStat::getApp() const {return (_app);}
 
+//--------------------------------------------
+/// Get the size of corresponding
+/// READ or WRITE deck
+//--------------------------------------------
 ssize_t IoStat::getSize(Marks enumMark) const{
 	if (enumMark == Marks::READ)
 		return _readMarks.size();
@@ -175,6 +226,9 @@ ssize_t IoStat::getSize(Marks enumMark) const{
 	return 0;
 }
 
+//--------------------------------------------
+/// Overload operator << 
+//--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const IoStat *other){
 	auto read = other->bandWidth(IoStat::Marks::READ, NULL);
 	auto write = other->bandWidth(IoStat::Marks::WRITE, NULL);

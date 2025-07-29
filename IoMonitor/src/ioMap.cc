@@ -75,7 +75,7 @@ void IoMap::AddRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid
 	std::lock_guard<std::mutex> lock(_mutex);
 
 	auto it = _filesMap.equal_range(inode);
-	if (DEBUG == 3){
+	if (config::IoMapDebug){
 		std::string data(app + " " + std::to_string(uid) + " " + std::to_string(gid) + " " + std::to_string(rbytes));
 		printInfo(std::cout, "enter with: " + data);
 	}
@@ -83,13 +83,13 @@ void IoMap::AddRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid
 		auto &io = it.first->second;
 		if (io->getApp() == app && io->getGid() == gid && io->getUid() == uid){
 			io->addRead(rbytes);
-			if (DEBUG == 3)
+			if (config::IoMapDebug)
 				printInfo(std::cout, "addRead");
 			break ;
 		}
 	}
 	if (it.first == it.second){
-		if (DEBUG == 3)
+		if (config::IoMapDebug)
 			printInfo(std::cout, "add new");
 		auto newIo = _filesMap.insert({inode, std::make_shared<IoStat>(inode, app, uid, gid)});
 		newIo->second->addRead(rbytes);
@@ -97,7 +97,7 @@ void IoMap::AddRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid
 		_uids.insert(uid);
 		_gids.insert(gid);
 	}
-	if (DEBUG == 3)
+	if (config::IoMapDebug)
 		printInfo(std::cout, "end\n");
 }
 

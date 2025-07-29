@@ -1,5 +1,5 @@
 //  File: IoStat.hh
-//  Author: Ilkay Yanar - 42Lausanne /CERN
+//  Author: Ilkay Yanar - 42Lausanne / CERN
 //  ----------------------------------------------------------------------
 
 /*************************************************************************
@@ -22,12 +22,10 @@
 
 //--------------------------------------------
 /// Each class has a variable define DEBUG which
-/// can be redefined at compilation to print the
-/// debug of each class
-///
-/// Number required to see debug mode: 1
+/// can be redefined at compilation at IoMonitor.hh
 //--------------------------------------------
 
+#pragma once
 #include "ioMonitor.hh"
 
 //--------------------------------------------
@@ -41,7 +39,7 @@ class IoStat {
 	/// Enumerator that allows to keep the context
 	/// of READ or WRITE to avoid duplicate functions
 	//--------------------------------------------
-	public: enum class Marks{
+public: enum class Marks : uint8_t{
 		READ,
 		WRITE
 	};
@@ -93,7 +91,7 @@ class IoStat {
 		IoStat(const IoStat &other);
 
 		//--------------------------------------------
-		/// Overloading copy "=" operator
+		/// Overload the operator =
 		//--------------------------------------------
 		IoStat& operator=(const IoStat &other);
 
@@ -167,7 +165,8 @@ class IoStat {
 		/// @param seconds(optional) over how many seconds
 		/// from now the function should calculate
 		///
-		/// @return size Returns the size of what was erased
+		/// @return std::pair<double, double> fisrt is the
+		/// average, the second is the standard deviation 
 		//--------------------------------------------
 		std::pair<double, double> bandWidth(Marks EnumMark, size_t *range, size_t seconds = 10) const;
 
