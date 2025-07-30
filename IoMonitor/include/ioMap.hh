@@ -41,7 +41,8 @@
 class IoMap {
 	private:
 		//--------------------------------------------
-		/// @brief Multithreaded function to clean up IoStats
+		/// @brief Multithreaded function to clean up
+		/// inactive IoStats
 		///
 		/// @details
 		/// Multithreaded function that checks for
@@ -214,11 +215,11 @@ class IoMap {
 		/// The function calculates the READ or WRITE
 		/// weighted bandwidth (depending on the enumMark
 		/// variable given as a parameter) during the
-		/// last N seconds
+		/// last N seconds depending on the index variable
 		///
 		/// @param	index Template variable
-		/// that can be const char*/std::string/uint_t/gid_t
-		/// calculates the weighted bandwidth according to
+		/// index type can be const char*/std::string/uint_t/gid_t.
+		/// Calculates the weighted bandwidth according to
 		/// the type of the variable and get the data from
 		/// all the corresponding I/Os
 		/// @param	enumMark READ or WRITE variable comes
@@ -228,7 +229,7 @@ class IoMap {
 		/// the last N I/O from now (by default - 10s)
 		///
 		/// @return std::nullopt If an error is encountered
-		/// @return std::optional<std::pair<double, double> >
+		/// @return std::optional<std::pair<double, double>>
 		/// first is the weighted average, second is the
 		/// weighted standard deviation 
 		//--------------------------------------------
@@ -299,5 +300,4 @@ class IoMap {
 
 		return weighted;
 	}
-
 };
