@@ -22,7 +22,6 @@
 
 #include "../include/ioStat.hh"
 
-
 //--------------------------------------------
 /// Get the current time
 //--------------------------------------------
@@ -230,8 +229,8 @@ ssize_t IoStat::getSize(Marks enumMark) const{
 /// Overload operator << 
 //--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const IoStat *other){
-	auto read = other->bandWidth(IoStat::Marks::READ, NULL);
-	auto write = other->bandWidth(IoStat::Marks::WRITE, NULL);
+	std::pair<double, double> read = other->bandWidth(IoStat::Marks::READ, NULL);
+	std::pair<double, double> write = other->bandWidth(IoStat::Marks::WRITE, NULL);
 	os << "[ IoStat bandwodth from last 10s] " << std::endl;
 	os << C_BLUE << "[READ]{average: " << read.first <<
 		", standard deviation: " << read.second <<  "}";

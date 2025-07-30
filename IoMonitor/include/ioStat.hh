@@ -1,4 +1,4 @@
-//  File: IoStat.hh
+//  File: ioStat.hh
 //  Author: Ilkay Yanar - 42Lausanne / CERN
 //  ----------------------------------------------------------------------
 
@@ -22,7 +22,7 @@
 
 //--------------------------------------------
 /// Each class has a variable define DEBUG which
-/// can be redefined at compilation at IoMonitor.hh
+/// can be defined in the IoMonitor.hh namespace
 //--------------------------------------------
 
 #pragma once
@@ -95,12 +95,12 @@ public: enum class Marks : uint8_t{
 		//--------------------------------------------
 		IoStat& operator=(const IoStat &other);
 
-
 		//--------------------------------------------
 		/// @brief Main constructor to initialize the class
 		///
 		/// @param	fileId	Tracked file id
-		/// @param	app		Name of the application where the file is linked
+		/// @param	app		Name of the application where
+		/// the file is linked
 		/// @param	uid		Id of the user
 		/// @param	gid		Id of the group
 		//--------------------------------------------
@@ -126,7 +126,6 @@ public: enum class Marks : uint8_t{
 		/// @brief Keep all I/O from the last N seconds.
 		///
 		/// @details
-		/// 
 		/// The function takes as parameters the number of
 		/// seconds corresponding to the number of seconds
 		/// of I/O which will be kept, the rest will be erased.
@@ -147,8 +146,9 @@ public: enum class Marks : uint8_t{
 		//--------------------------------------------
 		/// @brief Calculate the write or read bandwidth
 		///
-		/// @details The function calculates the write or
-		/// read bandwidth (depending on the "enumMark" parameter)
+		/// @details
+		/// The function calculates the read or
+		/// write bandwidth (depending on the "enumMark" parameter)
 		/// of the last N seconds (by default - 10s)
 		///
 		/// The function thus calculates the average and
@@ -176,9 +176,9 @@ public: enum class Marks : uint8_t{
 		/// in a format corresponding to the class with the
 		/// current timestamp
 		///
-		/// @param	os The output steam
+		/// @param	os The output stream
 		/// @param	msg The message to display
-		/// -Exemple: std::cout/std::cerr
+		/// - Exemple: std::cout/std::cerr
 		//--------------------------------------------
 		static void	printInfo(std::ostream &os, const char *msg);
 
@@ -190,7 +190,7 @@ public: enum class Marks : uint8_t{
 		///
 		/// @param	os The output stream
 		/// @param	msg The message to display
-		/// -Exemple: std::cout/std::cerr
+		/// - Exemple: std::cout/std::cerr
 		//--------------------------------------------
 		static void	printInfo(std::ostream &os, const std::string &msg);
 

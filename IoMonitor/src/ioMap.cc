@@ -48,16 +48,16 @@ void	IoMap::printInfo(std::ostream &os, const std::string &msg){
 
 void IoMap::cleanerLoop(){
 
-	std::unique_lock<std::mutex> lock(_mutex);
 
 	while (true){
+		std::unique_lock<std::mutex> lock(_mutex);
 		_cv.wait_for(lock, std::chrono::seconds(60));
-
-		printInfo(std::cout, "thread!");
+		if (config::IoMapDebug)
+			printInfo(std::cout, "thread!");
 		if (!_running)
 			break;
-
-		printInfo(std::cout, "thread cleaning!");
+		if (config::IoMapDebug)
+			printInfo(std::cout, "thread cleaning!");
 		for(auto it = _filesMap.begin(); it != _filesMap.end();){
 			std::pair<double, double> read;
 			std::pair<double, double> write;
@@ -157,18 +157,5 @@ std::ostream& operator<<(std::ostream &os, const IoMap *other){
 		os << std::endl << C_GREEN << "└─[" << C_CYAN << "IoStat" << C_GREEN << "]" << C_RESET;
 		os << std::fixed << std::setprecision(3) << C_WHITE << it.second << C_RESET << std::endl;
 	}
-	return os;
-}
-
-std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator it){
-	os << C_GREEN << "┌─[" << C_CYAN << "IoMap" << C_GREEN << "]" << C_RESET;
-	os << C_GREEN << "[" << C_CYAN << "id:" << it->first << C_GREEN << "]" << C_RESET;
-	os << C_GREEN << "[" <<  C_CYAN << "app:"<< it->second->getApp() << C_GREEN << "]" << C_RESET;
-	os << C_GREEN << "[" << C_CYAN << "uid:" << it->second->getUid() << C_GREEN << "]" << C_RESET;
-	os << C_GREEN << "[" << C_CYAN << "gid:" << it->second->getGid() << C_GREEN << "]" << C_RESET;
-	os << C_GREEN << "[" << C_CYAN << "sR:" << it->second->getSize(IoStat::Marks::READ)
-		<< "/sW:"<< it->second->getSize(IoStat::Marks::WRITE) << C_GREEN << "]" << C_RESET;
-	os << std::endl << C_GREEN << "└─[" << C_CYAN << "IoStat" << C_GREEN << "]" << C_RESET;
-	os << std::fixed << std::setprecision(3) << C_WHITE << it->second << C_RESET << std::endl;
 	return os;
 }

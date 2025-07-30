@@ -50,9 +50,11 @@ int getBandWidth(IoStat &io, IoStat::Marks enumMark, size_t seconds = 10){
 	if (config::IoStatDebug){
 		std::cout << std::fixed;
 		if (enumMark == IoStat::Marks::READ)
-			std::cout << "\t[Read:" << size << "/" << io.getSize(enumMark) << "]: average: " << bandWidth.first << " | standard deviation: " << bandWidth.second << std::endl;
+			std::cout << "\t[Read:" << size << "/" << io.getSize(enumMark) << "]: average: "
+				<< bandWidth.first << " | standard deviation: " << bandWidth.second << std::endl;
 		else
-			std::cout << "\t[Write:" << size << "/" << io.getSize(enumMark) << "]: average: " << bandWidth.first << " | standard deviation: " << bandWidth.second << std::endl;
+			std::cout << "\t[Write:" << size << "/" << io.getSize(enumMark) << "]: average: "
+				<< bandWidth.first << " | standard deviation: " << bandWidth.second << std::endl;
 		std::cout << std::endl;
 	}
 	return 0;
@@ -90,13 +92,23 @@ int testIoStatFillData(){
 	io.cleanOldsMarks(IoStat::Marks::READ, 1000);
 	getBandWidth(io, IoStat::Marks::READ, 10);
 	getBandWidth(io, IoStat::Marks::READ, 0);
+
+
+	size = io.cleanOldsMarks(IoStat::Marks::WRITE, 0);
+	size = io.cleanOldsMarks(IoStat::Marks::READ, 0);
+	fillIoStat(io, 10000000, 100, 0.5);
+	for (size_t i = 0; i < 10; i++){
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		getBandWidth(io, IoStat::Marks::WRITE, 1);
+		getBandWidth(io, IoStat::Marks::READ, 1);
+	}
 	return 0;
 }
 
 int testIoStatCleaning(){
 	IoStat io(4, "qukdb", 2, 2);
 
-	fillIoStat(io, 10000, 10000000);
+	fillIoStat(io, 10000000, 100, 0.2);
 	if (cleanMarks(io, IoStat::Marks::READ, 1) < 0)
 		return -1;
 	return 0;

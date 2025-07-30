@@ -1,58 +1,244 @@
+//  File: ioMap.hh
+//  Author: Ilkay Yanar - 42Lausanne / CERN
+//  ----------------------------------------------------------------------
+
+/*************************************************************************
+ *  EOS - the CERN Disk Storage System                                   *
+ *  Copyright (C) 2025 CERN/Switzerland                                  *
+ *                                                                       *
+ *  This program is free software: you can redistribute it and/or modify *
+ *  it under the terms of the GNU General Public License as published by *
+ *  the Free Software Foundation, either version 3 of the License, or    *
+ *  (at your option) any later version.                                  *
+ *                                                                       *
+ *  This program is distributed in the hope that it will be useful,      *
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of       *
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        *
+ *  GNU General Public License for more details.                         *
+ *                                                                       *
+ *  You should have received a copy of the GNU General Public License    *
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.*
+ *************************************************************************/
+
+//--------------------------------------------
+/// Each class has a variable define DEBUG which
+/// can be defined in the IoMonitor.hh namespace
+//--------------------------------------------
+
 #pragma once
 
 #include "ioStat.hh"
 #include <iomanip>
 #include <numeric>
 
+//--------------------------------------------
+/// The current name of the class when us
+/// printInfo function
+//--------------------------------------------
 #define IOMAP_NAME "IoMap"
+
 
 class IoMap {
 	private:
+		//--------------------------------------------
+		/// @brief Multithreaded function to clean up IoStats
+		///
+		/// @details
+		/// Multithreaded function that checks for
+		/// inactive I/Os every 60 seconds and removes them
+		//--------------------------------------------
 		void cleanerLoop();
-		void removeInactives();
 
+		//--------------------------------------------
+		/// Main variable that keeps track of all IoStats
+		//--------------------------------------------
 		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> > _filesMap;
+
+		//--------------------------------------------
+		/// Keeps all app name
+		//--------------------------------------------
 		std::unordered_set<std::string> _apps;
+
+		//--------------------------------------------
+		/// Keeps all users id
+		//--------------------------------------------
 		std::unordered_set<uid_t> _uids;
+
+		//--------------------------------------------
+		/// Keeps all groups id
+		//--------------------------------------------
 		std::unordered_set<gid_t> _gids;
 
+		//--------------------------------------------
+		/// Variables to manage multithreading
+		//--------------------------------------------
 		mutable std::mutex _mutex;
 		std::thread _cleaner;
 		std::atomic<bool> _running;
 		std::condition_variable _cv;
 
 	public:
-		// Orthodoxe Canonical Form
+		//--------------------------------------------
+		/// Orthodoxe canonical form
+		//--------------------------------------------
+
+		//--------------------------------------------
+		/// Main constructor
+		//--------------------------------------------
 		IoMap();
-		IoMap(int);
+
+		//--------------------------------------------
+		/// Destructor
+		//--------------------------------------------
 		~IoMap();
+
+		//--------------------------------------------
+		/// Constructor by copy constructor
+		//--------------------------------------------
 		IoMap(const IoMap &other);
+
+		//--------------------------------------------
+		/// Overload the operator =
+		//--------------------------------------------
 		IoMap& operator=(const IoMap &other);
 
+
+		//--------------------------------------------
+		/// @brief Optional constructor
+		///
+		/// @details
+		/// If the constructor is called with any int,
+		/// the multithreaded cleanLoop function will
+		/// not be run, making debugging easier.
+		///
+		/// @param	int		ignored
+		//--------------------------------------------
+		IoMap(int);
+
+		
+		//--------------------------------------------
+		/// @brief adds an IoStat object to the multimap
+		/// with the corresponding elements
+		///
+		/// @param	inode	File id
+		/// @param	app		Name of the application
+		/// @param uid		ID of the corresponding user
+		/// @param gid		ID of the corresponding group
+		/// @param rbytes	Number of bytes read
+		//--------------------------------------------
 		void AddRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes);
+
+		//--------------------------------------------
+		/// @brief adds an IoStat object to the multimap
+		/// with the corresponding elements
+		///
+		/// @param	inode	file id
+		/// @param	app		Name of the application
+		/// @param uid		ID of the corresponding user
+		/// @param gid		ID of the corresponding group
+		/// @param rbytes	Number of bytes read
+		//--------------------------------------------
 		void AddWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes);
 
+
+		//--------------------------------------------
+		///@brief Get all apps
+		///
+		/// @return std::vector<std::string> Vector of
+		/// all current active apps
+		//--------------------------------------------
 		std::vector<std::string> getApps();
+
+		//--------------------------------------------
+		///@brief Get all uids
+		///
+		/// @return std::vector<uid_t> Vector of
+		/// all current active uids
+		//--------------------------------------------
 		std::vector<uid_t> getUids();
+
+		//--------------------------------------------
+		///@brief Get all gids
+		///
+		/// @return std::vector<uid_t> Vector of
+		/// all current active gids
+		//--------------------------------------------
 		std::vector<gid_t> getGids();
 		
 
-		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat>> GetAllStatsSnapshot() const;
+		//--------------------------------------------
+		///@brief Get a copy of the multimap
+		///
+		/// @return std::unordered_multimap<uint64_t, 
+		/// std::shared_ptr<IoStat> > Vector of
+		/// all current active gids
+		//--------------------------------------------
+		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> > GetAllStatsSnapshot() const;
 
+		//--------------------------------------------
+		/// Static function
+		/// @brief Displays the string given as a parameter
+		/// in a format corresponding to the class with the
+		/// current timestamp
+		///
+		/// @param	os The output stream
+		/// @param	msg The message to display
+		/// - Exemple: std::cout/std::cerr
+		//--------------------------------------------
 		static void	printInfo(std::ostream &os, const char *);
+
+		//--------------------------------------------
+		/// Static function
+		/// @brief Displays the string given as a parameter
+		/// in a format corresponding to the class with the
+		/// current timestamp
+		///
+		/// @param	os The output stream
+		/// @param	msg The message to display
+		/// - Exemple: std::cout/std::cerr
+		//--------------------------------------------
 		static void	printInfo(std::ostream &os, const std::string &);
 
+		//--------------------------------------------
+		/// @brief Overload operator << to print
+		/// the entire multimap
+		//--------------------------------------------
 		friend std::ostream& operator<<(std::ostream &os, const IoMap *other);
-		friend std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator it);
 
 
-
-
+		//--------------------------------------------
+		/// Template
+		/// @brief Get the WRITE or READ bandwidth
+		///
+		/// @details
+		/// The function calculates the READ or WRITE
+		/// weighted bandwidth (depending on the enumMark
+		/// variable given as a parameter) during the
+		/// last N seconds
+		///
+		/// @param	index Template variable
+		/// that can be const char*/std::string/uint_t/gid_t
+		/// calculates the weighted bandwidth according to
+		/// the type of the variable and get the data from
+		/// all the corresponding I/Os
+		/// @param	enumMark READ or WRITE variable comes
+		/// from the IoStat::Marks enumerator
+		/// - Exemple: IoStat::Marks::READ
+		/// @param seconds(optional) The second range during
+		/// the last N I/O from now (by default - 10s)
+		///
+		/// @return std::nullopt If an error is encountered
+		/// @return std::optional<std::pair<double, double> >
+		/// first is the weighted average, second is the
+		/// weighted standard deviation 
+		//--------------------------------------------
 		template <typename T>
-		std::optional<std::pair<double, double>> getBandwidth(const T index, IoStat::Marks enumMark, size_t seconds = 10){
+		std::optional<std::pair<double, double> > getBandwidth(const T index, IoStat::Marks enumMark, size_t seconds = 10){
 
-		if (seconds == 0 || (enumMark != IoStat::Marks::READ && enumMark != IoStat::Marks::WRITE))
+		if (enumMark != IoStat::Marks::READ && enumMark != IoStat::Marks::WRITE)
 			return std::nullopt;
+		else if (seconds == 0)
+			return (std::pair<double, double>(0, 0));
 
 		std::map<std::pair<double, double>, size_t> indexData;
 		std::pair<double, double> weighted = {0, 0};
