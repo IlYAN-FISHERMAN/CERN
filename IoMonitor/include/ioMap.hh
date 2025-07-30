@@ -208,7 +208,7 @@ class IoMap {
 		/// @brief Overload operator << to print
 		/// the entire multimap
 		//--------------------------------------------
-		friend std::ostream& operator<<(std::ostream &os, const IoMap *other);
+		friend std::ostream& operator<<(std::ostream &os, const IoMap &other);
 
 
 		//--------------------------------------------
