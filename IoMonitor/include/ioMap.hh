@@ -257,6 +257,7 @@ class IoMap {
 		std::pair<double, double> tmp = {0, 0};
 		size_t size = 0;
 
+		/// Check the type of the index variable
 		if constexpr (std::is_same_v<T, std::string> || std::is_same_v<T, const char *>){
 			for (auto it : _filesMap){
 				if (it.second->getApp() == index){
@@ -293,6 +294,7 @@ class IoMap {
 		if (indexData.size() <= 0)
 			return std::nullopt;
 
+		/// Calcule weighted average/standard deviation
 		size_t divisor = 0;
 		size_t stdDivisor = 0;
 		std::cout << std::fixed;
@@ -309,7 +311,6 @@ class IoMap {
 		if (stdDivisor > 0)
 			weighted.second = std::sqrt(weighted.second / stdDivisor);
 
-		// std::cout << "test: " << weighted.first << "/" << weighted.second << std::endl;
 		return weighted;
 	}
 };
