@@ -10,7 +10,13 @@ TEST(IoStat, FillData) {
 }
 
 TEST(IoMap, FillData) {
-	EXPECT_EQ(testIoMap(), 0);
+	EXPECT_EQ(testIoMapData(), 0);
+}
+
+TEST(IoMap, exactValue) {
+	ASSERT_FALSE(testIoMapSpecificCase());
+	ASSERT_FALSE(testIoMapMultipleCase());
+	EXPECT_EQ(testIoMapBigVolume(), 0);
 }
 
 /// Only for debugging
@@ -22,7 +28,9 @@ int main(int ac, char **av) {
 	(void)ac;
 	(void)av;
 
+	// testIoMapSpecificCase();
 	// testIoMap();
+	std::cout << "code: " << testIoMapBigVolume();
 	// testInteractiveIoMap();
 	// testIoStatFillData();
 	// testIoStatCleaning();

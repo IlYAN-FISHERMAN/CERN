@@ -258,6 +258,7 @@ class IoMap {
 		size_t size = 0;
 
 		/// Check the type of the index variable
+		/// and after 
 		if constexpr (std::is_same_v<T, std::string> || std::is_same_v<T, const char *>){
 			for (auto it : _filesMap){
 				if (it.second->getApp() == index){

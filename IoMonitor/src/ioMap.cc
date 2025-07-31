@@ -50,11 +50,9 @@ void	IoMap::printInfo(std::ostream &os, const std::string &msg){
 /// Multithreaded function to clean up inactive IoStats
 //--------------------------------------------
 void IoMap::cleanerLoop(){
-
-
 	while (true){
 		std::unique_lock<std::mutex> lock(_mutex);
-		_cv.wait_for(lock, std::chrono::seconds(TIME_TO_CLEAN));
+		_cv.wait_for(lock, std::chrono::seconds(TIME_TO_CLEAN), [this]{ return !_running;});
 		if (!_running)
 			break;
 		// Clean inactive I/O

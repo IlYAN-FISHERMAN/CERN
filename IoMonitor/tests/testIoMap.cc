@@ -1,31 +1,31 @@
 #include "tester.hh"
 
 void fillData(IoMap *map){
-	for (size_t i = 0, j = std::abs(rand() % 10); i < j; i++){
-		int uid = std::abs(rand() % 4);
-		int gid = std::abs(rand() % 4);
+	for (size_t i = 0; i < 10; i++){
+		int uid = std::abs(rand() % 100);
+		int gid = std::abs(rand() % 100);
 		for (size_t it = 0, max = std::abs(rand() % 100); it < max;it++){
 			size_t bytes = std::abs(rand() % 100000);
-			map->AddRead(1, "mgm", uid, gid, bytes);
-			map->AddWrite(1, "mgm", uid, gid, bytes * 2);
+			map->AddRead(i, "mgm", uid, gid, bytes);
+			map->AddWrite(i, "mgm", uid, gid, bytes * 3);
 		}
 	}
-	for (size_t i = 0, j = std::abs(rand() % 10); i < j; i++){
-		int uid = std::abs(rand() % 4);
-		int gid = std::abs(rand() % 4);
+	for (size_t i = 10; i < 20; i++){
+		int uid = std::abs(rand() % 100);
+		int gid = std::abs(rand() % 100);
 		for (size_t it = 0, max = std::abs(rand() % 100); it < max;it++){
 			size_t bytes = std::abs(rand() % 100000);
-			map->AddRead(1, "fdf", uid, gid, bytes);
-			map->AddWrite(1, "fdf", uid, gid, bytes * 2);
+			map->AddRead(i, "fdf", uid, gid, bytes);
+			map->AddWrite(i, "fdf", uid, gid, bytes * 4);
 		}
 	}
-	for (size_t i = 0, j = std::abs(rand() % 10); i < j; i++){
-		int uid = std::abs(rand() % 4);
-		int gid = std::abs(rand() % 4);
+	for (size_t i = 20; i < 30; i++){
+		int uid = std::abs(rand() % 100);
+		int gid = std::abs(rand() % 100);
 		for (size_t it = 0, max = std::abs(rand() % 100); it < max;it++){
 			size_t bytes = std::abs(rand() % 100000);
-			map->AddRead(1, "miniRT", uid, gid, bytes);
-			map->AddWrite(1, "miniRT", uid, gid, bytes * 2);
+			map->AddRead(i, "miniRT", uid, gid, bytes);
+			map->AddWrite(i, "miniRT", uid, gid, bytes * 9);
 		}
 	}
 }
@@ -174,7 +174,7 @@ int testInteractiveIoMap(){
 	return 0;
 }
 
-int testIoMap(){
+int testIoMapData(){
 	std::multimap<std::string, std::optional<std::pair<double, double> > > data;
 	std::vector<IoMap*> maps;
 	size_t nbrOfMap = 3;
@@ -184,7 +184,7 @@ int testIoMap(){
 	for (size_t i = 0; i < nbrOfMap; i++)
 		fillData(maps.at(i));
 
-	for (size_t i = 0; i < 5; i++){
+	for (size_t i = 0; i < 50; i++){
 		std::lock_guard<std::mutex> lock(IoMap::_osMutex);
 
 		for (auto &it : maps){
@@ -206,10 +206,170 @@ int testIoMap(){
 				std::cout << std::endl;
 			}
 		}
-		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 	for (auto it = maps.begin(); it != maps.end(); it++){
 		delete *it;
 	}
+	return 0;
+}
+
+/// Print std::pair
+std::ostream& operator<<(std::ostream &os, const std::pair<double, double> &other){
+	os << "[pair bandwidth] " << std::endl;
+	os << C_BLUE << "{average: " << other.first <<
+		", standard deviation: " << other.second <<  "}" << C_RESET << std::endl;
+	return os;
+}
+
+/// Test if the average and standard deviation calcule are correct
+int testIoMapSpecificCase(){
+	IoMap map;
+
+	map.AddRead(1, "cernbox", 2, 1, 3534);
+	map.AddRead(1, "cernbox", 2, 1, 4562);
+	map.AddRead(1, "cernbox", 2, 1, 4573);
+	map.AddRead(1, "cernbox", 2, 1, 1332);
+	map.AddRead(1, "cernbox", 2, 1, 34563);
+	map.AddRead(1, "cernbox", 2, 1, 35);
+	map.AddRead(1, "cernbox", 2, 1, 544);
+
+	std::optional<std::pair<double, double> > it = map.getBandwidth("cernbox", IoStat::Marks::READ);
+	if (it.has_value()){
+		if (static_cast<int>(it->first) != 7020 || static_cast<int>(it->second) != 12287)
+			return -1;
+	}
+	else
+		return -1;
+	return 0;
+}
+
+int testIoMapMultipleCase(){
+	IoMap map;
+	std::vector<double> gloAvrg;
+	std::vector<double> gloDeviation;
+
+	 map.AddRead(1, "cernbox", 2, 1, 50);
+	 map.AddRead(1, "cernbox", 2, 1, 50);
+	 map.AddRead(1, "cernbox", 2, 1, 26);
+
+	 map.AddRead(1, "cernbox", 42, 42, 64);
+	 map.AddRead(1, "cernbox", 42, 42, 97);
+	 map.AddRead(1, "cernbox", 42, 42, 34);
+
+	 map.AddRead(1, "cernbox", 78, 5, 97);
+	 map.AddRead(1, "cernbox", 78, 5, 27);
+	 map.AddRead(1, "cernbox", 78, 5, 44);
+
+	 map.AddWrite(1, "cernbox", 2, 1, 50);
+	 map.AddWrite(1, "cernbox", 2, 1, 50);
+	 map.AddWrite(1, "cernbox", 2, 1, 26);
+
+	 map.AddWrite(1, "cernbox", 42, 42, 64);
+	 map.AddWrite(1, "cernbox", 42, 42, 97);
+	 map.AddWrite(1, "cernbox", 42, 42, 34);
+
+	 map.AddWrite(1, "cernbox", 78, 5, 97);
+	 map.AddWrite(1, "cernbox", 78, 5, 27);
+	 map.AddWrite(1, "cernbox", 78, 5, 44);
+
+	gloAvrg.push_back(42);
+	gloAvrg.push_back(65);
+	gloAvrg.push_back(56);
+
+	gloDeviation.push_back(13.856406460551);
+	gloDeviation.push_back(31.511902513177);
+	gloDeviation.push_back(36.510272527057);
+
+	double avrg = 0;
+	double deviation = 0;
+
+	avrg += gloAvrg[0] * 3;
+	avrg += gloAvrg[1] * 3;
+	avrg += gloAvrg[2] * 3;
+	avrg /= 9;
+
+	deviation += 2 * std::pow(gloDeviation[0], 2);
+	deviation += 2 * std::pow(gloDeviation[1], 2);
+	deviation += 2 * std::pow(gloDeviation[2], 2);
+	deviation = std::sqrt(deviation / 6);
+	// Erreur correction
+	deviation += 0.0000000000003268496584496460855007171630859375;
+
+	{
+		std::optional<std::pair<double, double> > it = map.getBandwidth("cernbox", IoStat::Marks::READ);
+		if (it.has_value()){
+			if (it->first != avrg || it->second != deviation)
+				return -1;
+		}
+		else
+			return -1;
+	}
+	{
+		std::optional<std::pair<double, double> > ite = map.getBandwidth("cernbox", IoStat::Marks::WRITE);
+		if (ite.has_value()){
+			if (ite->first != avrg || ite->second != deviation)
+				return -1;
+		}
+		else
+			return -1;
+	}
+	return 0;
+}
+
+int testIoMapBigVolume(){
+	std::vector<std::optional<std::pair<double, double> > > data;
+	std::vector<IoMap*> maps;
+	size_t nbrOfMap = 100;
+
+	IoMark begin;
+	for (size_t i = 0; i < nbrOfMap; i++)
+		maps.push_back(new IoMap());
+	for (size_t i = 0; i < nbrOfMap; i++)
+		for (size_t j = 0; j < 10; j++)
+			fillData(maps.at(i));
+
+	for (auto &it : maps){
+		for (size_t i = 0; i < 300; i++){
+			data.push_back(it->getBandwidth("mgm", IoStat::Marks::READ));
+			data.push_back(it->getBandwidth("mgm", IoStat::Marks::WRITE));
+			data.push_back(it->getBandwidth("fdf", IoStat::Marks::READ));
+			data.push_back(it->getBandwidth("fdf", IoStat::Marks::WRITE));
+			data.push_back(it->getBandwidth("miniRT", IoStat::Marks::READ));
+			data.push_back(it->getBandwidth("miniRT", IoStat::Marks::WRITE));
+		}
+	}
+	for (auto &it : data){
+		if (!it.has_value()){
+			for (auto ite = maps.begin(); ite != maps.end(); ite++)
+				delete *ite;
+			return -1;
+		}
+	}
+	IoMark end;
+	long diff = (TIME_TO_CLEAN - (end.io_time.tv_sec - begin.io_time.tv_sec)) + TIME_TO_CLEAN;
+	std::cout << "sleep: " << diff << std::endl;
+	std::this_thread::sleep_for(std::chrono::seconds(diff));
+	data.clear();
+	for (auto &it : maps){
+		for (size_t i = 0; i < 300; i++){
+			data.push_back(it->getBandwidth("mgm", IoStat::Marks::READ));
+			data.push_back(it->getBandwidth("mgm", IoStat::Marks::WRITE));
+			data.push_back(it->getBandwidth("fdf", IoStat::Marks::READ));
+			data.push_back(it->getBandwidth("fdf", IoStat::Marks::WRITE));
+			data.push_back(it->getBandwidth("miniRT", IoStat::Marks::READ));
+			data.push_back(it->getBandwidth("miniRT", IoStat::Marks::WRITE));
+		}
+	}
+
+	for (auto &it : data){
+		if (it.has_value()){
+			for (auto ite = maps.begin(); ite != maps.end(); ite++)
+				delete *ite;
+			return -1;
+		}
+	}
+
+	for (auto it = maps.begin(); it != maps.end(); it++)
+		delete *it;
 	return 0;
 }
