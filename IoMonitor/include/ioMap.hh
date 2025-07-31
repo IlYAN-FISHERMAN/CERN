@@ -123,12 +123,12 @@ class IoMap {
 		//--------------------------------------------
 		/// Constructor by copy constructor
 		//--------------------------------------------
-		IoMap(const IoMap &other);
+		IoMap(const IoMap &other) = delete;
 
 		//--------------------------------------------
 		/// Overload the operator =
 		//--------------------------------------------
-		IoMap& operator=(const IoMap &other);
+		IoMap& operator=(const IoMap &other) = delete;
 
 		static std::mutex _osMutex;
 
@@ -206,10 +206,15 @@ class IoMap {
 
 		//--------------------------------------------
 		/// @brief Overload operator << to print
-		/// the entire multimap
+		/// the entire multimap from a IoMap object
 		//--------------------------------------------
 		friend std::ostream& operator<<(std::ostream &os, const IoMap &other);
 
+		//--------------------------------------------
+		/// @brief Overload operator << to print
+		/// the entire multimap
+		//--------------------------------------------
+		friend std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> > &other);
 
 		//--------------------------------------------
 		/// Template
@@ -302,6 +307,7 @@ class IoMap {
 		if (stdDivisor > 0)
 			weighted.second = std::sqrt(weighted.second / stdDivisor);
 
+		// std::cout << "test: " << weighted.first << "/" << weighted.second << std::endl;
 		return weighted;
 	}
 };

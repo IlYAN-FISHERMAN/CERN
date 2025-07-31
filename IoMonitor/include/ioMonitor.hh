@@ -87,6 +87,6 @@ const char*	getCurrentTime();
 //--------------------------------------------
 namespace config {
 	constexpr bool IoStatDebug = false;
-	constexpr bool IoMapDebug = true;
+	constexpr bool IoMapDebug = false;
 	constexpr bool IoMarkDebug = false;
 }

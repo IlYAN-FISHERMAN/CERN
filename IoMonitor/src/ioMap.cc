@@ -13,13 +13,12 @@ IoMap::IoMap() : _running(true){
 /// Destructor
 //--------------------------------------------
 IoMap::~IoMap() {
-	{
-		std::lock_guard<std::mutex> lock(_mutex);
-		_running = false;
-		_cv.notify_one();
-	}
-	if (_cleaner.joinable())
+	std::lock_guard<std::mutex> lock(_mutex);
+	_running = false;
+	_cv.notify_one();
+	if (_cleaner.joinable()){
 		_cleaner.join();
+	}
 }
 
 //--------------------------------------------
@@ -28,37 +27,10 @@ IoMap::~IoMap() {
 IoMap::IoMap(int) : _running(false){}
 
 //--------------------------------------------
-/// Constructor by copy constructor
-//--------------------------------------------
-IoMap::IoMap(const IoMap &other){
-	std::lock_guard<std::mutex> lock(other._mutex);
-	_filesMap = other._filesMap;
-	_apps = other._apps;
-	_uids = other._uids;
-	_gids = other._gids;
-}
-
-//--------------------------------------------
-/// Overload the operator =
-//--------------------------------------------
-IoMap& IoMap::operator=(const IoMap& other){
-	if (this != &other){
-		std::lock_guard<std::mutex> lock(other._mutex);
-		_filesMap = other._filesMap;
-		_apps = other._apps;
-		_uids = other._uids;
-		_gids = other._gids;
-		_cleaner = std::thread(&IoMap::cleanerLoop, this);
-	}
-	return *this;
-}
-
-//--------------------------------------------
 /// Display the string given as parameter in
 /// specific format with the current time
 //--------------------------------------------
 void	IoMap::printInfo(std::ostream &os, const char *msg){
-	std::lock_guard<std::mutex> lock(_osMutex);
 	const char *time = getCurrentTime();
 	os << IOMAP_NAME << " [" << time << "]: " << msg << std::endl;
 }
@@ -68,11 +40,9 @@ void	IoMap::printInfo(std::ostream &os, const char *msg){
 /// specific format with the current time
 //--------------------------------------------
 void	IoMap::printInfo(std::ostream &os, const std::string &msg){
-	std::lock_guard<std::mutex> lock(_osMutex);
 	const char *time = getCurrentTime();
 	os << IOMAP_NAME << " [" << time << "]: " << msg << std::endl;
 }
-
 
 //--------------------------------------------
 /// Multithreaded function to clean up inactive IoStats
@@ -203,10 +173,29 @@ std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> > IoMap::GetAllStatsSn
 }
 
 //--------------------------------------------
-/// Overload operator << to print the entire multimap
+/// Overload operator << to print the entire
+/// multimap from a IoMap object
 //--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const IoMap &other){
 	for (auto it : other._filesMap){
+		os << C_GREEN << "┌─[" << C_CYAN << "IoMap" << C_GREEN << "]" << C_RESET;
+		os << C_GREEN << "[" << C_CYAN << "id:" << it.first << C_GREEN << "]" << C_RESET;
+		os << C_GREEN << "[" <<  C_CYAN << "app:"<< it.second->getApp() << C_GREEN << "]" << C_RESET;
+		os << C_GREEN << "[" << C_CYAN << "uid:" << it.second->getUid() << C_GREEN << "]" << C_RESET;
+		os << C_GREEN << "[" << C_CYAN << "gid:" << it.second->getGid() << C_GREEN << "]" << C_RESET;
+		os << C_GREEN << "[" << C_CYAN << "sR:" << it.second->getSize(IoStat::Marks::READ)
+			<< "/sW:"<< it.second->getSize(IoStat::Marks::WRITE) << C_GREEN << "]" << C_RESET;
+		os << std::endl << C_GREEN << "└─[" << C_CYAN << "IoStat" << C_GREEN << "]" << C_RESET;
+		os << std::fixed << std::setprecision(3) << C_WHITE << it.second << C_RESET << std::endl;
+	}
+	return os;
+}
+
+//--------------------------------------------
+/// Overload operator << to print a entire multimap
+//--------------------------------------------
+std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> > &other){
+	for (auto it : other){
 		os << C_GREEN << "┌─[" << C_CYAN << "IoMap" << C_GREEN << "]" << C_RESET;
 		os << C_GREEN << "[" << C_CYAN << "id:" << it.first << C_GREEN << "]" << C_RESET;
 		os << C_GREEN << "[" <<  C_CYAN << "app:"<< it.second->getApp() << C_GREEN << "]" << C_RESET;
