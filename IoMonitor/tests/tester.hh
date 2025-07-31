@@ -5,4 +5,5 @@
 
 int testIoStatFillData();
 int testIoStatCleaning();
+int testInteractiveIoMap();
 int testIoMap();

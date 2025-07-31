@@ -188,12 +188,16 @@ std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t *range, size_
 	// Calcule average
 	for (std::deque<IoMark>::const_iterator it = begin; it < end; it++)
 		avrg += static_cast<double>(it->bytes);
-	avrg = avrg / std::distance(begin, end);
+	if (std::distance(begin, end) > 0)
+		avrg = avrg / std::distance(begin, end);
 
 	// Calcule standard deviation
-	for (std::deque<IoMark>::const_iterator it = begin; it < end; it++)
-		deviation += std::pow(static_cast<double>(it->bytes - avrg), 2);
-	deviation = std::sqrt(deviation / (std::distance(begin, end) - 1));
+	if (std::distance(begin, end) > 1){
+		for (std::deque<IoMark>::const_iterator it = begin; it < end; it++){
+			deviation += std::pow(std::abs(it->bytes - avrg), 2);
+		}
+		deviation = std::sqrt(deviation / (std::distance(begin, end) - 1));
+	}
 
 	return (std::pair<double, double>(avrg, deviation));
 }
@@ -231,7 +235,7 @@ ssize_t IoStat::getSize(Marks enumMark) const{
 std::ostream& operator<<(std::ostream &os, const IoStat *other){
 	std::pair<double, double> read = other->bandWidth(IoStat::Marks::READ, NULL);
 	std::pair<double, double> write = other->bandWidth(IoStat::Marks::WRITE, NULL);
-	os << "[ IoStat bandwodth from last 10s] " << std::endl;
+	os << "[IoStat bandwodth from last 10s] " << std::endl;
 	os << C_BLUE << "[READ]{average: " << read.first <<
 		", standard deviation: " << read.second <<  "}";
 	os << " / ";

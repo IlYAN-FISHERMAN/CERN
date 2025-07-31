@@ -37,6 +37,11 @@
 //--------------------------------------------
 #define IOMAP_NAME "IoMap"
 
+//--------------------------------------------
+/// the time the cleanloop function must wait
+/// before cleaning the map
+//--------------------------------------------
+#define TIME_TO_CLEAN 60
 
 class IoMap {
 	private:
@@ -49,6 +54,28 @@ class IoMap {
 		/// inactive I/Os every 60 seconds and removes them
 		//--------------------------------------------
 		void cleanerLoop();
+
+		//--------------------------------------------
+		/// @brief Displays the string given as a parameter
+		/// in a format corresponding to the class with the
+		/// current timestamp
+		///
+		/// @param	os The output stream
+		/// @param	msg The message to display
+		/// - Exemple: std::cout/std::cerr
+		//--------------------------------------------
+		void	printInfo(std::ostream &os, const char *);
+
+		//--------------------------------------------
+		/// @brief Displays the string given as a parameter
+		/// in a format corresponding to the class with the
+		/// current timestamp
+		///
+		/// @param	os The output stream
+		/// @param	msg The message to display
+		/// - Exemple: std::cout/std::cerr
+		//--------------------------------------------
+		void	printInfo(std::ostream &os, const std::string &);
 
 		//--------------------------------------------
 		/// Main variable that keeps track of all IoStats
@@ -94,15 +121,14 @@ class IoMap {
 		~IoMap();
 
 		//--------------------------------------------
-		/// Constructor by copy constructor
+		/// Explicite block constructor by copy constructor
 		//--------------------------------------------
-		IoMap(const IoMap &other);
+		IoMap(const IoMap &other) = delete;
 
 		//--------------------------------------------
-		/// Overload the operator =
+		/// Explicite block overload the operator =
 		//--------------------------------------------
-		IoMap& operator=(const IoMap &other);
-
+		IoMap& operator=(const IoMap &other) = delete;
 
 		//--------------------------------------------
 		/// @brief Optional constructor
@@ -116,6 +142,10 @@ class IoMap {
 		//--------------------------------------------
 		IoMap(int);
 
+		//--------------------------------------------
+		/// Public static mutex to share outputs stream
+		//--------------------------------------------
+		static std::mutex _osMutex;
 		
 		//--------------------------------------------
 		/// @brief adds an IoStat object to the multimap
@@ -148,7 +178,7 @@ class IoMap {
 		/// @return std::vector<std::string> Vector of
 		/// all current active apps
 		//--------------------------------------------
-		std::vector<std::string> getApps();
+		std::vector<std::string> getApps() const;
 
 		//--------------------------------------------
 		///@brief Get all uids
@@ -156,7 +186,7 @@ class IoMap {
 		/// @return std::vector<uid_t> Vector of
 		/// all current active uids
 		//--------------------------------------------
-		std::vector<uid_t> getUids();
+		std::vector<uid_t> getUids() const;
 
 		//--------------------------------------------
 		///@brief Get all gids
@@ -164,7 +194,7 @@ class IoMap {
 		/// @return std::vector<uid_t> Vector of
 		/// all current active gids
 		//--------------------------------------------
-		std::vector<gid_t> getGids();
+		std::vector<gid_t> getGids() const;
 		
 
 		//--------------------------------------------
@@ -177,35 +207,16 @@ class IoMap {
 		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> > GetAllStatsSnapshot() const;
 
 		//--------------------------------------------
-		/// Static function
-		/// @brief Displays the string given as a parameter
-		/// in a format corresponding to the class with the
-		/// current timestamp
-		///
-		/// @param	os The output stream
-		/// @param	msg The message to display
-		/// - Exemple: std::cout/std::cerr
+		/// @brief Overload operator << to print
+		/// the entire multimap from a IoMap object
 		//--------------------------------------------
-		static void	printInfo(std::ostream &os, const char *);
-
-		//--------------------------------------------
-		/// Static function
-		/// @brief Displays the string given as a parameter
-		/// in a format corresponding to the class with the
-		/// current timestamp
-		///
-		/// @param	os The output stream
-		/// @param	msg The message to display
-		/// - Exemple: std::cout/std::cerr
-		//--------------------------------------------
-		static void	printInfo(std::ostream &os, const std::string &);
+		friend std::ostream& operator<<(std::ostream &os, const IoMap &other);
 
 		//--------------------------------------------
 		/// @brief Overload operator << to print
 		/// the entire multimap
 		//--------------------------------------------
-		friend std::ostream& operator<<(std::ostream &os, const IoMap *other);
-
+		friend std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> > &other);
 
 		//--------------------------------------------
 		/// Template
@@ -298,6 +309,7 @@ class IoMap {
 		if (stdDivisor > 0)
 			weighted.second = std::sqrt(weighted.second / stdDivisor);
 
+		// std::cout << "test: " << weighted.first << "/" << weighted.second << std::endl;
 		return weighted;
 	}
 };

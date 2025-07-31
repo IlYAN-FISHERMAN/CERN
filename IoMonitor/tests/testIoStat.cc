@@ -72,7 +72,7 @@ int cleanMarks(IoStat &io, IoStat::Marks enumMark, int seconds){
 int testIoStatFillData(){
 	IoStat io(4, "mgm", 2, 2);
 
-	fillIoStat(io, 10000000, 100, 0.2);
+	fillIoStat(io, 1000000, 100, 0);
 	if (getBandWidth(io, IoStat::Marks::READ, 1) < 0
 		|| getBandWidth(io, IoStat::Marks::WRITE, 1) < 0)
 			return -1;
@@ -96,7 +96,7 @@ int testIoStatFillData(){
 
 	size = io.cleanOldsMarks(IoStat::Marks::WRITE, 0);
 	size = io.cleanOldsMarks(IoStat::Marks::READ, 0);
-	fillIoStat(io, 10000000, 100, 0.5);
+	fillIoStat(io, 1000000, 100, 0);
 	for (size_t i = 0; i < 10; i++){
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		getBandWidth(io, IoStat::Marks::WRITE, 1);
@@ -108,7 +108,7 @@ int testIoStatFillData(){
 int testIoStatCleaning(){
 	IoStat io(4, "qukdb", 2, 2);
 
-	fillIoStat(io, 10000000, 100, 0.2);
+	fillIoStat(io, 1000000, 100, 0);
 	if (cleanMarks(io, IoStat::Marks::READ, 1) < 0)
 		return -1;
 	return 0;
