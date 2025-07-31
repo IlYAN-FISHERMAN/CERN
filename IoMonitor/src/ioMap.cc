@@ -13,9 +13,11 @@ IoMap::IoMap() : _running(true){
 /// Destructor
 //--------------------------------------------
 IoMap::~IoMap() {
-	std::lock_guard<std::mutex> lock(_mutex);
-	_running = false;
-	_cv.notify_one();
+	{
+		std::lock_guard<std::mutex> lock(_mutex);
+		_running = false;
+		_cv.notify_one();
+	}
 	if (_cleaner.joinable()){
 		_cleaner.join();
 	}

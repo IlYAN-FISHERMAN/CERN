@@ -41,7 +41,7 @@
 /// the time the cleanloop function must wait
 /// before cleaning the map
 //--------------------------------------------
-#define TIME_TO_CLEAN 60
+#define TIME_TO_CLEAN 15
 
 class IoMap {
 	private:
@@ -121,16 +121,14 @@ class IoMap {
 		~IoMap();
 
 		//--------------------------------------------
-		/// Constructor by copy constructor
+		/// Explicite block constructor by copy constructor
 		//--------------------------------------------
 		IoMap(const IoMap &other) = delete;
 
 		//--------------------------------------------
-		/// Overload the operator =
+		/// Explicite block overload the operator =
 		//--------------------------------------------
 		IoMap& operator=(const IoMap &other) = delete;
-
-		static std::mutex _osMutex;
 
 		//--------------------------------------------
 		/// @brief Optional constructor
@@ -144,6 +142,10 @@ class IoMap {
 		//--------------------------------------------
 		IoMap(int);
 
+		//--------------------------------------------
+		/// Public static mutex to share outputs stream
+		//--------------------------------------------
+		static std::mutex _osMutex;
 		
 		//--------------------------------------------
 		/// @brief adds an IoStat object to the multimap

@@ -194,16 +194,22 @@ int testIoMap(){
 			data.insert({"uid_t: 2", it->getBandwidth<uid_t>(2, IoStat::Marks::WRITE)});
 			data.insert({"gid_t: 1", it->getBandwidth<gid_t>(1, IoStat::Marks::READ)});
 			data.insert({"gid_t: 1", it->getBandwidth<gid_t>(1, IoStat::Marks::WRITE)});
-			for (auto &it : data){
-				if (it.second.has_value()){
-					std::cout << "map[" << it.first << "]: "
-						<< "avrg: " << it.second->first << " | standard deviation: " << it.second->second << std::endl;
+			if (config::IoMapDebug){
+				for (auto &it : data){
+					if (it.second.has_value()){
+						std::cout << "map[" << it.first << "]: "
+							<< "avrg: " << it.second->first << " | standard deviation: " << it.second->second << std::endl;
+					}
+					else
+						std::cout << "no value" << std::endl;
 				}
-				else
-					std::cout << "no value" << std::endl;
+				std::cout << std::endl;
 			}
 		}
-		std::this_thread::sleep_for(std::chrono::seconds(2));
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+	}
+	for (auto it = maps.begin(); it != maps.end(); it++){
+		delete *it;
 	}
 	return 0;
 }

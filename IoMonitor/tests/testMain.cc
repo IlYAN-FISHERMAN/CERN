@@ -13,8 +13,8 @@ int main(int ac, char **av) {
 	(void)ac;
 	(void)av;
 
-	testIoMap();
-	// testInteractiveIoMap();
+	// testIoMap();
+	testInteractiveIoMap();
 	// testIoStatFillData();
     // ::testing::InitGoogleTest(&ac, av);
     // return RUN_ALL_TESTS();
