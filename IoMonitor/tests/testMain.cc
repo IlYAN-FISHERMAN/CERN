@@ -31,10 +31,13 @@ TEST(IoMap, exactValue) {
 int main(int ac, char **av) {
 	(void)ac;
 	(void)av;
+	// int code = 0;
 
 	// testIoMapSpecificCase();
 	// testIoMap();
-	// int code = testIoMapBigVolume();
+	// testIoMapBigVolume() < 0 ? code = -1 :
+	// testIoMapBigVolume() < 0 ? code = -1 :
+	// testIoMapBigVolume() < 0 ? code = -1 : code = 0;
 	// int code = testIoMapExactValue();
 	// int code = testIoStatExactValue();
 	// testInteractiveIoMap();

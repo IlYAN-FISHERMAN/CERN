@@ -41,7 +41,7 @@
 /// the time the cleanloop function must wait
 /// before cleaning the map
 //--------------------------------------------
-#define TIME_TO_CLEAN 1
+#define TIME_TO_CLEAN 60
 
 class IoMap {
 	private:

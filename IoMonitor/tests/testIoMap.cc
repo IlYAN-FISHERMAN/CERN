@@ -314,50 +314,28 @@ int testIoMapExactValue(){
 int testIoMapBigVolume(){
 	std::vector<std::optional<std::pair<double, double> > > data;
 	std::vector<IoMap*> maps;
-	size_t nbrOfMap = 10;
+	size_t nbrOfMap = 10000;
 
 	IoMark begin;
 	for (size_t i = 0; i < nbrOfMap; i++)
 		maps.push_back(new IoMap());
 	for (size_t i = 0; i < nbrOfMap; i++)
-		for (size_t j = 0; j < nbrOfMap; j++)
-			fillData(maps.at(i));
+		fillData(maps.at(i));
 
-	for (auto &it : maps){
-		for (size_t i = 0; i < 100; i++){
-			data.push_back(it->getBandwidth("mgm", IoStat::Marks::READ));
-			data.push_back(it->getBandwidth("mgm", IoStat::Marks::WRITE));
-			data.push_back(it->getBandwidth("fdf", IoStat::Marks::READ));
-			data.push_back(it->getBandwidth("fdf", IoStat::Marks::WRITE));
-			data.push_back(it->getBandwidth("miniRT", IoStat::Marks::READ));
-			data.push_back(it->getBandwidth("miniRT", IoStat::Marks::WRITE));
-		}
-	}
-	for (auto &it : data){
-		if (!it.has_value()){
-			for (auto ite = maps.begin(); ite != maps.end(); ite++)
-				delete *ite;
-			return -1;
-		}
-	}
 	IoMark end;
-	double diff = begin.io_time.tv_nsec - end.io_time.tv_nsec;
-	std::cout << "sleep: " << diff << std::endl;
-	std::this_thread::sleep_for(std::chrono::seconds(5));
+	long diff = TIME_TO_CLEAN * 2 + 1;
+	std::this_thread::sleep_for(std::chrono::seconds(diff));
 	data.clear();
-	std::cout << "size before: " << data.size() << std::endl;
 	for (auto &it : maps){
-		for (size_t i = 0; i < 100; i++){
-			data.push_back(it->getBandwidth("mgm", IoStat::Marks::READ));
-			data.push_back(it->getBandwidth("mgm", IoStat::Marks::WRITE));
-			data.push_back(it->getBandwidth("fdf", IoStat::Marks::READ));
-			data.push_back(it->getBandwidth("fdf", IoStat::Marks::WRITE));
-			data.push_back(it->getBandwidth("miniRT", IoStat::Marks::READ));
-			data.push_back(it->getBandwidth("miniRT", IoStat::Marks::WRITE));
+		for (size_t i = 0; i < 1000; i++){
+			data.push_back(it->getBandwidth("mgm", IoStat::Marks::READ, 30));
+			data.push_back(it->getBandwidth("mgm", IoStat::Marks::WRITE, 30));
+			data.push_back(it->getBandwidth("fdf", IoStat::Marks::READ, 30));
+			data.push_back(it->getBandwidth("fdf", IoStat::Marks::WRITE, 30));
+			data.push_back(it->getBandwidth("miniRT", IoStat::Marks::READ, 30));
+			data.push_back(it->getBandwidth("miniRT", IoStat::Marks::WRITE, 30));
 		}
 	}
-	std::cout << "size after: " << data.size() << std::endl;
-
 	for (auto &it : data){
 		if (it.has_value()){
 			for (auto ite = maps.begin(); ite != maps.end(); ite++)
