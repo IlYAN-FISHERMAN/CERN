@@ -9,13 +9,17 @@ TEST(IoStat, FillData) {
 	EXPECT_EQ(testIoStatFillData(), 0);
 }
 
+TEST(IoStat, exactValue) {
+	EXPECT_EQ(testIoStatExactValue(), 0);
+}
+
 TEST(IoMap, FillData) {
 	EXPECT_EQ(testIoMapData(), 0);
 }
 
 TEST(IoMap, exactValue) {
 	ASSERT_FALSE(testIoMapSpecificCase());
-	ASSERT_FALSE(testIoMapMultipleCase());
+	ASSERT_FALSE(testIoMapExactValue());
 	EXPECT_EQ(testIoMapBigVolume(), 0);
 }
 
@@ -30,10 +34,13 @@ int main(int ac, char **av) {
 
 	// testIoMapSpecificCase();
 	// testIoMap();
-	std::cout << "code: " << testIoMapBigVolume();
+	// int code = testIoMapBigVolume();
+	// int code = testIoMapExactValue();
+	// int code = testIoStatExactValue();
 	// testInteractiveIoMap();
 	// testIoStatFillData();
 	// testIoStatCleaning();
-    // ::testing::InitGoogleTest(&ac, av);
-    // return RUN_ALL_TESTS();
+	// std::cout << "code: " << code << std::endl;
+    ::testing::InitGoogleTest(&ac, av);
+    return RUN_ALL_TESTS();
 }

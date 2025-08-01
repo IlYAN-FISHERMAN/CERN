@@ -172,6 +172,8 @@ std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t *range, size_
 	std::deque<IoMark>::const_iterator end = mark.end();
 	struct timespec	currentTime;
 
+	if (mark.empty())
+		return (std::pair(0, 0));
 	// Found the bandwidth iterator range
 	clock_gettime(CLOCK_REALTIME, &currentTime);
 	for (std::deque<IoMark>::const_iterator it = end; it != mark.begin();){
@@ -232,9 +234,9 @@ ssize_t IoStat::getSize(Marks enumMark) const{
 //--------------------------------------------
 /// Overload operator << 
 //--------------------------------------------
-std::ostream& operator<<(std::ostream &os, const IoStat *other){
-	std::pair<double, double> read = other->bandWidth(IoStat::Marks::READ, NULL);
-	std::pair<double, double> write = other->bandWidth(IoStat::Marks::WRITE, NULL);
+std::ostream& operator<<(std::ostream &os, const IoStat &other){
+	std::pair<double, double> read = other.bandWidth(IoStat::Marks::READ, NULL);
+	std::pair<double, double> write = other.bandWidth(IoStat::Marks::WRITE, NULL);
 	os << "[IoStat bandwidth from last 10s] " << std::endl;
 	os << C_BLUE << "[READ]{average: " << read.first <<
 		", standard deviation: " << read.second <<  "}";

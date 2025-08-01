@@ -113,3 +113,51 @@ int testIoStatCleaning(){
 		return -1;
 	return 0;
 }
+
+int testIoStatExactValue(){
+	IoStat io1(1, "cernbox", 2, 1);
+	IoStat io2(1, "cernbox", 2, 1);
+	IoStat io3(1, "cernbox", 2, 1);
+
+	 io1.addRead(50);
+	 io1.addRead(50);
+	 io1.addRead(26);
+
+	 io2.addRead(64);
+	 io2.addRead(97);
+	 io2.addRead(34);
+
+	 io3.addRead(97);
+	 io3.addRead(27);
+	 io3.addRead(44);
+
+	std::pair<double, double> p1 = io1.bandWidth(IoStat::Marks::READ, NULL);
+	std::pair<double, double> p2 = io2.bandWidth(IoStat::Marks::READ, NULL);
+	std::pair<double, double> p3 = io3.bandWidth(IoStat::Marks::READ, NULL);
+
+	if (p1.first != 42 || p2.first != 65 || p3.first != 56)
+		return -1;
+
+	double deviation = 0;
+	deviation += std::pow(std::abs(50 - p1.first), 2);
+	deviation += std::pow(std::abs(50 - p1.first), 2);
+	deviation += std::pow(std::abs(26 - p1.first), 2);
+	deviation = std::sqrt(deviation / 2);
+	if (deviation != p1.second)
+		return -1;
+	deviation = 0;
+	deviation += std::pow(std::abs(64 - p2.first), 2);
+	deviation += std::pow(std::abs(97 - p2.first), 2);
+	deviation += std::pow(std::abs(34 - p2.first), 2);
+	deviation = std::sqrt(deviation / 2);
+	if (deviation != p2.second)
+		return -1;
+	deviation = 0;
+	deviation += std::pow(std::abs(97 - p3.first), 2);
+	deviation += std::pow(std::abs(27 - p3.first), 2);
+	deviation += std::pow(std::abs(44 - p3.first), 2);
+	deviation = std::sqrt(deviation / 2);
+	if (deviation != p3.second)
+		return -1;
+	return 0;
+}

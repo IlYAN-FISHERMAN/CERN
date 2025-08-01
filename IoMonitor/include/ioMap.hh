@@ -41,7 +41,7 @@
 /// the time the cleanloop function must wait
 /// before cleaning the map
 //--------------------------------------------
-#define TIME_TO_CLEAN 60
+#define TIME_TO_CLEAN 1
 
 class IoMap {
 	private:
@@ -157,7 +157,7 @@ class IoMap {
 		/// @param gid		ID of the corresponding group
 		/// @param rbytes	Number of bytes read
 		//--------------------------------------------
-		void AddRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes);
+		void AddRead(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t rbytes);
 
 		//--------------------------------------------
 		/// @brief adds an IoStat object to the multimap
@@ -169,7 +169,7 @@ class IoMap {
 		/// @param gid		ID of the corresponding group
 		/// @param rbytes	Number of bytes read
 		//--------------------------------------------
-		void AddWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes);
+		void AddWrite(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t wbytes);
 
 
 		//--------------------------------------------
@@ -246,7 +246,8 @@ class IoMap {
 		//--------------------------------------------
 		template <typename T>
 		std::optional<std::pair<double, double> > getBandwidth(const T index, IoStat::Marks enumMark, size_t seconds = 10){
-
+		
+		std::lock_guard<std::mutex> lock(_mutex);
 		if (enumMark != IoStat::Marks::READ && enumMark != IoStat::Marks::WRITE)
 			return std::nullopt;
 		else if (seconds == 0)

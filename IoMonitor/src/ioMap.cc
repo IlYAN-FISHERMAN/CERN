@@ -78,61 +78,80 @@ void IoMap::cleanerLoop(){
 //--------------------------------------------
 /// Adds an IoStat object to the multimap with the corresponding elements
 //--------------------------------------------
-void IoMap::AddRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes){
+void IoMap::AddRead(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t rbytes){
 	std::lock_guard<std::mutex> lock(_mutex);
 
 	auto it = _filesMap.equal_range(inode);
-	if (config::IoMapDebug && !_running){
-		std::string data(app + " " + std::to_string(uid) + " " + std::to_string(gid) + " " + std::to_string(rbytes));
-		printInfo(std::cout, "enter with: " + data);
-	}
-	// Search for an existing matching IoStat
-	for(;it.first != it.second; it.first++){
-		auto &io = it.first->second;
-		if (io->getApp() == app && io->getGid() == gid && io->getUid() == uid){
-			io->addRead(rbytes);
-			if (config::IoMapDebug && !_running)
-				printInfo(std::cout, "addRead");
-			break ;
-		}
-	}
-	// or Create new one
-	if (it.first == it.second){
-		if (config::IoMapDebug && !_running)
+	// Create new IoStat or search for an existing matching one
+	if (_filesMap.find(inode) == _filesMap.end()){
+		if (config::IoMapDebug)
 			printInfo(std::cout, "add new");
 		auto newIo = _filesMap.insert({inode, std::make_shared<IoStat>(inode, app, uid, gid)});
 		newIo->second->addRead(rbytes);
 		_apps.insert(app);
 		_uids.insert(uid);
 		_gids.insert(gid);
+		return ;
 	}
-	if (config::IoMapDebug && !_running)
-		printInfo(std::cout, "end\n");
+	while (it.first != it.second){
+		auto &io = it.first->second;
+		if (io->getApp() == app && io->getGid() == gid && io->getUid() == uid){
+			io->addRead(rbytes);
+			if (config::IoMapDebug)
+				printInfo(std::cout, "addRead");
+			break ;
+		}
+		it.first++;
+		if (it.first == it.second){
+			if (config::IoMapDebug)
+				printInfo(std::cout, "add new");
+			auto newIo = _filesMap.insert({inode, std::make_shared<IoStat>(inode, app, uid, gid)});
+			newIo->second->addRead(rbytes);
+			_apps.insert(app);
+			_uids.insert(uid);
+			_gids.insert(gid);
+			break ;
+		}
+	}
 }
 
 //--------------------------------------------
 /// Adds an IoStat object to the multimap with the corresponding elements
 //--------------------------------------------
-void IoMap::AddWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes){
+void IoMap::AddWrite(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t wbytes){
 	std::lock_guard<std::mutex> lock(_mutex);
 
 	auto it = _filesMap.equal_range(inode);
-	
-	// Search for an existing matching IoStat
-	for(;it.first != it.second; it.first++){
-		auto &io = it.first->second;
-		if (io->getApp() == app && io->getGid() == gid && io->getUid() == uid){
-			io->addWrite(wbytes);
-			break ;
-		}
-	}
-	// or Create new one
-	if (it.first == it.second){
-		auto &&newIo = _filesMap.insert({inode, std::make_shared<IoStat>(inode, app, uid, gid)});
+	// Create new IoStat or search for an existing matching one
+	if (_filesMap.find(inode) == _filesMap.end()){
+		if (config::IoMapDebug)
+			printInfo(std::cout, "add new");
+		auto newIo = _filesMap.insert({inode, std::make_shared<IoStat>(inode, app, uid, gid)});
 		newIo->second->addWrite(wbytes);
 		_apps.insert(app);
 		_uids.insert(uid);
 		_gids.insert(gid);
+		return ;
+	}
+	while (it.first != it.second){
+		auto &io = it.first->second;
+		if (io->getApp() == app && io->getGid() == gid && io->getUid() == uid){
+			io->addWrite(wbytes);
+			if (config::IoMapDebug)
+				printInfo(std::cout, "addWrite");
+			break ;
+		}
+		it.first++;
+		if (it.first == it.second){
+			if (config::IoMapDebug)
+				printInfo(std::cout, "add new");
+			auto newIo = _filesMap.insert({inode, std::make_shared<IoStat>(inode, app, uid, gid)});
+			newIo->second->addWrite(wbytes);
+			_apps.insert(app);
+			_uids.insert(uid);
+			_gids.insert(gid);
+			break ;
+		}
 	}
 }
 

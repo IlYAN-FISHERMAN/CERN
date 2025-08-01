@@ -225,7 +225,7 @@ public: enum class Marks : uint8_t{
 /// @brief Overload operator << to print the average
 /// and standard deviation of the last 10 seconds
 //--------------------------------------------
-std::ostream& operator<<(std::ostream &os, const IoStat *other);
+std::ostream& operator<<(std::ostream &os, const IoStat &other);
 
 struct IoStatSummary {
     double avg_read = 0.0;

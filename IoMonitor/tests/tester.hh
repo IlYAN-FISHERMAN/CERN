@@ -5,9 +5,10 @@
 
 int testIoStatFillData();
 int testIoStatCleaning();
+int testIoStatExactValue();
 
 int testInteractiveIoMap();
 int testIoMapBigVolume();
 int testIoMapSpecificCase();
-int testIoMapMultipleCase();
+int testIoMapExactValue();
 int testIoMapData();
