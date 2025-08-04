@@ -8,8 +8,8 @@ void fillData(IoMap *map){
 		int gid = std::abs(rand() % 100);
 		for (size_t it = 0, max = std::abs(rand() % 100); it < max;it++){
 			size_t bytes = std::abs(rand() % 100000);
-			map->AddRead(i, "mgm", uid, gid, bytes);
-			map->AddWrite(i, "mgm", uid, gid, bytes * 3);
+			map->addRead(i, "mgm", uid, gid, bytes);
+			map->addWrite(i, "mgm", uid, gid, bytes * 3);
 		}
 	}
 	for (size_t i = 10; i < 20; i++){
@@ -17,8 +17,8 @@ void fillData(IoMap *map){
 		int gid = std::abs(rand() % 100);
 		for (size_t it = 0, max = std::abs(rand() % 100); it < max;it++){
 			size_t bytes = std::abs(rand() % 100000);
-			map->AddRead(i, "fdf", uid, gid, bytes);
-			map->AddWrite(i, "fdf", uid, gid, bytes * 4);
+			map->addRead(i, "fdf", uid, gid, bytes);
+			map->addWrite(i, "fdf", uid, gid, bytes * 4);
 		}
 	}
 	for (size_t i = 20; i < 30; i++){
@@ -26,34 +26,34 @@ void fillData(IoMap *map){
 		int gid = std::abs(rand() % 100);
 		for (size_t it = 0, max = std::abs(rand() % 100); it < max;it++){
 			size_t bytes = std::abs(rand() % 100000);
-			map->AddRead(i, "miniRT", uid, gid, bytes);
-			map->AddWrite(i, "miniRT", uid, gid, bytes * 9);
+			map->addRead(i, "miniRT", uid, gid, bytes);
+			map->addWrite(i, "miniRT", uid, gid, bytes * 9);
 		}
 	}
 }
 
 void fillGroup1(IoMap *map){
-	map->AddRead(1, "eos", 1, 1, std::abs(rand() % 100));
-	map->AddRead(1, "eos", 1, 1, std::abs(rand() % 100));
-	map->AddRead(1, "eos", 1, 1, std::abs(rand() % 100));
-	map->AddRead(1, "eos", 1, 1, std::abs(rand() % 100));
-	map->AddRead(1, "eos", 1, 1, std::abs(rand() % 100));
+	map->addRead(1, "eos", 1, 1, std::abs(rand() % 100));
+	map->addRead(1, "eos", 1, 1, std::abs(rand() % 100));
+	map->addRead(1, "eos", 1, 1, std::abs(rand() % 100));
+	map->addRead(1, "eos", 1, 1, std::abs(rand() % 100));
+	map->addRead(1, "eos", 1, 1, std::abs(rand() % 100));
 }
 
 void fillGroup2(IoMap *map){
-	map->AddRead(1, "jpeg", 2, 2, std::abs(rand() % 1000));
-	map->AddRead(1, "jpeg", 2, 2, std::abs(rand() % 1000));
-	map->AddRead(1, "jpeg", 2, 2, std::abs(rand() % 1000));
-	map->AddRead(1, "jpeg", 2, 2, std::abs(rand() % 1000));
-	map->AddRead(1, "jpeg", 2, 2, std::abs(rand() % 1000));
+	map->addRead(1, "jpeg", 2, 2, std::abs(rand() % 1000));
+	map->addRead(1, "jpeg", 2, 2, std::abs(rand() % 1000));
+	map->addRead(1, "jpeg", 2, 2, std::abs(rand() % 1000));
+	map->addRead(1, "jpeg", 2, 2, std::abs(rand() % 1000));
+	map->addRead(1, "jpeg", 2, 2, std::abs(rand() % 1000));
 }
 
 void fillGroup3(IoMap *map){
-	map->AddRead(1, "jpeg", 3, 3, std::abs(rand() % 10000));
-	map->AddRead(1, "jpeg", 3, 3, std::abs(rand() % 10000));
-	map->AddRead(1, "jpeg", 3, 3, std::abs(rand() % 10000));
-	map->AddRead(1, "jpeg", 3, 3, std::abs(rand() % 10000));
-	map->AddRead(1, "jpeg", 3, 3, std::abs(rand() % 10000));
+	map->addRead(1, "jpeg", 3, 3, std::abs(rand() % 10000));
+	map->addRead(1, "jpeg", 3, 3, std::abs(rand() % 10000));
+	map->addRead(1, "jpeg", 3, 3, std::abs(rand() % 10000));
+	map->addRead(1, "jpeg", 3, 3, std::abs(rand() % 10000));
+	map->addRead(1, "jpeg", 3, 3, std::abs(rand() % 10000));
 }
 
 void prompt(bool &isMultiT, std::string &input){
@@ -111,14 +111,6 @@ void purge(bool &isMultiT, IoMap *map){
 	}
 }
 
-int set(IoMap *map, std::stringstream &os){
-	std::string params;
-	(void)params;
-	(void)map;
-	(void)os;
-	return 0;
-}
-
 int execCmd(std::string &input, IoMap *map, bool &isMultiT){
 	std::stringstream os(input);
 	std::string cmd;
@@ -135,8 +127,6 @@ int execCmd(std::string &input, IoMap *map, bool &isMultiT){
 		std::cout << "\033c";
 	else if (cmd == "purge")
 		purge(isMultiT, map);
-	else if (cmd == "set")
-			set(map, os);
 	else
 		std::cerr << "IoMap: " << input << " :command not found" << std::endl;
 	if (cmd != "clear" && cmd != "c")
@@ -196,7 +186,7 @@ int testIoMapData(){
 			data.insert({"uid_t: 2", it->getBandwidth<uid_t>(2, IoStat::Marks::WRITE)});
 			data.insert({"gid_t: 1", it->getBandwidth<gid_t>(1, IoStat::Marks::READ)});
 			data.insert({"gid_t: 1", it->getBandwidth<gid_t>(1, IoStat::Marks::WRITE)});
-			if (config::IoMapDebug){
+			if (io::IoMapDebug){
 				for (auto &it : data){
 					if (it.second.has_value()){
 						std::cout << "map[" << it.first << "]: "
@@ -227,13 +217,13 @@ std::ostream& operator<<(std::ostream &os, const std::pair<double, double> &othe
 int testIoMapSpecificCase(){
 	IoMap map;
 
-	map.AddRead(1, "cernbox", 2, 1, 3534);
-	map.AddRead(1, "cernbox", 2, 1, 4562);
-	map.AddRead(1, "cernbox", 2, 1, 4573);
-	map.AddRead(1, "cernbox", 2, 1, 1332);
-	map.AddRead(1, "cernbox", 2, 1, 34563);
-	map.AddRead(1, "cernbox", 2, 1, 35);
-	map.AddRead(1, "cernbox", 2, 1, 544);
+	map.addRead(1, "cernbox", 2, 1, 3534);
+	map.addRead(1, "cernbox", 2, 1, 4562);
+	map.addRead(1, "cernbox", 2, 1, 4573);
+	map.addRead(1, "cernbox", 2, 1, 1332);
+	map.addRead(1, "cernbox", 2, 1, 34563);
+	map.addRead(1, "cernbox", 2, 1, 35);
+	map.addRead(1, "cernbox", 2, 1, 544);
 
 	std::optional<std::pair<double, double> > it = map.getBandwidth("cernbox", IoStat::Marks::READ);
 	if (it.has_value()){
@@ -276,17 +266,17 @@ int testIoMapExactValue(){
 	std::pair<double, double> p3;
 	pairTmp(&p1, &p2, &p3);
 
-	map.AddWrite(1, "cernbox", 2, 1, 50);
-	map.AddWrite(1, "cernbox", 2, 1, 50);
-	map.AddWrite(1, "cernbox", 2, 1, 26);
+	map.addWrite(1, "cernbox", 2, 1, 50);
+	map.addWrite(1, "cernbox", 2, 1, 50);
+	map.addWrite(1, "cernbox", 2, 1, 26);
 
-	map.AddWrite(1, "cernbox", 42, 42, 64);
-	map.AddWrite(1, "cernbox", 42, 42, 97);
-	map.AddWrite(1, "cernbox", 42, 42, 34);
+	map.addWrite(1, "cernbox", 42, 42, 64);
+	map.addWrite(1, "cernbox", 42, 42, 97);
+	map.addWrite(1, "cernbox", 42, 42, 34);
 
-	map.AddWrite(1, "cernbox", 78, 5, 97);
-	map.AddWrite(1, "cernbox", 78, 5, 27);
-	map.AddWrite(1, "cernbox", 78, 5, 44);
+	map.addWrite(1, "cernbox", 78, 5, 97);
+	map.addWrite(1, "cernbox", 78, 5, 27);
+	map.addWrite(1, "cernbox", 78, 5, 44);
 
 	double avrg = 0;
 	double deviation = 0;

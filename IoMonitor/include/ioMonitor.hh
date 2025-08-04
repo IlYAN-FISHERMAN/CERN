@@ -85,7 +85,7 @@ const char*	getCurrentTime();
 /// if debug is "true" all debug phases of
 /// the corresponding class will be displayed
 //--------------------------------------------
-namespace config {
+namespace io {
 	constexpr bool IoStatDebug = false;
 	constexpr bool IoMapDebug = false;
 	constexpr bool IoMarkDebug = false;

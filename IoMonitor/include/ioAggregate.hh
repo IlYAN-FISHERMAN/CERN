@@ -1,53 +1,95 @@
+//  File: ioAggregate.hh
+//  Author: Ilkay Yanar - 42Lausanne / CERN
+//  ----------------------------------------------------------------------
+
+/*************************************************************************
+ *  EOS - the CERN Disk Storage System                                   *
+ *  Copyright (C) 2025 CERN/Switzerland                                  *
+ *                                                                       *
+ *  This program is free software: you can redistribute it and/or modify *
+ *  it under the terms of the GNU General Public License as published by *
+ *  the Free Software Foundation, either version 3 of the License, or    *
+ *  (at your option) any later version.                                  *
+ *                                                                       *
+ *  This program is distributed in the hope that it will be useful,      *
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of       *
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        *
+ *  GNU General Public License for more details.                         *
+ *                                                                       *
+ *  You should have received a copy of the GNU General Public License    *
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.*
+ *************************************************************************/
+
 #pragma once
 
 #include "ioMap.hh"
 
+//--------------------------------------------
+/// The current name of the class when us
+/// printInfo function
+//--------------------------------------------
 #define IOAGGREGATE_NAME "IoAggregate"
 
 class IoAggregate {
-public:
-    IoAggregate(size_t num_bins, size_t interval_sec);
+	private:
+		struct Bin {
+			std::unordered_map<std::string, IoStatSummary> appStats;
+		};
 
+		size_t _numBins;
+		size_t _intervalSec;
+		size_t _currentIndex;
+		std::vector<Bin> _bins;
+		mutable std::mutex _mutex;
 
-    void AddSample(const std::string& app, const IoStatSummary& summary);
-    std::optional<IoStatSummary> GetAggregated(const std::string& app, size_t past_seconds) const;
-    void ShiftWindow();
+	public:
+		//--------------------------------------------
+		/// Orthodoxe canonical form
+		//--------------------------------------------
+	
+		//--------------------------------------------
+		/// Destructor
+		//--------------------------------------------
+		~IoAggregate();
 
-private:
-    struct Bin {
-        std::unordered_map<std::string, IoStatSummary> app_stats;
-    };
+		//--------------------------------------------
+		/// Constructor by copy constructor
+		//--------------------------------------------
+		IoAggregate(const IoStat &other);
 
-    size_t num_bins_;
-    size_t interval_sec_;
-    size_t current_index_;
-    std::vector<Bin> bins_;
-    mutable std::mutex mutex_;
+		//--------------------------------------------
+		/// Overload the operator =
+		//--------------------------------------------
+		IoAggregate& operator=(const IoAggregate &other);
+
+		IoAggregate(size_t numBins, size_t intervalSec);
+
+		void addSample(const std::string &app, const IoStatSummary &summary);
+		std::optional<IoStatSummary> getAggregated(const std::string &app, size_t seconds) const;
+		void shiftWindow();
+
 };
 
-// -------- AggregatedIoMap --------
 class AggregatedIoMap {
-public:
-    // Pass dynamic aggregation windows in seconds
-    explicit AggregatedIoMap(const std::vector<size_t>& aggregation_windows);
-    ~AggregatedIoMap();
+	private:
+		void aggregationLoop();
+		size_t computeMaxIntervalSec() const;
 
-    void AddRead(uint64_t inode, const std::string& app, uid_t uid, gid_t gid, size_t rbytes);
-    void AddWrite(uint64_t inode, const std::string& app, uid_t uid, gid_t gid, size_t wbytes);
+		IoMap _base;
+		std::unordered_map<size_t, std::unique_ptr<IoAggregate>> _aggregates;
 
-    std::optional<IoStatSummary> getBandwidth(const std::string& app, size_t past_seconds);
-    std::optional<IoStatSummary> getBandwidth(uid_t uid, size_t past_seconds);
+		std::thread _aggregationThread;
+		std::atomic<bool> _running;
+	public:
+		explicit AggregatedIoMap(const std::vector<size_t> &aggregationWindows);
+		~AggregatedIoMap();
 
-    std::vector<size_t> getAvailableWindows() const;
+	void addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes);
+	void addWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes);
 
-private:
-    void AggregationLoop();
-    size_t ComputeMaxIntervalSec() const;
-
-    IoMap base_;
-    std::unordered_map<size_t, std::unique_ptr<IoAggregate>> aggregates_;  // key: total window duration (sec)
-
-    std::thread aggregation_thread_;
-    std::atomic<bool> running_;
+	std::optional<IoStatSummary> getBandwidth(const std::string& app, size_t seconds);
+	std::optional<IoStatSummary> getBandwidth(uid_t uid, size_t seconds);
+	
+	std::vector<size_t> getAvailableWindows() const;
 };
 

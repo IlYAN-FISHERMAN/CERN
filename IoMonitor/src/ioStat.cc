@@ -89,19 +89,14 @@ IoStat::IoStat(uint64_t fileId, const std::string& app, uid_t uid, gid_t gid) :
 IoStat::~IoStat(){}
 
 //--------------------------------------------
-/// Add rbytes to the read deque
+/// Add bytes to the corresponding Read/Write deque
 //--------------------------------------------
-void IoStat::addRead(size_t rBytes){
-	IoMark io(rBytes);
-	_readMarks.push_back(io);
-}
-
-//--------------------------------------------
-/// Add wbytes to the write deque
-//--------------------------------------------
-void IoStat::addWrite(size_t wBytes){
-		IoMark io(wBytes);
-	_writeMarks.push_back(io);
+void IoStat::add(size_t bytes, IoStat::Marks enumMark){
+	IoMark io(bytes);
+	if (enumMark == Marks::READ)
+		_readMarks.push_back(io);
+	else if (enumMark == Marks::WRITE)
+		_writeMarks.push_back(io);
 }
 
 //--------------------------------------------
@@ -110,7 +105,7 @@ void IoStat::addWrite(size_t wBytes){
 //--------------------------------------------
 uint64_t IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
 	if ((enumMark != Marks::READ && enumMark != Marks::WRITE)){
-		if (config::IoStatDebug)
+		if (io::IoStatDebug)
 			IoStat::printInfo(std::cerr, "\033[031mNo marks found for\033[0m");
 		return -1;
 	}
@@ -134,7 +129,7 @@ uint64_t IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
 	}
 	// checks if in case where seconds > 0 if there is something to delete
 	if (seconds > 0 && end == mark.end()){
-		if (config::IoStatDebug)
+		if (io::IoStatDebug)
 			printInfo(std::cout, "\033[031mNothing to clean\033[0m");
 		return 1;
 	}
@@ -156,7 +151,7 @@ uint64_t IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
 //--------------------------------------------
 std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t *range, size_t seconds) const{
 	if ((enumMark != Marks::READ && enumMark != Marks::WRITE) || seconds == 0){
-		if (config::IoStatDebug){
+		if (io::IoStatDebug){
 			if (seconds == 0)
 				IoStat::printInfo(std::cerr, "\033[031mCan't calculate bandwidth with 0s\033[0m");
 			else
@@ -235,8 +230,8 @@ ssize_t IoStat::getSize(Marks enumMark) const{
 /// Overload operator << 
 //--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const IoStat &other){
-	std::pair<double, double> read = other.bandWidth(IoStat::Marks::READ, NULL);
-	std::pair<double, double> write = other.bandWidth(IoStat::Marks::WRITE, NULL);
+	std::pair<double, double> read = other.bandWidth(IoStat::Marks::READ);
+	std::pair<double, double> write = other.bandWidth(IoStat::Marks::WRITE);
 	os << "[IoStat bandwidth from last 10s] " << std::endl;
 	os << C_BLUE << "[READ]{average: " << read.first <<
 		", standard deviation: " << read.second <<  "}";
