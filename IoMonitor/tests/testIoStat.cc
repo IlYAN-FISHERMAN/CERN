@@ -23,20 +23,20 @@
 #include "tester.hh"
 
 void fillIoStat(IoStat &io, int nbr = 10, int range = 100000, double seconds = 0.1){
-	if (config::IoStatDebug)
+	if (io::IoStatDebug)
 		IoStat::printInfo(std::cout, "fill IoStat");
 	for (int i = 0; i < nbr; i++){
-		io.addWrite(rand() % range);
-		io.addRead(rand() % range * 0.5);
+		io.add(rand() % range, IoStat::Marks::WRITE);
+		io.add(rand() % range * 0.5, IoStat::Marks::READ);
 		if (seconds > 0)
 			usleep(seconds);
 	}
-	if (config::IoStatDebug)
+	if (io::IoStatDebug)
 		IoStat::printInfo(std::cout, "fill end");
 }
 
 int getBandWidth(IoStat &io, IoStat::Marks enumMark, size_t seconds = 10){
-	if (config::IoStatDebug){
+	if (io::IoStatDebug){
 		std::cout << std::endl;
 		IoStat::printInfo(std::cout, "Get bandwidth from the last " + std::to_string(seconds) + "s");
 	}
@@ -47,7 +47,7 @@ int getBandWidth(IoStat &io, IoStat::Marks enumMark, size_t seconds = 10){
 	size_t size = 0;
 	std::pair<double, double> bandWidth = io.bandWidth(enumMark, &size, seconds);
 
-	if (config::IoStatDebug){
+	if (io::IoStatDebug){
 		std::cout << std::fixed;
 		if (enumMark == IoStat::Marks::READ)
 			std::cout << "\t[Read:" << size << "/" << io.getSize(enumMark) << "]: average: "
@@ -61,10 +61,10 @@ int getBandWidth(IoStat &io, IoStat::Marks enumMark, size_t seconds = 10){
 }
 
 int cleanMarks(IoStat &io, IoStat::Marks enumMark, int seconds){
-	if (config::IoStatDebug)
+	if (io::IoStatDebug)
 		IoStat::printInfo(std::cout, "Clean everything after " + std::to_string(seconds) + "s");
 	int code = io.cleanOldsMarks(enumMark, seconds);
-	if (config::IoStatDebug)
+	if (io::IoStatDebug)
 		std::cout << std::endl;
 	return code;
 }
@@ -77,15 +77,15 @@ int testIoStatFillData(){
 		|| getBandWidth(io, IoStat::Marks::WRITE, 1) < 0)
 			return -1;
 
-	if (config::IoStatDebug)
+	if (io::IoStatDebug)
 		IoStat::printInfo(std::cout, " [ Error tests ]");
 	getBandWidth(io, IoStat::Marks::WRITE, 100);
 	size_t size = io.cleanOldsMarks(IoStat::Marks::WRITE, 0);
-	if (config::IoStatDebug)
+	if (io::IoStatDebug)
 		IoStat::printInfo(std::cout, "Erased " + std::to_string(size) + " element");
-	io.addWrite(0);
-	io.addWrite(0);
-	io.addWrite(0);
+	io.add(0, IoStat::Marks::WRITE);
+	io.add(0, IoStat::Marks::WRITE);
+	io.add(0, IoStat::Marks::WRITE);
 	getBandWidth(io, IoStat::Marks::WRITE, 1000);
 	getBandWidth(io, IoStat::Marks::WRITE, 0);
 	getBandWidth(io, IoStat::Marks::READ, 10);
@@ -119,17 +119,17 @@ int testIoStatExactValue(){
 	IoStat io2(1, "cernbox", 2, 1);
 	IoStat io3(1, "cernbox", 2, 1);
 
-	 io1.addRead(50);
-	 io1.addRead(50);
-	 io1.addRead(26);
+	 io1.add(50, IoStat::Marks::READ);
+	 io1.add(50, IoStat::Marks::READ);
+	 io1.add(26, IoStat::Marks::READ);
 
-	 io2.addRead(64);
-	 io2.addRead(97);
-	 io2.addRead(34);
+	 io2.add(64, IoStat::Marks::READ);
+	 io2.add(97, IoStat::Marks::READ);
+	 io2.add(34, IoStat::Marks::READ);
 
-	 io3.addRead(97);
-	 io3.addRead(27);
-	 io3.addRead(44);
+	 io3.add(97, IoStat::Marks::READ);
+	 io3.add(27, IoStat::Marks::READ);
+	 io3.add(44, IoStat::Marks::READ);
 
 	std::pair<double, double> p1 = io1.bandWidth(IoStat::Marks::READ, NULL);
 	std::pair<double, double> p2 = io2.bandWidth(IoStat::Marks::READ, NULL);

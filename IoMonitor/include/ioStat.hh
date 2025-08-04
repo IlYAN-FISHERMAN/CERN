@@ -107,20 +107,15 @@ public: enum class Marks : uint8_t{
 		IoStat(uint64_t fileId, const std::string& app, uid_t uid, gid_t gid);
 
 		//--------------------------------------------
-		/// @brief Add read bytes to the read deque
+		/// @brief Add bytes to the corresponding Read/Write deque
 		/// and records its execution timestamp
 		///
 		/// @param	rBytes Number of bytes read
+		/// @param	enumMark READ or WRITE variable comes
+		/// from the IoStat::Marks enumerator
+		/// - Exemple: IoStat::Marks::READ
 		//--------------------------------------------
-		void addRead(size_t rBytes);
-
-		//--------------------------------------------
-		/// @brief Add read/written bytes to the corresponding deque
-		/// {read/write} and records its execution timestamp
-		///
-		/// @param	rBytes/wBytes Number of bytes written
-		//--------------------------------------------
-		void addWrite(size_t wBytes);
+		void add(size_t bytes, IoStat::Marks enumMark);
 
 		//--------------------------------------------
 		/// @brief Keep all I/O from the last N seconds.
@@ -153,22 +148,21 @@ public: enum class Marks : uint8_t{
 		///
 		/// The function thus calculates the average and
 		/// the standard deviation of the range of data found
-		///
-		/// Sets the "range" variable to the
-		/// number of elements that were found
-		/// (can be set to NULL in which case the parameter
-		/// is ignored)
 		/// 
 		/// @param	enumMark READ or WRITE variable comes
 		/// from the IoStat::Marks enumerator
 		/// - Exemple: IoStat::Marks::WRITE
 		/// @param seconds(optional) over how many seconds
 		/// from now the function should calculate
+		/// @param	range Sets the "range" variable to the
+		/// number of elements that were found
+		/// (can be set to NULL in which case the parameter
+		/// is ignored)
 		///
 		/// @return std::pair<double, double> fisrt is the
 		/// average, the second is the standard deviation 
 		//--------------------------------------------
-		std::pair<double, double> bandWidth(Marks EnumMark, size_t *range, size_t seconds = 10) const;
+		std::pair<double, double> bandWidth(Marks EnumMark, size_t *range = NULL, size_t seconds = 10) const;
 
 		//--------------------------------------------
 		/// Static function

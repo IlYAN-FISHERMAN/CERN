@@ -41,7 +41,7 @@
 /// the time the cleanloop function must wait
 /// before cleaning the map
 //--------------------------------------------
-#define TIME_TO_CLEAN 60
+#define TIME_TO_CLEAN 2
 
 class IoMap {
 	private:
@@ -157,7 +157,7 @@ class IoMap {
 		/// @param gid		ID of the corresponding group
 		/// @param rbytes	Number of bytes read
 		//--------------------------------------------
-		void AddRead(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t rbytes);
+		void addRead(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t rbytes);
 
 		//--------------------------------------------
 		/// @brief adds an IoStat object to the multimap
@@ -169,7 +169,7 @@ class IoMap {
 		/// @param gid		ID of the corresponding group
 		/// @param rbytes	Number of bytes read
 		//--------------------------------------------
-		void AddWrite(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t wbytes);
+		void addWrite(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t wbytes);
 
 
 		//--------------------------------------------
@@ -289,7 +289,7 @@ class IoMap {
 			}
 		}
 		else{
-			if (config::IoMapDebug)
+			if (io::IoMapDebug)
 				printInfo(std::cerr, "No match found for data type");
 			return std::nullopt;
 		}
