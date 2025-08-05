@@ -90,3 +90,16 @@ namespace io {
 	constexpr bool IoMapDebug = false;
 	constexpr bool IoMarkDebug = false;
 }
+
+//--------------------------------------------
+/// Summary of a IoStat struct
+//--------------------------------------------
+struct IoStatSummary {
+    double avgRead;
+    double sigmaRead;
+    double avgWrite;
+    double sigmaWrite;
+
+	IoStatSummary() : avgRead(0.0), sigmaRead(0.0), 
+			avgWrite(0.0), sigmaWrite(0.0){}
+};

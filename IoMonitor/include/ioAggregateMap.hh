@@ -1,4 +1,4 @@
-//  File: ioAggregate.cc
+//  File: ioAggregateMap.hh
 //  Author: Ilkay Yanar - 42Lausanne / CERN
 //  ----------------------------------------------------------------------
 
@@ -20,50 +20,46 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.*
  *************************************************************************/
 
-#include "../include/ioAggregate.hh"
+#pragma once
 
-IoAggregate::IoAggregate(size_t numBins, size_t intervalSec) :
-	_numBins(numBins), _intervalSec(intervalSec), _currentIndex(0){
-}
+#include "ioAggregate.hh"
 
-IoAggregate::~IoAggregate(){}
+//--------------------------------------------
+/// The current name of the class when us
+/// printInfo function
+//--------------------------------------------
+#define IOAGGREGATEMap_NAME "IoAggregateMap"
 
-void IoAggregate::addSample(const std::string &app, const IoStatSummary &summary){
-	std::lock_guard<std::mutex> lock(_mutex);
+class AggregatedIoMap {
+	private:
+		void aggregationLoop();
+		size_t computeMaxIntervalSec() const;
 
-	if (_bins.empty()){
-		_bins.push_back(Bin(app, summary));
-	}
-	else if (_currentIndex < _bins.size()){
-		_bins.at(_currentIndex).appStats.insert({app, summary});
-	}
-}
+		IoMap _map;
+		std::unordered_map<size_t, std::unique_ptr<IoAggregate>> _aggregates;
 
-IoAggregate::IoAggregate(const IoAggregate &other){
-	std::lock_guard<std::mutex> lock(_mutex);
-	_numBins = other._numBins;
-	_intervalSec = other._intervalSec;
-	_currentIndex = other._currentIndex;
-	_bins = other._bins;
-}
+		std::thread _thread;
+		std::atomic<bool> _running;
 
-IoAggregate& IoAggregate::operator=(const IoAggregate &other){
-	std::lock_guard<std::mutex> lock(_mutex);
-	if (this != &other){
-		_numBins = other._numBins;
-		_intervalSec = other._intervalSec;
-		_currentIndex = other._currentIndex;
-		_bins = other._bins;
-	}
-	return *this;
-}
+		AggregatedIoMap();
+	public:
+		AggregatedIoMap(const AggregatedIoMap &other) = delete;
 
-std::optional<IoStatSummary> IoAggregate::getAggregated(const std::string &app, size_t seconds) const{
-	std::lock_guard<std::mutex> lock(_mutex);
-	std::optional<IoStatSummary> value;
+		AggregatedIoMap& operator=(const AggregatedIoMap &other) = delete;
 
-	for (auto &it : _bins)
-		if (it)
-}
+		~AggregatedIoMap();
 
-void shiftWindow();
+		AggregatedIoMap(const std::vector<size_t> &aggregationWindows);
+
+		void addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes);
+		void addWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes);
+
+		std::vector<size_t> getAvailableWindows() const;
+
+		template <typename T>
+		std::optional<IoStatSummary> getBandwidth(T index, size_t seconds){
+			(void)index;
+			(void)seconds;
+		}
+	
+};

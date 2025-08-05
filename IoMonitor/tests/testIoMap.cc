@@ -303,14 +303,14 @@ int testIoMapExactValue(){
 
 int testIoMapBigVolume(){
 	std::vector<std::optional<std::pair<double, double> > > data;
-	std::vector<IoMap*> maps;
+	std::vector<std::unique_ptr<IoMap> > maps;
 	size_t nbrOfMap = 10000;
 
 	IoMark begin;
 	for (size_t i = 0; i < nbrOfMap; i++)
-		maps.push_back(new IoMap());
+		maps.push_back(std::make_unique<IoMap>());
 	for (size_t i = 0; i < nbrOfMap; i++)
-		fillData(maps.at(i));
+		fillData(maps.at(i).get());
 
 	IoMark end;
 	long diff = TIME_TO_CLEAN * 2 + 1;
@@ -327,14 +327,9 @@ int testIoMapBigVolume(){
 		}
 	}
 	for (auto &it : data){
-		if (it.has_value()){
-			for (auto ite = maps.begin(); ite != maps.end(); ite++)
-				delete *ite;
+		if (it.has_value())
 			return -1;
-		}
 	}
 
-	for (auto it = maps.begin(); it != maps.end(); it++)
-		delete *it;
 	return 0;
 }

@@ -1,4 +1,4 @@
-//  File: ioAggregate.cc
+//  File: ioAggregateMap.cc
 //  Author: Ilkay Yanar - 42Lausanne / CERN
 //  ----------------------------------------------------------------------
 
@@ -20,50 +20,31 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.*
  *************************************************************************/
 
-#include "../include/ioAggregate.hh"
+#include "../include/ioAggregateMap.hh"
 
-IoAggregate::IoAggregate(size_t numBins, size_t intervalSec) :
-	_numBins(numBins), _intervalSec(intervalSec), _currentIndex(0){
+AggregatedIoMap::AggregatedIoMap(const std::vector<size_t> &aggregationWindows) : _running(true){
+	(void)aggregationWindows;
+	_thread = std::thread(&AggregatedIoMap::aggregationLoop, this);
 }
 
-IoAggregate::~IoAggregate(){}
+AggregatedIoMap::~AggregatedIoMap(){}
 
-void IoAggregate::addSample(const std::string &app, const IoStatSummary &summary){
-	std::lock_guard<std::mutex> lock(_mutex);
-
-	if (_bins.empty()){
-		_bins.push_back(Bin(app, summary));
-	}
-	else if (_currentIndex < _bins.size()){
-		_bins.at(_currentIndex).appStats.insert({app, summary});
-	}
+void addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes){
+	(void)inode;
+	(void)app;
+	(void)uid;
+	(void)gid;
+	(void)rbytes;
 }
 
-IoAggregate::IoAggregate(const IoAggregate &other){
-	std::lock_guard<std::mutex> lock(_mutex);
-	_numBins = other._numBins;
-	_intervalSec = other._intervalSec;
-	_currentIndex = other._currentIndex;
-	_bins = other._bins;
+void addWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes){
+	(void)inode;
+	(void)app;
+	(void)uid;
+	(void)gid;
+	(void)wbytes;
 }
 
-IoAggregate& IoAggregate::operator=(const IoAggregate &other){
-	std::lock_guard<std::mutex> lock(_mutex);
-	if (this != &other){
-		_numBins = other._numBins;
-		_intervalSec = other._intervalSec;
-		_currentIndex = other._currentIndex;
-		_bins = other._bins;
-	}
-	return *this;
+std::vector<size_t> AggregatedIoMap::getAvailableWindows() const{
+	return (std::vector<size_t>(_aggregates.begin(), _aggregates.end()));
 }
-
-std::optional<IoStatSummary> IoAggregate::getAggregated(const std::string &app, size_t seconds) const{
-	std::lock_guard<std::mutex> lock(_mutex);
-	std::optional<IoStatSummary> value;
-
-	for (auto &it : _bins)
-		if (it)
-}
-
-void shiftWindow();

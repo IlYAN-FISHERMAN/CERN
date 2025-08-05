@@ -220,10 +220,3 @@ public: enum class Marks : uint8_t{
 /// and standard deviation of the last 10 seconds
 //--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const IoStat &other);
-
-struct IoStatSummary {
-    double avg_read = 0.0;
-    double sigma_read = 0.0;
-    double avg_write = 0.0;
-    double sigma_write = 0.0;
-};
