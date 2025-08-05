@@ -28,9 +28,9 @@
 /// The current name of the class when us
 /// printInfo function
 //--------------------------------------------
-#define IOAGGREGATEMap_NAME "IoAggregateMap"
+#define IOAGGREGATEMAP_NAME "IoAggregateMap"
 
-class AggregatedIoMap {
+class IoAggregateMap {
 	private:
 		void aggregationLoop();
 		size_t computeMaxIntervalSec() const;
@@ -41,15 +41,16 @@ class AggregatedIoMap {
 		std::thread _thread;
 		std::atomic<bool> _running;
 
-		AggregatedIoMap();
+		IoAggregateMap() = delete;
+
 	public:
-		AggregatedIoMap(const AggregatedIoMap &other) = delete;
+		IoAggregateMap(const IoAggregateMap &other) = delete;
+		IoAggregateMap& operator=(const IoAggregateMap &other) = delete;
 
-		AggregatedIoMap& operator=(const AggregatedIoMap &other) = delete;
+		~IoAggregateMap();
 
-		~AggregatedIoMap();
-
-		AggregatedIoMap(const std::vector<size_t> &aggregationWindows);
+		IoAggregateMap(const std::vector<size_t> &aggregationWindows);
+		IoAggregateMap(const std::vector<size_t> &aggregationWindows, int);
 
 		void addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes);
 		void addWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes);
@@ -57,9 +58,8 @@ class AggregatedIoMap {
 		std::vector<size_t> getAvailableWindows() const;
 
 		template <typename T>
-		std::optional<IoStatSummary> getBandwidth(T index, size_t seconds){
-			(void)index;
-			(void)seconds;
+		std::optional<IoStatSummary> getBandwidth(T index, size_t seconds, IoStat::Marks enumMark){
+			return (_map.getBandwidth(index, enumMark, seconds));
 		}
 	
 };

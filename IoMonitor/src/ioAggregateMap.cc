@@ -22,12 +22,14 @@
 
 #include "../include/ioAggregateMap.hh"
 
-AggregatedIoMap::AggregatedIoMap(const std::vector<size_t> &aggregationWindows) : _running(true){
-	(void)aggregationWindows;
-	_thread = std::thread(&AggregatedIoMap::aggregationLoop, this);
+IoAggregateMap::IoAggregateMap(const std::vector<size_t> &aggregationWindows) : _running(true){
+	_thread = std::thread(&IoAggregateMap::aggregationLoop, this);
 }
 
-AggregatedIoMap::~AggregatedIoMap(){}
+IoAggregateMap::IoAggregateMap(const std::vector<size_t> &aggregationWindows, int) : _running(true){
+}
+
+IoAggregateMap::~IoAggregateMap(){}
 
 void addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes){
 	(void)inode;
@@ -45,6 +47,14 @@ void addWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size
 	(void)wbytes;
 }
 
-std::vector<size_t> AggregatedIoMap::getAvailableWindows() const{
+std::vector<size_t> IoAggregateMap::getAvailableWindows() const{
 	return (std::vector<size_t>(_aggregates.begin(), _aggregates.end()));
+}
+
+void IoAggregateMap::addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes){
+	_map.addRead(inode, app, uid, gid, rbytes);
+}
+
+void IoAggregateMap::addWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes){
+	_map.addWrite(inode, app, uid, gid, wbytes);
 }
