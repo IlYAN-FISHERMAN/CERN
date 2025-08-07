@@ -22,8 +22,11 @@
 
 #include "../include/ioAggregateMap.hh"
 
+#define TIME_TO_UPDATE 60
+
+
 IoAggregateMap::IoAggregateMap() : _running(true){
-	_thread = std::thread(&IoAggregateMap::aggregationLoop, this);
+	_thread = std::thread(&IoAggregateMap::updateAggregateLoop, this);
 }
 
 IoAggregateMap::IoAggregateMap(int) : _running(true){
@@ -36,8 +39,6 @@ std::vector<size_t> IoAggregateMap::getAvailableWindows() const{
 	return (std::vector<size_t>(_aggregates.begin()->first, _aggregates.end()->first));
 }
 
-void IoAggregateMap::aggregationLoop(){}
-
 void IoAggregateMap::addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes){
 	_map.addRead(inode, app, uid, gid, rbytes);
 }
@@ -46,6 +47,18 @@ void IoAggregateMap::addWrite(uint64_t inode, const std::string &app, uid_t uid,
 	_map.addWrite(inode, app, uid, gid, wbytes);
 }
 
+void IoAggregateMap::updateAggregateLoop(){
+	while (true){
+		std::this_thread::sleep_for(std::chrono::seconds(TIME_TO_UPDATE));
+		if (!_running)
+			break;
+		// Update IoAggregates
+	}
+}
+
+
+
+
 const IoMap& IoAggregateMap::getIoMap() const{return _map;}
 
 std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoAggregateMap::begin(){return _map.begin();}
@@ -53,6 +66,5 @@ std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoAggregat
 
 std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other){
 	os << other.getIoMap() << std::endl << std::endl;
-	os << other._aggregates
 	return os;
 }

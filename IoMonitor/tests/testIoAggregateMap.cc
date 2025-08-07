@@ -31,14 +31,12 @@ void fillData(IoAggregateMap &map){
 }
 
 int testIoAggregateMap(){
-	IoAggregateMap map(1);
-	size_t nbrOfMap = 3;
+	IoAggregateMap map;
 
-	IoMark begin;
-	for (size_t i = 0; i < nbrOfMap; i++)
-		fillData(map);
-
-	// std::this_thread::sleep_for(std::chrono::seconds(7));
-	std::cout << map << std::endl;
+	fillData(map);
+	while (true){
+	std::this_thread::sleep_for(std::chrono::seconds(4));
+		std::cout << map << std::endl;
+	}
 	return 0;
 }

@@ -24,6 +24,8 @@
 
 #include "ioAggregate.hh"
 
+#define TIME_TO_UPDATE 60
+
 //--------------------------------------------
 /// The current name of the class when us
 /// printInfo function
@@ -32,7 +34,7 @@
 
 class IoAggregateMap{
 	private:
-		void aggregationLoop();
+		void updateAggregateLoop();
 		size_t computeMaxIntervalSec() const;
 
 		IoMap _map;
@@ -40,7 +42,6 @@ class IoAggregateMap{
 
 		std::thread _thread;
 		std::atomic<bool> _running;
-
 
 	public:
 		IoAggregateMap();

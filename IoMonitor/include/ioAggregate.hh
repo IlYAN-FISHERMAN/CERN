@@ -75,7 +75,7 @@ class IoAggregate {
 		//--------------------------------------------
 		/// Main constructor
 		//--------------------------------------------
-		IoAggregate(size_t numBins, size_t intervalSec);
+		explicit IoAggregate(size_t winDuration, size_t intervalSec = 60);
 
 		void addSample(const std::string &app, const IoStatSummary &summary);
 
