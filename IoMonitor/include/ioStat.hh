@@ -220,3 +220,9 @@ public: enum class Marks : uint8_t{
 /// and standard deviation of the last 10 seconds
 //--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const IoStat &other);
+
+//--------------------------------------------
+/// @brief Overload operator << to print
+/// the entire multimap
+//--------------------------------------------
+std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> > &other);

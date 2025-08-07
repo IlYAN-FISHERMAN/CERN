@@ -64,4 +64,6 @@ class IoAggregateMap{
 
 		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator begin();
 		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator end();
+
+		friend std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other);
 };

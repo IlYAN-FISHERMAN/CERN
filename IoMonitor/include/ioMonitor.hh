@@ -43,6 +43,8 @@
 #include <string.h>
 #include <map>
 #include <unistd.h>
+#include <iomanip>
+#include <numeric>
 #include "color.hh"
 
 

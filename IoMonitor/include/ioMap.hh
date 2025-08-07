@@ -28,8 +28,6 @@
 #pragma once
 
 #include "ioStat.hh"
-#include <iomanip>
-#include <numeric>
 
 //--------------------------------------------
 /// The current name of the class when us
@@ -211,12 +209,6 @@ class IoMap {
 		/// the entire multimap from a IoMap object
 		//--------------------------------------------
 		friend std::ostream& operator<<(std::ostream &os, const IoMap &other);
-
-		//--------------------------------------------
-		/// @brief Overload operator << to print
-		/// the entire multimap
-		//--------------------------------------------
-		friend std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> > &other);
 
 		//--------------------------------------------
 		/// Template

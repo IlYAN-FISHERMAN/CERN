@@ -50,3 +50,9 @@ const IoMap& IoAggregateMap::getIoMap() const{return _map;}
 
 std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoAggregateMap::begin(){return _map.begin();}
 std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoAggregateMap::end(){return _map.end();}
+
+std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other){
+	os << other.getIoMap() << std::endl << std::endl;
+	os << other._aggregates
+	return os;
+}
