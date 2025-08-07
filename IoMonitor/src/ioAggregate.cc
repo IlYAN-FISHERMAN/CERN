@@ -22,8 +22,9 @@
 
 #include "../include/ioAggregate.hh"
 
-IoAggregate::IoAggregate(size_t numBins, size_t intervalSec) :
-	_numBins(numBins), _intervalSec(intervalSec), _currentIndex(0){
+IoAggregate::IoAggregate(size_t winDuration, size_t intervalSec){
+	if (intervalSec)
+	_numBins(winDuration);_intervalSec(intervalSec);_currentIndex(0);_bins(numBins);
 }
 
 IoAggregate::~IoAggregate(){}
@@ -32,7 +33,7 @@ void IoAggregate::addSample(const std::string &app, const IoStatSummary &summary
 	std::lock_guard<std::mutex> lock(_mutex);
 
 	if (_bins.empty()){
-		_bins.push_back(Bin(app, summary));
+		_bins.emplace_back(Bin(app, summary));
 	}
 	else if (_currentIndex < _bins.size()){
 		_bins.at(_currentIndex).appStats.insert({app, summary});
