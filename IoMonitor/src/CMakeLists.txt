@@ -1,4 +1,4 @@
-add_library(io_monitor STATIC ioStat.cc ioMap.cc ioAggregate.cc
-                              ioAggregateMap.cc)
+add_library(io_monitor STATIC IoStat.cc IoMap.cc IoAggregate.cc
+                              IoAggregateMap.cc)
 
 target_include_directories(io_monitor PUBLIC ${CMAKE_SOURCE_DIR}/include)

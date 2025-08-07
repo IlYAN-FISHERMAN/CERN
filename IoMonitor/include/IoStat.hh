@@ -1,4 +1,4 @@
-//  File: ioStat.hh
+//  File: IoStat.hh
 //  Author: Ilkay Yanar - 42Lausanne / CERN
 //  ----------------------------------------------------------------------
 
@@ -26,7 +26,7 @@
 //--------------------------------------------
 
 #pragma once
-#include "ioMonitor.hh"
+#include "IoMonitor.hh"
 
 //--------------------------------------------
 /// The current name of the class when us

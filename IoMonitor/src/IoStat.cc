@@ -1,4 +1,4 @@
-//  File: ioStat.cc
+//  File: IoStat.cc
 //  Author: Ilkay Yanar - 42Lausanne / CERN
 //  ----------------------------------------------------------------------
 
@@ -20,7 +20,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.*
  *************************************************************************/
 
-#include "../include/ioStat.hh"
+#include "../include/IoStat.hh"
 
 //--------------------------------------------
 /// Get the current time

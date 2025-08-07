@@ -1,4 +1,4 @@
-//  File: ioAggregateMap.hh
+//  File: IoAggregateMap.hh
 //  Author: Ilkay Yanar - 42Lausanne / CERN
 //  ----------------------------------------------------------------------
 
@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "ioAggregate.hh"
+#include "IoAggregate.hh"
 
 #define TIME_TO_UPDATE 60
 
@@ -35,13 +35,13 @@
 class IoAggregateMap{
 	private:
 		void updateAggregateLoop();
-		size_t computeMaxIntervalSec() const;
 
 		IoMap _map;
 		std::unordered_map<size_t, std::unique_ptr<IoAggregate>> _aggregates;
 
 		std::thread _thread;
 		std::atomic<bool> _running;
+		mutable std::mutex _mutex;
 
 	public:
 		IoAggregateMap();

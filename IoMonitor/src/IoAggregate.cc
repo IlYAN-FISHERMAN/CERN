@@ -1,4 +1,4 @@
-//  File: ioAggregate.cc
+//  File: IoAggregate.cc
 //  Author: Ilkay Yanar - 42Lausanne / CERN
 //  ----------------------------------------------------------------------
 
@@ -20,11 +20,21 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.*
  *************************************************************************/
 
-#include "../include/ioAggregate.hh"
+#include "../include/IoAggregate.hh"
 
-IoAggregate::IoAggregate(size_t winDuration, size_t intervalSec){
-	if (intervalSec)
-	_numBins(winDuration);_intervalSec(intervalSec);_currentIndex(0);_bins(numBins);
+IoAggregate::IoAggregate(size_t winTime, size_t intervalSec, size_t nbrBins) : _currentIndex(0){
+	if (intervalSec == 0)
+		intervalSec = 1;
+	else if (intervalSec > winTime)
+		intervalSec = winTime;
+	if (winTime < 60)
+		winTime = 60;
+	if (winTime % intervalSec != 0)
+		winTime -= winTime % intervalSec;
+	_winTime = winTime;
+	_intervalSec = intervalSec;
+	nbrBins == 0 ? _nbrBins = 1 : _nbrBins = nbrBins;
+	_bins.resize(nbrBins);
 }
 
 IoAggregate::~IoAggregate(){}
@@ -32,17 +42,22 @@ IoAggregate::~IoAggregate(){}
 void IoAggregate::addSample(const std::string &app, const IoStatSummary &summary){
 	std::lock_guard<std::mutex> lock(_mutex);
 
-	if (_bins.empty()){
-		_bins.emplace_back(Bin(app, summary));
-	}
-	else if (_currentIndex < _bins.size()){
-		_bins.at(_currentIndex).appStats.insert({app, summary});
+	if (_currentIndex < _bins.size()){
+		if (_bins.at(_currentIndex).appStats.size() == _winTime / _intervalSec){
+			_currentIndex++;
+			if (_currentIndex > _nbrBins){
+				_currentIndex = 0;
+				_bins.at(_currentIndex).appStats.clear();
+			}
+		}
+		_bins.at(_currentIndex).appStats.emplace(app, summary);
 	}
 }
 
 IoAggregate::IoAggregate(const IoAggregate &other){
 	std::lock_guard<std::mutex> lock(_mutex);
-	_numBins = other._numBins;
+	std::lock_guard<std::mutex> otherLock(other._mutex);
+	_nbrBins = other._nbrBins;
 	_intervalSec = other._intervalSec;
 	_currentIndex = other._currentIndex;
 	_bins = other._bins;
@@ -50,8 +65,9 @@ IoAggregate::IoAggregate(const IoAggregate &other){
 
 IoAggregate& IoAggregate::operator=(const IoAggregate &other){
 	std::lock_guard<std::mutex> lock(_mutex);
+	std::lock_guard<std::mutex> otherLock(other._mutex);
 	if (this != &other){
-		_numBins = other._numBins;
+		_nbrBins = other._nbrBins;
 		_intervalSec = other._intervalSec;
 		_currentIndex = other._currentIndex;
 		_bins = other._bins;
@@ -59,16 +75,13 @@ IoAggregate& IoAggregate::operator=(const IoAggregate &other){
 	return *this;
 }
 
-std::optional<IoStatSummary> IoAggregate::getAggregated(const std::string &app, size_t seconds) const{
+std::unordered_map<std::string, IoStatSummary> IoAggregate::getCurrentMapAggregated() const{ return (_bins.at(_currentIndex).appStats);}
+
+std::optional<IoStatSummary> IoAggregate::getAggregated() const{
 	std::lock_guard<std::mutex> lock(_mutex);
-	std::optional<IoStatSummary> value;
 
-	// for (auto &it : _bins)
-	// 	if (it)
-	(void)app;
-	(void)seconds;
-	return value;
+	IoStatSummary summary;
+	if (_bins.at(_currentIndex).appStats.size() == 0)
+		return std::nullopt;
+
 }
-
-void IoAggregate::shiftWindow(){}
-

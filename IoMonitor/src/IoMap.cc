@@ -1,4 +1,4 @@
-//  File: testIoMap.cc
+//  File: IoMap.cc
 //  Author: Ilkay Yanar - 42Lausanne /CERN
 //  ----------------------------------------------------------------------
 
@@ -20,7 +20,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.*
  *************************************************************************/
 
-#include "../include/ioMap.hh"
+#include "../include/IoMap.hh"
 
 std::mutex IoMap::_osMutex;
 

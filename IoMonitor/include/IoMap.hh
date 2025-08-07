@@ -1,4 +1,4 @@
-//  File: ioMap.hh
+//  File: IoMap.hh
 //  Author: Ilkay Yanar - 42Lausanne / CERN
 //  ----------------------------------------------------------------------
 
@@ -27,7 +27,7 @@
 
 #pragma once
 
-#include "ioStat.hh"
+#include "IoStat.hh"
 
 //--------------------------------------------
 /// The current name of the class when us

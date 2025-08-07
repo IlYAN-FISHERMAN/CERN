@@ -1,4 +1,4 @@
-//  File: ioMonitor.hh
+//  File: IoMonitor.hh
 //  Author: Ilkay Yanar - 42Lausanne / CERN
 //  ----------------------------------------------------------------------
 
@@ -102,6 +102,10 @@ struct IoStatSummary {
     double avgWrite;
     double sigmaWrite;
 
+	size_t rElem;
+	size_t wElem;
+
 	IoStatSummary() : avgRead(0.0), sigmaRead(0.0), 
-			avgWrite(0.0), sigmaWrite(0.0){}
+			avgWrite(0.0), sigmaWrite(0.0), rElem(0),
+			wElem(0){}
 };

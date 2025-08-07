@@ -1,4 +1,4 @@
-//  File: ioAggregateMap.cc
+//  File: IoAggregateMap.cc
 //  Author: Ilkay Yanar - 42Lausanne / CERN
 //  ----------------------------------------------------------------------
 
@@ -20,7 +20,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.*
  *************************************************************************/
 
-#include "../include/ioAggregateMap.hh"
+#include "../include/IoAggregateMap.hh"
 
 #define TIME_TO_UPDATE 60
 
@@ -33,7 +33,10 @@ IoAggregateMap::IoAggregateMap(int) : _running(true){
 	// _thread = std::thread(&IoAggregateMap::aggregationLoop, this);
 }
 
-IoAggregateMap::~IoAggregateMap(){}
+IoAggregateMap::~IoAggregateMap(){
+	std::lock_guard<std::mutex> lock(_mutex);
+	_running = false;
+}
 
 std::vector<size_t> IoAggregateMap::getAvailableWindows() const{
 	return (std::vector<size_t>(_aggregates.begin()->first, _aggregates.end()->first));
@@ -48,11 +51,12 @@ void IoAggregateMap::addWrite(uint64_t inode, const std::string &app, uid_t uid,
 }
 
 void IoAggregateMap::updateAggregateLoop(){
-	while (true){
-		std::this_thread::sleep_for(std::chrono::seconds(TIME_TO_UPDATE));
+	auto next_tick = std::chrono::steady_clock::now() + std::chrono::seconds(5);
+	while (_running){
+		std::this_thread::sleep_until(next_tick);
 		if (!_running)
 			break;
-		// Update IoAggregates
+		next_tick += std::chrono::seconds(5);
 	}
 }
 

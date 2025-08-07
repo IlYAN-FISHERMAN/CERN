@@ -1,4 +1,4 @@
-//  File: ioAggregate.hh
+//  File: IoAggregate.hh
 //  Author: Ilkay Yanar - 42Lausanne / CERN
 //  ----------------------------------------------------------------------
 
@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "ioMap.hh"
+#include "IoMap.hh"
 
 //--------------------------------------------
 /// The current name of the class when us
@@ -34,14 +34,11 @@ class IoAggregate {
 	private:
 		struct Bin {
 			std::unordered_map<std::string, IoStatSummary> appStats;
-
-			explicit Bin(const std::string &app, const IoStatSummary &summary){
-				appStats.insert({app, summary});
-			}
 		};
 
-		size_t _numBins;
+		size_t _nbrBins;
 		size_t _intervalSec;
+		size_t _winTime;
 		size_t _currentIndex;
 
 		std::vector<Bin> _bins;
@@ -75,11 +72,10 @@ class IoAggregate {
 		//--------------------------------------------
 		/// Main constructor
 		//--------------------------------------------
-		explicit IoAggregate(size_t winDuration, size_t intervalSec = 60);
+		explicit IoAggregate(size_t winTime, size_t intervalSec, size_t nbrBins);
 
 		void addSample(const std::string &app, const IoStatSummary &summary);
 
-		std::optional<IoStatSummary> getAggregated(const std::string &app, size_t seconds) const;
-
-		void shiftWindow();
+		std::unordered_map<std::string, IoStatSummary> getCurrentMapAggregated() const;
+		std::optional<IoStatSummary> getAggregated() const;
 };
