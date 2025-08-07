@@ -41,7 +41,7 @@
 /// the time the cleanloop function must wait
 /// before cleaning the map
 //--------------------------------------------
-#define TIME_TO_CLEAN 2
+#define TIME_TO_CLEAN 3
 
 class IoMap {
 	private:
@@ -315,4 +315,7 @@ class IoMap {
 
 		return weighted;
 	}
+	
+		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator begin();
+		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator end();
 };

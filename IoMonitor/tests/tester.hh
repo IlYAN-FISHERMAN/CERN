@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <gtest/gtest.h>
 #include <iostream>
-#include "../include/ioAggregate.hh"
+#include "../include/ioAggregateMap.hh"
 
 int testIoStatFillData();
 int testIoStatCleaning();
@@ -13,4 +13,7 @@ int testIoMapSpecificCase();
 int testIoMapExactValue();
 int testIoMapData();
 
-int testIoAggregateData();
+int testIoAggregateMap();
+
+
+void fillData(IoMap *map);

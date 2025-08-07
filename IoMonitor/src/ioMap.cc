@@ -249,3 +249,6 @@ std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_
 	}
 	return os;
 }
+
+std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoMap::begin(){return _filesMap.begin();}
+std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoMap::end(){return _filesMap.end();}

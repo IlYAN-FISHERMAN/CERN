@@ -30,7 +30,7 @@
 //--------------------------------------------
 #define IOAGGREGATEMAP_NAME "IoAggregateMap"
 
-class IoAggregateMap {
+class IoAggregateMap{
 	private:
 		void aggregationLoop();
 		size_t computeMaxIntervalSec() const;
@@ -41,16 +41,15 @@ class IoAggregateMap {
 		std::thread _thread;
 		std::atomic<bool> _running;
 
-		IoAggregateMap() = delete;
 
 	public:
+		IoAggregateMap();
+		IoAggregateMap(int);
+
 		IoAggregateMap(const IoAggregateMap &other) = delete;
 		IoAggregateMap& operator=(const IoAggregateMap &other) = delete;
 
 		~IoAggregateMap();
-
-		IoAggregateMap(const std::vector<size_t> &aggregationWindows);
-		IoAggregateMap(const std::vector<size_t> &aggregationWindows, int);
 
 		void addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes);
 		void addWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes);
@@ -61,5 +60,8 @@ class IoAggregateMap {
 		std::optional<IoStatSummary> getBandwidth(T index, size_t seconds, IoStat::Marks enumMark){
 			return (_map.getBandwidth(index, enumMark, seconds));
 		}
-	
+		const IoMap& getIoMap() const;
+
+		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator begin();
+		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator end();
 };

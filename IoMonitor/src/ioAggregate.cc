@@ -62,8 +62,12 @@ std::optional<IoStatSummary> IoAggregate::getAggregated(const std::string &app, 
 	std::lock_guard<std::mutex> lock(_mutex);
 	std::optional<IoStatSummary> value;
 
-	for (auto &it : _bins)
-		if (it)
+	// for (auto &it : _bins)
+	// 	if (it)
+	(void)app;
+	(void)seconds;
+	return value;
 }
 
-void shiftWindow();
+void IoAggregate::shiftWindow(){}
+

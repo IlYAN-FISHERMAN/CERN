@@ -22,34 +22,21 @@
 
 #include "../include/ioAggregateMap.hh"
 
-IoAggregateMap::IoAggregateMap(const std::vector<size_t> &aggregationWindows) : _running(true){
+IoAggregateMap::IoAggregateMap() : _running(true){
 	_thread = std::thread(&IoAggregateMap::aggregationLoop, this);
 }
 
-IoAggregateMap::IoAggregateMap(const std::vector<size_t> &aggregationWindows, int) : _running(true){
+IoAggregateMap::IoAggregateMap(int) : _running(true){
+	// _thread = std::thread(&IoAggregateMap::aggregationLoop, this);
 }
 
 IoAggregateMap::~IoAggregateMap(){}
 
-void addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes){
-	(void)inode;
-	(void)app;
-	(void)uid;
-	(void)gid;
-	(void)rbytes;
-}
-
-void addWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes){
-	(void)inode;
-	(void)app;
-	(void)uid;
-	(void)gid;
-	(void)wbytes;
-}
-
 std::vector<size_t> IoAggregateMap::getAvailableWindows() const{
-	return (std::vector<size_t>(_aggregates.begin(), _aggregates.end()));
+	return (std::vector<size_t>(_aggregates.begin()->first, _aggregates.end()->first));
 }
+
+void IoAggregateMap::aggregationLoop(){}
 
 void IoAggregateMap::addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes){
 	_map.addRead(inode, app, uid, gid, rbytes);
@@ -58,3 +45,8 @@ void IoAggregateMap::addRead(uint64_t inode, const std::string &app, uid_t uid, 
 void IoAggregateMap::addWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes){
 	_map.addWrite(inode, app, uid, gid, wbytes);
 }
+
+const IoMap& IoAggregateMap::getIoMap() const{return _map;}
+
+std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoAggregateMap::begin(){return _map.begin();}
+std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoAggregateMap::end(){return _map.end();}
