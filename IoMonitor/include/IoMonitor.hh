@@ -103,5 +103,8 @@ struct IoStatSummary {
 	size_t rSize;
 	size_t wSize;
 
-	IoStatSummary() : rSize(0), wSize(0){}
+	IoStatSummary() :
+		readBandwidth(std::pair<double, double>(0,0)),
+		writeBandwidth(std::pair<double, double>(0, 0)),
+		rSize(0), wSize(0){}
 };

@@ -334,6 +334,29 @@ int testIoMapBigVolume(){
 	return 0;
 }
 
+std::ostream& operator<<(std::ostream &os, const std::optional<IoStatSummary> &opt){
+	if (!opt.has_value()){
+		os << "empty" << std::endl;
+		return os;
+	}
+	IoStatSummary other = opt.value();
+	os << "[READ]: ";
+	if (other.readBandwidth.has_value())
+		os << "average: " << other.readBandwidth->first
+			<< " standard deviation: " << other.readBandwidth->second
+			<< " size: " << other.rSize << std::endl;
+	else
+		os << "empty" << std::endl;
+	os << "[WRITE]: ";
+	if (other.writeBandwidth.has_value())
+		os << "average: " << other.writeBandwidth->first
+			<< " standard deviation: " << other.writeBandwidth->second
+			<< " size: " << other.wSize << std::endl;
+	else
+		os << "empty" << std::endl;
+	return os;
+}
+
 int testIoMapSummary(){
 	IoMap map;
 	std::pair<double, double> p1;
@@ -392,6 +415,7 @@ int testIoMapSummary(){
 	wDeviation += 2 * std::pow(p3.second, 2);
 	wDeviation = std::sqrt(wDeviation / 6);
 
+	// std::cout << map.getSummary("cernbox") << std::endl;
 	std::optional<std::pair<double, double> > read = map.getBandwidth("cernbox", IoStat::Marks::READ);
 	std::optional<std::pair<double, double> > write = map.getBandwidth("cernbox", IoStat::Marks::READ);
 	if (read.has_value() && write.has_value()){
@@ -403,6 +427,7 @@ int testIoMapSummary(){
 		return -1;
 
 	std::optional<IoStatSummary> summary = map.getSummary("cernbox");
+	// std::cout << summary << std::endl;
 	if (summary.has_value()){
 		if (!summary->readBandwidth.has_value() || !summary->writeBandwidth.has_value())
 			return -1;
@@ -413,6 +438,6 @@ int testIoMapSummary(){
 			|| summary->writeBandwidth->first != write->first || summary->writeBandwidth->second != write->second)
 			return -1;
 	}
-	std::cout << "Read size: "<< summary->rSize << "\nWrite size: " << summary->wSize << std::endl;
 	return 0;
 }
+

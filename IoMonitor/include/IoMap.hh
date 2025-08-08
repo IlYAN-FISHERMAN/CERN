@@ -238,188 +238,184 @@ class IoMap {
 		//--------------------------------------------
 		template <typename T>
 		std::optional<std::pair<double, double> > getBandwidth(const T index, IoStat::Marks enumMark, size_t seconds = 10){
-		
-		std::lock_guard<std::mutex> lock(_mutex);
-		if (enumMark != IoStat::Marks::READ && enumMark != IoStat::Marks::WRITE)
-			return std::nullopt;
-		else if (seconds == 0)
-			return (std::pair<double, double>(0, 0));
 
-		std::map<std::pair<double, double>, size_t> indexData;
-		std::pair<double, double> weighted = {0, 0};
-		std::pair<double, double> tmp = {0, 0};
-		size_t size = 0;
+			std::lock_guard<std::mutex> lock(_mutex);
+			if (enumMark != IoStat::Marks::READ && enumMark != IoStat::Marks::WRITE)
+				return std::nullopt;
+			else if (seconds == 0)
+				return (std::pair<double, double>(0, 0));
 
-		/// Check the type of the index variable
-		/// and after 
-		if constexpr (std::is_same_v<T, std::string> || std::is_same_v<T, const char *>){
-			for (auto it : _filesMap){
-				if (it.second->getApp() == index){
-					tmp = it.second->bandWidth(enumMark, &size, seconds);
-					indexData.insert({tmp, size});
-					size = 0;
-					tmp = {0, 0};
+			std::map<std::pair<double, double>, size_t> indexData;
+			std::pair<double, double> weighted = {0, 0};
+			std::pair<double, double> tmp = {0, 0};
+			size_t size = 0;
+
+			/// Check the type of the index variable
+			/// and after 
+			if constexpr (std::is_same_v<T, std::string> || std::is_same_v<T, const char *>){
+				for (auto it : _filesMap){
+					if (it.second->getApp() == index){
+						tmp = it.second->bandWidth(enumMark, &size, seconds);
+						indexData.insert({tmp, size});
+						size = 0;
+						tmp = {0, 0};
+					}
+				}
+			} else if constexpr (std::is_same_v<T, uid_t>){
+				for (auto it : _filesMap){
+					if (it.second->getUid() == index){
+						tmp = it.second->bandWidth(enumMark, &size, seconds);
+						indexData.insert({tmp, size});
+						size = 0;
+						tmp = {0, 0};
+					}
+				}
+			} else if constexpr (std::is_same_v<T, gid_t>){
+				for (auto it : _filesMap){
+					if (it.second->getGid() == index){
+						tmp = it.second->bandWidth(enumMark, &size, seconds);
+						indexData.insert({tmp, size});
+						size = 0;
+						tmp = {0, 0};
+					}
 				}
 			}
-		} else if constexpr (std::is_same_v<T, uid_t>){
-			for (auto it : _filesMap){
-				if (it.second->getUid() == index){
-					tmp = it.second->bandWidth(enumMark, &size, seconds);
-					indexData.insert({tmp, size});
-					size = 0;
-					tmp = {0, 0};
+			else{
+				if (io::IoMapDebug)
+					printInfo(std::cerr, "No match found for data type");
+				return std::nullopt;
+			}
+			if (indexData.size() <= 0)
+				return std::nullopt;
+
+			/// Calcule weighted average/standard deviation
+			size_t divisor = 0;
+			size_t stdDivisor = 0;
+			for (const auto &it : indexData){
+				weighted.first += (it.first.first * it.second);
+				divisor += it.second;
+				if (it.second > 1){
+					stdDivisor += it.second - 1;
+					weighted.second += (it.second - 1) * (std::pow(it.first.second, 2));
 				}
 			}
-		} else if constexpr (std::is_same_v<T, gid_t>){
-			for (auto it : _filesMap){
-				if (it.second->getGid() == index){
-					tmp = it.second->bandWidth(enumMark, &size, seconds);
-					indexData.insert({tmp, size});
-					size = 0;
-					tmp = {0, 0};
+			if (divisor > 0)
+				weighted.first /= divisor;
+			if (stdDivisor > 0)
+				weighted.second = std::sqrt(weighted.second / stdDivisor);
+
+			return weighted;
+		}
+
+		template <typename T>
+		std::optional<IoStatSummary> getSummary(const T index, size_t seconds = 10){
+			std::lock_guard<std::mutex> lock(_mutex);
+
+			std::map<std::pair<double, double>, size_t> readData;
+			std::map<std::pair<double, double>, size_t> writeData;
+			std::pair<double, double> read = {0, 0};
+			std::pair<double, double> write = {0, 0};
+			size_t size = 0;
+			IoStatSummary summary;
+
+			if constexpr (std::is_same_v<T, std::string> || std::is_same_v<T, const char *>){
+				for (auto it : _filesMap){
+					if (it.second->getApp() == index){
+						read = it.second->bandWidth(IoStat::Marks::READ, &size, seconds);
+						summary.rSize += size;
+						readData.insert({read, size});
+						size = 0;
+						read = {0, 0};
+
+						write = it.second->bandWidth(IoStat::Marks::WRITE, &size, seconds);
+						summary.wSize += size;
+						writeData.insert({write, size});
+						size = 0;
+						write = {0, 0};
+					}
+				}
+			} else if constexpr (std::is_same_v<T, uid_t>){
+				for (auto it : _filesMap){
+					if (it.second->getUid() == index){
+						read = it.second->bandWidth(IoStat::Marks::READ, &size, seconds);
+						summary.rSize += size;
+						readData.insert({read, size});
+						size = 0;
+						read = {0, 0};
+
+						write = it.second->bandWidth(IoStat::Marks::WRITE, &size, seconds);
+						summary.wSize += size;
+						writeData.insert({write, size});
+						size = 0;
+						write = {0, 0};
+					}
+				}
+			} else if constexpr (std::is_same_v<T, gid_t>){
+				for (auto it : _filesMap){
+					if (it.second->getGid() == index){
+						read = it.second->bandWidth(IoStat::Marks::READ, &size, seconds);
+						summary.rSize += size;
+						readData.insert({read, size});
+						size = 0;
+						read = {0, 0};
+
+						write = it.second->bandWidth(IoStat::Marks::WRITE, &size, seconds);
+						summary.wSize += size;
+						writeData.insert({write, size});
+						size = 0;
+						write = {0, 0};
+					}
 				}
 			}
-		}
-		else{
-			if (io::IoMapDebug)
-				printInfo(std::cerr, "No match found for data type");
-			return std::nullopt;
-		}
-		if (indexData.size() <= 0)
-			return std::nullopt;
-
-		/// Calcule weighted average/standard deviation
-		size_t divisor = 0;
-		size_t stdDivisor = 0;
-		if (io::IoMapDebug)
-			std::cout << std::fixed;
-		for (const auto &it : indexData){
-			weighted.first += (it.first.first * it.second);
-			divisor += it.second;
-			if (it.second > 1){
-				stdDivisor += it.second - 1;
-				weighted.second += (it.second - 1) * (std::pow(it.first.second, 2));
+			else{
+				if (io::IoMapDebug)
+					printInfo(std::cerr, "No match found for data type");
+				return std::nullopt;
 			}
-		}
-		if (divisor > 0)
-			weighted.first /= divisor;
-		if (stdDivisor > 0)
-			weighted.second = std::sqrt(weighted.second / stdDivisor);
 
-		return weighted;
-	}
+			if (writeData.size() <= 0 && readData.size() <= 0)
+				return std::nullopt;
+			if (writeData.size() <= 0)
+				summary.writeBandwidth = std::nullopt;
+			if (readData.size() <= 0)
+				summary.readBandwidth = std::nullopt;
 
-	template <typename T>
-	std::optional<IoStatSummary> getSummary(const T index, size_t seconds = 10){
-		std::lock_guard<std::mutex> lock(_mutex);
-
-		std::map<std::pair<double, double>, size_t> readData;
-		std::map<std::pair<double, double>, size_t> writeData;
-		std::pair<double, double> read = {0, 0};
-		std::pair<double, double> write = {0, 0};
-		size_t size = 0;
-		IoStatSummary summary;
-
-		if constexpr (std::is_same_v<T, std::string> || std::is_same_v<T, const char *>){
-			for (auto it : _filesMap){
-				if (it.second->getApp() == index){
-					read = it.second->bandWidth(IoStat::Marks::READ, &size, seconds);
-					summary.rSize += size;
-					readData.insert({read, size});
-					size = 0;
-					read = {0, 0};
-
-					write = it.second->bandWidth(IoStat::Marks::WRITE, &size, seconds);
-					summary.wSize += size;
-					writeData.insert({write, size});
-					size = 0;
-					write = {0, 0};
+			size_t divisor = 0;
+			size_t stdDivisor = 0;
+			/// Calcule read weighted average/standard deviation
+			if (summary.readBandwidth.has_value()){
+				for (const auto &it : readData){
+					summary.readBandwidth->first += (it.first.first * it.second);
+					divisor += it.second;
+					if (it.second > 1){
+						stdDivisor += it.second - 1;
+						summary.readBandwidth->second += (it.second - 1) * (std::pow(it.first.second, 2));
+					}
 				}
+				if (divisor > 0)
+					summary.readBandwidth->first /= divisor;
+				if (stdDivisor > 0)
+					summary.readBandwidth->second = std::sqrt(summary.readBandwidth->second / stdDivisor);
 			}
-		} else if constexpr (std::is_same_v<T, uid_t>){
-			for (auto it : _filesMap){
-				if (it.second->getUid() == index){
-					read = it.second->bandWidth(IoStat::Marks::READ, &size, seconds);
-					summary.rSize += size;
-					readData.insert({read, size});
-					size = 0;
-					read = {0, 0};
-
-					write = it.second->bandWidth(IoStat::Marks::WRITE, &size, seconds);
-					summary.wSize += size;
-					writeData.insert({write, size});
-					size = 0;
-					write = {0, 0};
+			/// Calcule write weighted average/standard deviation
+			if (summary.writeBandwidth.has_value()){
+				divisor = 0;
+				stdDivisor = 0;
+				for (const auto &it : writeData){
+					summary.writeBandwidth->first += (it.first.first * it.second);
+					divisor += it.second;
+					if (it.second > 1){
+						stdDivisor += it.second - 1;
+						summary.writeBandwidth->second += (it.second - 1) * (std::pow(it.first.second, 2));
+					}
 				}
+				if (divisor > 0)
+					summary.writeBandwidth->first /= divisor;
+				if (stdDivisor > 0)
+					summary.writeBandwidth->second = std::sqrt(summary.writeBandwidth->second / stdDivisor);
 			}
-		} else if constexpr (std::is_same_v<T, gid_t>){
-			for (auto it : _filesMap){
-				if (it.second->getGid() == index){
-					read = it.second->bandWidth(IoStat::Marks::READ, &size, seconds);
-					summary.rSize += size;
-					readData.insert({read, size});
-					size = 0;
-					read = {0, 0};
-
-					write = it.second->bandWidth(IoStat::Marks::WRITE, &size, seconds);
-					summary.wSize += size;
-					writeData.insert({write, size});
-					size = 0;
-					write = {0, 0};
-				}
-			}
+			return summary;
 		}
-		else{
-			if (io::IoMapDebug)
-				printInfo(std::cerr, "No match found for data type");
-			return std::nullopt;
-		}
-
-		if (writeData.size() <= 0 && readData.size() <= 0)
-			return std::nullopt;
-		if (writeData.size() <= 0)
-			summary.writeBandwidth = std::nullopt;
-		if (readData.size() <= 0)
-			summary.readBandwidth = std::nullopt;
-
-		/// Calcule read weighted average/standard deviation
-		size_t divisor = 0;
-		size_t stdDivisor = 0;
-		if (io::IoMapDebug)
-			std::cout << std::fixed;
-		for (const auto &it : readData){
-			summary.readBandwidth->first += (it.first.first * it.second);
-			divisor += it.second;
-			if (it.second > 1){
-				stdDivisor += it.second - 1;
-				summary.readBandwidth->second += (it.second - 1) * (std::pow(it.first.second, 2));
-			}
-		}
-		if (divisor > 0)
-			summary.readBandwidth->first /= divisor;
-		if (stdDivisor > 0)
-			summary.readBandwidth->second = std::sqrt(summary.readBandwidth->second / stdDivisor);
-
-		/// Calcule write weighted average/standard deviation
-		divisor = 0;
-		stdDivisor = 0;
-		if (io::IoMapDebug)
-			std::cout << std::fixed;
-		for (const auto &it : writeData){
-			summary.writeBandwidth->first += (it.first.first * it.second);
-			divisor += it.second;
-			if (it.second > 1){
-				stdDivisor += it.second - 1;
-				summary.writeBandwidth->second += (it.second - 1) * (std::pow(it.first.second, 2));
-			}
-		}
-		if (divisor > 0)
-			summary.writeBandwidth->first /= divisor;
-		if (stdDivisor > 0)
-			summary.writeBandwidth->second = std::sqrt(summary.writeBandwidth->second / stdDivisor);
-
-		return summary;
-	}
 	
 		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator begin();
 		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator end();

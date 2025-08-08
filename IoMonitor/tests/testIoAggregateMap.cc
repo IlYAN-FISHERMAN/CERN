@@ -34,9 +34,25 @@ int testIoAggregateMap(){
 	IoAggregateMap map;
 
 	fillData(map);
+	map.addWindow(60, 10, 10);
+	map.addWindow(120, 10, 10);
+
+	if (map.containe(60)){
+		map.setTrack(60, "eos");
+		map.setTrack(60, static_cast<uid_t>(42));
+		map.setTrack(60, static_cast<gid_t>(2));
+	}
+
+	if (map.containe(120)){
+		map.setTrack(120, "eos");
+		map.setTrack(120, static_cast<uid_t>(42));
+		map.setTrack(120, static_cast<gid_t>(2));
+	}
+
 	while (true){
-	std::this_thread::sleep_for(std::chrono::seconds(4));
+	std::this_thread::sleep_for(std::chrono::seconds(5));
 		std::cout << map << std::endl;
 	}
+	std::cout << "hello\n";
 	return 0;
 }

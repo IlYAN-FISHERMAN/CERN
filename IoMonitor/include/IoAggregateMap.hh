@@ -24,7 +24,7 @@
 
 #include "IoAggregate.hh"
 
-#define TIME_TO_UPDATE 60
+#define TIME_TO_UPDATE 1
 
 //--------------------------------------------
 /// The current name of the class when us
@@ -37,11 +37,18 @@ class IoAggregateMap{
 		void updateAggregateLoop();
 
 		IoMap _map;
-		std::unordered_map<size_t, std::unique_ptr<IoAggregateBase> > _aggregates;
+		std::unordered_map<size_t, std::unique_ptr<IoAggregate> > _aggregates;
 
 		std::thread _thread;
 		std::atomic<bool> _running;
 		mutable std::mutex _mutex;
+
+		template<typename T>
+		std::optional<IoStatSummary> getSummary(const T index, size_t seconds = 10){
+			std::lock_guard<std::mutex> lock(_mutex);
+			return (_map.getSummary(index, seconds));
+		}
+
 
 	public:
 		IoAggregateMap();
@@ -57,17 +64,22 @@ class IoAggregateMap{
 
 		std::vector<size_t> getAvailableWindows() const;
 
-		template<typename T>
-		std::optional<IoStatSummary> getBandwidth(T index, size_t seconds, IoStat::Marks enumMark){
-			return (_map.getBandwidth(index, enumMark, seconds));
-		}
-
-		void addAggregation();
+		void addWindow(size_t winTime, size_t intervalsec, size_t nbrBins);
 
 		const IoMap& getIoMap() const;
 
-		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator begin() const;
-		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator end() const;
+		template <typename T>
+		int setTrack(size_t winTime, const T index){
+			if (_aggregates.find(winTime) == _aggregates.end())
+				return -1;
+			_aggregates[winTime]->setTrack(index);
+			return 0;
+		}
+
+		bool containe(size_t winTime) const;
+
+		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator begin();
+		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator end();
 
 		friend std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other);
 };

@@ -22,9 +22,6 @@
 
 #include "../include/IoAggregateMap.hh"
 
-#define TIME_TO_UPDATE 60
-
-
 IoAggregateMap::IoAggregateMap() : _running(true){
 	_thread = std::thread(&IoAggregateMap::updateAggregateLoop, this);
 }
@@ -51,17 +48,24 @@ void IoAggregateMap::addWrite(uint64_t inode, const std::string &app, uid_t uid,
 }
 
 void IoAggregateMap::updateAggregateLoop(){
-	auto next_tick = std::chrono::steady_clock::now() + std::chrono::seconds(5);
+	auto next_tick = std::chrono::steady_clock::now() + std::chrono::seconds(TIME_TO_UPDATE);
 	while (_running){
 		std::this_thread::sleep_until(next_tick);
 		if (!_running)
 			break;
-		next_tick += std::chrono::seconds(5);
+		// for (auto &it: _aggregates){
+		// 	it.second.
+		// }
+		next_tick += std::chrono::seconds(TIME_TO_UPDATE);
 	}
 }
 
+void IoAggregateMap::addWindow(size_t winTime, size_t intervalsec, size_t nbrBins){
+	std::lock_guard<std::mutex> lock(_mutex);
+	_aggregates[winTime] = std::make_unique<IoAggregate>(winTime, intervalsec, nbrBins);
+}
 
-
+bool IoAggregateMap::containe(size_t winTime) const {return (_aggregates.find(winTime) != _aggregates.end());}
 
 const IoMap& IoAggregateMap::getIoMap() const{return _map;}
 

@@ -23,29 +23,19 @@
 #pragma once
 
 #include "IoMap.hh"
-
+#include <variant>
 //--------------------------------------------
 /// The current name of the class when us
 /// printInfo function
 //-----------------------------------------
 #define IOAGGREGATE_NAME "IoAggregate"
 
-class IoAggregateBase {
-	public:
-		virtual ~IoAggregateBase() = 0;
-
-		virtual void addSample(const std::string &app, const IoStatSummary &summary) = 0;
-
-		virtual std::unordered_map<std::string, IoStatSummary> getCurrentMapAggregated() const = 0;
-
-		virtual std::optional<IoStatSummary> getAggregated() const = 0;
-};
-
-template <typename T>
-class IoAggregate : public IoAggregateBase {
+class IoAggregate{
 	private:
-		struct Bin {
-			std::unordered_map<T, IoStatSummary> appStats;
+		struct Bin{
+			std::unordered_multimap<std::string, IoStatSummary> appStats;
+			std::unordered_multimap<uid_t, IoStatSummary> uidStats;
+			std::unordered_multimap<gid_t, IoStatSummary> gidStats;
 		};
 
 		size_t _nbrBins;
@@ -53,7 +43,12 @@ class IoAggregate : public IoAggregateBase {
 		size_t _winTime;
 		size_t _currentIndex;
 
+		std::unordered_set<std::string>	_apps;
+		std::unordered_set<uid_t>		_uids;
+		std::unordered_set<gid_t>		_gids;
+ 
 		std::vector<Bin> _bins;
+
 		mutable std::mutex _mutex;
 
 		//--------------------------------------------
@@ -102,12 +97,12 @@ class IoAggregate : public IoAggregateBase {
 		/// Main constructor
 		//--------------------------------------------
 		explicit IoAggregate(size_t winTime, size_t intervalSec, size_t nbrBins) : _currentIndex(0){
-			if (intervalSec == 0)
-				intervalSec = 1;
-			else if (intervalSec > winTime)
-				intervalSec = winTime;
 			if (winTime < 60)
 				winTime = 60;
+			if (intervalSec == 0)
+				intervalSec = 1;
+			if (intervalSec > winTime)
+				intervalSec = winTime;
 			if (winTime % intervalSec != 0)
 				winTime -= winTime % intervalSec;
 			_winTime = winTime;
@@ -116,29 +111,53 @@ class IoAggregate : public IoAggregateBase {
 			_bins.resize(nbrBins);
 		}
 
-		void addSample(const std::string &app, const IoStatSummary &summary) override{
+		template <typename T>
+		void setTrack(const T index){
+			if constexpr (std::is_same_v<T, std::string> || std::is_same_v<T, const char *>)
+				_apps.insert(index);
+			else if constexpr (std::is_same_v<T, uid_t>)
+				_uids.insert(index);
+			else if constexpr (std::is_same_v<T, gid_t>)
+				_gids.insert(index);
+			else
+				return;
+		}
+
+		template <typename T>
+		void addSample(const T index, IoStatSummary &summary){
 			std::lock_guard<std::mutex> lock(_mutex);
-				if (_currentIndex < _bins.size()){
-					if (_bins.at(_currentIndex).appStats.size() == _winTime / _intervalSec){
-						_currentIndex++;
-						if (_currentIndex > _nbrBins){
-							_currentIndex = 0;
-							_bins.at(_currentIndex).appStats.clear();
-						}
+
+			if (_currentIndex > _bins.size())
+				_currentIndex = 0;
+			if (std::is_same_v<T, std::string> || std::is_same_v<T, const char *>){
+				if (_bins.at(_currentIndex).appStats.size() == _winTime / _intervalSec){
+					_currentIndex++;
+					if (_currentIndex > _nbrBins){
+						_currentIndex = 0;
+						_bins.at(_currentIndex).appStats.clear();
 					}
-					_bins.at(_currentIndex).appStats.emplace(app, summary);
 				}
+				_bins.at(_currentIndex).appStats.insert({index, summary});
+			}
+			else if (std::is_same_v<T, uid_t>){
+				if (_bins.at(_currentIndex).uidStats.size() == _winTime / _intervalSec){
+					_currentIndex++;
+					if (_currentIndex > _nbrBins){
+						_currentIndex = 0;
+						_bins.at(_currentIndex).uidStats.clear();
+					}
+				}
+				_bins.at(_currentIndex).uidStats.insert({index, summary});
+			}
+			else if (std::is_same_v<T, gid_t>){
+				if (_bins.at(_currentIndex).gidStats.size() == _winTime / _intervalSec){
+					_currentIndex++;
+					if (_currentIndex > _nbrBins){
+						_currentIndex = 0;
+						_bins.at(_currentIndex).gidStats.clear();
+					}
+				}
+				_bins.at(_currentIndex).gidStats.insert({index, summary});
+			}
 		}
-
-		std::unordered_map<std::string, IoStatSummary> getCurrentMapAggregated() const override{ return (_bins.at(_currentIndex).appStats);}
-
-		std::optional<IoStatSummary> getAggregated() const override{
-			std::lock_guard<std::mutex> lock(_mutex);
-
-			IoStatSummary summary;
-			if (_bins.at(_currentIndex).appStats.size() == 0)
-				return std::nullopt;
-
-		}
-
 };
