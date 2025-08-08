@@ -37,7 +37,7 @@ class IoAggregateMap{
 		void updateAggregateLoop();
 
 		IoMap _map;
-		std::unordered_map<size_t, std::unique_ptr<IoAggregate>> _aggregates;
+		std::unordered_map<size_t, std::unique_ptr<IoAggregateBase> > _aggregates;
 
 		std::thread _thread;
 		std::atomic<bool> _running;
@@ -57,14 +57,17 @@ class IoAggregateMap{
 
 		std::vector<size_t> getAvailableWindows() const;
 
-		template <typename T>
+		template<typename T>
 		std::optional<IoStatSummary> getBandwidth(T index, size_t seconds, IoStat::Marks enumMark){
 			return (_map.getBandwidth(index, enumMark, seconds));
 		}
+
+		void addAggregation();
+
 		const IoMap& getIoMap() const;
 
-		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator begin();
-		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator end();
+		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator begin() const;
+		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator end() const;
 
 		friend std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other);
 };

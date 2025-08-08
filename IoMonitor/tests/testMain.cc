@@ -20,6 +20,7 @@ TEST(IoMap, FillData) {
 TEST(IoMap, exactValue) {
 	ASSERT_FALSE(testIoMapSpecificCase());
 	ASSERT_FALSE(testIoMapExactValue());
+	ASSERT_FALSE(testIoMapSummary());
 	EXPECT_EQ(testIoMapBigVolume(), 0);
 }
 
@@ -35,7 +36,8 @@ int main(int ac, char **av) {
 
 	// testIoMapSpecificCase();
 	// testIoMap();
-	testIoAggregateMap() < 0 ? code = -1 : code = 0;
+	testIoMapSummary() < 0 ? code = -1 : code = 0;
+	// testIoAggregateMap() < 0 ? code = -1 : code = 0;
 	// testIoMapBigVolume() < 0 ? code = -1 :
 	// testIoMapBigVolume() < 0 ? code = -1 :
 	// testIoMapBigVolume() < 0 ? code = -1 : code = 0;

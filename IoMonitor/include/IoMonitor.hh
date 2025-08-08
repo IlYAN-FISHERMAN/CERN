@@ -97,15 +97,11 @@ namespace io {
 /// Summary of a IoStat struct
 //--------------------------------------------
 struct IoStatSummary {
-    double avgRead;
-    double sigmaRead;
-    double avgWrite;
-    double sigmaWrite;
+	std::optional<std::pair<double, double> > readBandwidth;
+	std::optional<std::pair<double, double> > writeBandwidth;
 
-	size_t rElem;
-	size_t wElem;
+	size_t rSize;
+	size_t wSize;
 
-	IoStatSummary() : avgRead(0.0), sigmaRead(0.0), 
-			avgWrite(0.0), sigmaWrite(0.0), rElem(0),
-			wElem(0){}
+	IoStatSummary() : rSize(0), wSize(0){}
 };

@@ -333,3 +333,86 @@ int testIoMapBigVolume(){
 
 	return 0;
 }
+
+int testIoMapSummary(){
+	IoMap map;
+	std::pair<double, double> p1;
+	std::pair<double, double> p2;
+	std::pair<double, double> p3;
+	pairTmp(&p1, &p2, &p3);
+
+	map.addWrite(1, "cernbox", 2, 1, 50);
+	map.addWrite(1, "cernbox", 2, 1, 50);
+	map.addWrite(1, "cernbox", 2, 1, 26);
+
+	map.addWrite(1, "cernbox", 42, 42, 64);
+	map.addWrite(1, "cernbox", 42, 42, 97);
+	map.addWrite(1, "cernbox", 42, 42, 34);
+
+	map.addWrite(1, "cernbox", 78, 5, 97);
+	map.addWrite(1, "cernbox", 78, 5, 27);
+	map.addWrite(1, "cernbox", 78, 5, 44);
+
+	map.addRead(1, "cernbox", 2, 1, 50);
+	map.addRead(1, "cernbox", 2, 1, 50);
+	map.addRead(1, "cernbox", 2, 1, 26);
+
+	map.addRead(1, "cernbox", 42, 42, 64);
+	map.addRead(1, "cernbox", 42, 42, 97);
+	map.addRead(1, "cernbox", 42, 42, 34);
+
+	map.addRead(1, "cernbox", 78, 5, 97);
+	map.addRead(1, "cernbox", 78, 5, 27);
+	map.addRead(1, "cernbox", 78, 5, 44);
+
+
+	double rAvrg = 0;
+	double rDeviation = 0;
+
+	double wAvrg = 0;
+	double wDeviation = 0;
+
+	rAvrg += p1.first * 3;
+	rAvrg += p2.first * 3;
+	rAvrg += p3.first * 3;
+	rAvrg /= 9;
+
+	rDeviation += 2 * std::pow(p1.second, 2);
+	rDeviation += 2 * std::pow(p2.second, 2);
+	rDeviation += 2 * std::pow(p3.second, 2);
+	rDeviation = std::sqrt(rDeviation / 6);
+
+	wAvrg += p1.first * 3;
+	wAvrg += p2.first * 3;
+	wAvrg += p3.first * 3;
+	wAvrg /= 9;
+
+	wDeviation += 2 * std::pow(p1.second, 2);
+	wDeviation += 2 * std::pow(p2.second, 2);
+	wDeviation += 2 * std::pow(p3.second, 2);
+	wDeviation = std::sqrt(wDeviation / 6);
+
+	std::optional<std::pair<double, double> > read = map.getBandwidth("cernbox", IoStat::Marks::READ);
+	std::optional<std::pair<double, double> > write = map.getBandwidth("cernbox", IoStat::Marks::READ);
+	if (read.has_value() && write.has_value()){
+		if (read->first != rAvrg || read->second != rDeviation
+			|| write->first != wAvrg || write->second != wDeviation)
+			return -1;
+	}
+	else
+		return -1;
+
+	std::optional<IoStatSummary> summary = map.getSummary("cernbox");
+	if (summary.has_value()){
+		if (!summary->readBandwidth.has_value() || !summary->writeBandwidth.has_value())
+			return -1;
+		if (summary->readBandwidth->first != rAvrg || summary->readBandwidth->second != rDeviation
+			|| summary->writeBandwidth->first != wAvrg || summary->writeBandwidth->second != wDeviation)
+			return -1;
+		else if (summary->readBandwidth->first != read->first || summary->readBandwidth->second != read->second
+			|| summary->writeBandwidth->first != write->first || summary->writeBandwidth->second != write->second)
+			return -1;
+	}
+	std::cout << "Read size: "<< summary->rSize << "\nWrite size: " << summary->wSize << std::endl;
+	return 0;
+}

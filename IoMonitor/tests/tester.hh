@@ -12,6 +12,7 @@ int testIoMapBigVolume();
 int testIoMapSpecificCase();
 int testIoMapExactValue();
 int testIoMapData();
+int testIoMapSummary();
 
 int testIoAggregateMap();
 

@@ -30,10 +30,22 @@
 //-----------------------------------------
 #define IOAGGREGATE_NAME "IoAggregate"
 
-class IoAggregate {
+class IoAggregateBase {
+	public:
+		virtual ~IoAggregateBase() = 0;
+
+		virtual void addSample(const std::string &app, const IoStatSummary &summary) = 0;
+
+		virtual std::unordered_map<std::string, IoStatSummary> getCurrentMapAggregated() const = 0;
+
+		virtual std::optional<IoStatSummary> getAggregated() const = 0;
+};
+
+template <typename T>
+class IoAggregate : public IoAggregateBase {
 	private:
 		struct Bin {
-			std::unordered_map<std::string, IoStatSummary> appStats;
+			std::unordered_map<T, IoStatSummary> appStats;
 		};
 
 		size_t _nbrBins;
@@ -57,25 +69,76 @@ class IoAggregate {
 		//--------------------------------------------
 		/// Destructor
 		//--------------------------------------------
-		~IoAggregate();
+		~IoAggregate(){}
 
 		//--------------------------------------------
 		/// Constructor by copy constructor
 		//--------------------------------------------
-		IoAggregate(const IoAggregate &other);
+		IoAggregate(const IoAggregate &other){
+			std::lock_guard<std::mutex> lock(_mutex);
+			std::lock_guard<std::mutex> otherLock(other._mutex);
+			_nbrBins = other._nbrBins;
+			_intervalSec = other._intervalSec;
+			_currentIndex = other._currentIndex;
+			_bins = other._bins;
+	}
 
 		//--------------------------------------------
 		/// Overload the operator =
 		//--------------------------------------------
-		IoAggregate& operator=(const IoAggregate &other);
+		IoAggregate& operator=(const IoAggregate &other){
+			std::lock_guard<std::mutex> lock(_mutex);
+			std::lock_guard<std::mutex> otherLock(other._mutex);
+			if (this != &other){
+				_nbrBins = other._nbrBins;
+				_intervalSec = other._intervalSec;
+				_currentIndex = other._currentIndex;
+				_bins = other._bins;
+			}
+			return *this;
+		}
 
 		//--------------------------------------------
 		/// Main constructor
 		//--------------------------------------------
-		explicit IoAggregate(size_t winTime, size_t intervalSec, size_t nbrBins);
+		explicit IoAggregate(size_t winTime, size_t intervalSec, size_t nbrBins) : _currentIndex(0){
+			if (intervalSec == 0)
+				intervalSec = 1;
+			else if (intervalSec > winTime)
+				intervalSec = winTime;
+			if (winTime < 60)
+				winTime = 60;
+			if (winTime % intervalSec != 0)
+				winTime -= winTime % intervalSec;
+			_winTime = winTime;
+			_intervalSec = intervalSec;
+			nbrBins == 0 ? _nbrBins = 1 : _nbrBins = nbrBins;
+			_bins.resize(nbrBins);
+		}
 
-		void addSample(const std::string &app, const IoStatSummary &summary);
+		void addSample(const std::string &app, const IoStatSummary &summary) override{
+			std::lock_guard<std::mutex> lock(_mutex);
+				if (_currentIndex < _bins.size()){
+					if (_bins.at(_currentIndex).appStats.size() == _winTime / _intervalSec){
+						_currentIndex++;
+						if (_currentIndex > _nbrBins){
+							_currentIndex = 0;
+							_bins.at(_currentIndex).appStats.clear();
+						}
+					}
+					_bins.at(_currentIndex).appStats.emplace(app, summary);
+				}
+		}
 
-		std::unordered_map<std::string, IoStatSummary> getCurrentMapAggregated() const;
-		std::optional<IoStatSummary> getAggregated() const;
+		std::unordered_map<std::string, IoStatSummary> getCurrentMapAggregated() const override{ return (_bins.at(_currentIndex).appStats);}
+
+		std::optional<IoStatSummary> getAggregated() const override{
+			std::lock_guard<std::mutex> lock(_mutex);
+
+			IoStatSummary summary;
+			if (_bins.at(_currentIndex).appStats.size() == 0)
+				return std::nullopt;
+
+		}
+
 };
