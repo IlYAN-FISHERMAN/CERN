@@ -41,6 +41,7 @@ int testIoAggregateMap(){
 		map.setTrack(60, "eos");
 		map.setTrack(60, static_cast<uid_t>(42));
 		map.setTrack(60, static_cast<gid_t>(2));
+		map.setTrack(60, static_cast<gid_t>(100));
 	}
 
 	if (map.containe(120)){
@@ -49,10 +50,9 @@ int testIoAggregateMap(){
 		map.setTrack(120, static_cast<gid_t>(2));
 	}
 
-	while (true){
-	std::this_thread::sleep_for(std::chrono::seconds(5));
+	for(int i = 0; i < 1;i++){
+		std::this_thread::sleep_for(std::chrono::seconds(1));
 		std::cout << map << std::endl;
 	}
-	std::cout << "hello\n";
 	return 0;
 }

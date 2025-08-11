@@ -26,32 +26,44 @@ IoAggregateMap::IoAggregateMap() : _running(true){
 	_thread = std::thread(&IoAggregateMap::updateAggregateLoop, this);
 }
 
-IoAggregateMap::IoAggregateMap(int) : _running(true){
+IoAggregateMap::IoAggregateMap(int) : _running(false){
 	// _thread = std::thread(&IoAggregateMap::aggregationLoop, this);
 }
 
 IoAggregateMap::~IoAggregateMap(){
-	std::lock_guard<std::mutex> lock(_mutex);
-	_running = false;
+	{
+		std::unique_lock<std::mutex> lock(_mutex);
+		if (io::IoAggregateMapDebug)
+			assert(lock.owns_lock());
+		_running.store(false);
+		_cv.notify_one();
+	}
+	if (_thread.joinable())
+		_thread.join();
 }
 
 std::vector<size_t> IoAggregateMap::getAvailableWindows() const{
+	std::lock_guard<std::mutex> lock(_mutex);
 	return (std::vector<size_t>(_aggregates.begin()->first, _aggregates.end()->first));
 }
 
 void IoAggregateMap::addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes){
+	std::lock_guard<std::mutex> lock(_mutex);
 	_map.addRead(inode, app, uid, gid, rbytes);
 }
 
 void IoAggregateMap::addWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes){
+	std::lock_guard<std::mutex> lock(_mutex);
 	_map.addWrite(inode, app, uid, gid, wbytes);
 }
 
 void IoAggregateMap::updateAggregateLoop(){
 	auto next_tick = std::chrono::steady_clock::now() + std::chrono::seconds(TIME_TO_UPDATE);
-	while (_running){
-		std::this_thread::sleep_until(next_tick);
-		if (!_running)
+
+	while (_running.load()){
+		std::unique_lock<std::mutex> lock(_mutex);
+		_cv.wait_until(lock, next_tick, [this]{ return !_running;});
+		if (!_running.load())
 			break;
 		// for (auto &it: _aggregates){
 		// 	it.second.
@@ -61,18 +73,35 @@ void IoAggregateMap::updateAggregateLoop(){
 }
 
 void IoAggregateMap::addWindow(size_t winTime, size_t intervalsec, size_t nbrBins){
-	std::lock_guard<std::mutex> lock(_mutex);
+	std::lock_guard<std::mutex> lock(this->_mutex);
 	_aggregates[winTime] = std::make_unique<IoAggregate>(winTime, intervalsec, nbrBins);
 }
 
-bool IoAggregateMap::containe(size_t winTime) const {return (_aggregates.find(winTime) != _aggregates.end());}
+bool IoAggregateMap::containe(size_t winTime) const {
+	std::lock_guard<std::mutex> lock(_mutex);
+	return (_aggregates.find(winTime) != _aggregates.end());
+}
 
-const IoMap& IoAggregateMap::getIoMap() const{return _map;}
+const IoMap& IoAggregateMap::getIoMap() const{
+	std::lock_guard<std::mutex> lock(_mutex);
+	return _map;
+}
 
-std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoAggregateMap::begin(){return _map.begin();}
-std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoAggregateMap::end(){return _map.end();}
+std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoAggregateMap::begin(){
+	std::lock_guard<std::mutex> lock(_mutex);
+	return _map.begin();
+}
+
+std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoAggregateMap::end(){
+	std::lock_guard<std::mutex> lock(_mutex);
+	return _map.end();
+}
 
 std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other){
-	os << other.getIoMap() << std::endl << std::endl;
+	os << C_GREEN << "[" << C_CYAN << "IoAggregateMap" << C_GREEN << "]" << C_RESET;
+	os << C_GREEN << "[" << C_CYAN << "available window: " << other._aggregates.size() << C_GREEN << "]" << C_RESET << std::endl << std::endl;
+	for (auto &it : other._aggregates){
+		os << *it.second.get() << std::endl;
+	}
 	return os;
 }

@@ -41,6 +41,8 @@ class IoAggregateMap{
 
 		std::thread _thread;
 		std::atomic<bool> _running;
+		std::condition_variable _cv;
+		
 		mutable std::mutex _mutex;
 
 		template<typename T>

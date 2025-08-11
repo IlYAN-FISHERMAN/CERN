@@ -45,6 +45,7 @@
 #include <unistd.h>
 #include <iomanip>
 #include <numeric>
+#include <assert.h>
 #include "color.hh"
 
 
@@ -91,10 +92,12 @@ namespace io {
 	constexpr bool IoStatDebug = false;
 	constexpr bool IoMapDebug = false;
 	constexpr bool IoMarkDebug = false;
+	constexpr bool IoAggregateMapDebug = false;
+	constexpr bool IoAggregateDebug = false;
 }
 
 //--------------------------------------------
-/// Summary of a IoStat struct
+/// Summary of a IoStat bandwidth
 //--------------------------------------------
 struct IoStatSummary {
 	std::optional<std::pair<double, double> > readBandwidth;

@@ -36,13 +36,14 @@ IoMap::IoMap() : _running(true){
 //--------------------------------------------
 IoMap::~IoMap() {
 	{
-		std::lock_guard<std::mutex> lock(_mutex);
-		_running = false;
+		std::unique_lock<std::mutex> lock(_mutex);
+		if (io::IoMapDebug)
+			assert(lock.owns_lock());
+		_running.store(false);
 		_cv.notify_one();
 	}
-	if (_cleaner.joinable()){
+	if (_cleaner.joinable())
 		_cleaner.join();
-	}
 }
 
 //--------------------------------------------
@@ -72,10 +73,10 @@ void	IoMap::printInfo(std::ostream &os, const std::string &msg){
 /// Multithreaded function to clean up inactive IoStats
 //--------------------------------------------
 void IoMap::cleanerLoop(){
-	while (true){
+	while (_running.load()){
 		std::unique_lock<std::mutex> lock(_mutex);
 		_cv.wait_for(lock, std::chrono::seconds(TIME_TO_CLEAN), [this]{ return !_running;});
-		if (!_running)
+		if (!_running.load())
 			break;
 		// Clean inactive I/O
 		size_t rsize = 0;

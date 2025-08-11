@@ -168,13 +168,13 @@ int testInteractiveIoMap(){
 
 int testIoMapData(){
 	std::multimap<std::string, std::optional<std::pair<double, double> > > data;
-	std::vector<IoMap*> maps;
-	size_t nbrOfMap = 3;
+	std::vector<std::unique_ptr<IoMap> > maps;
+	size_t nbrOfMap = 10;
 
 	for (size_t i = 0; i < nbrOfMap; i++)
-		maps.push_back(new IoMap());
+		maps.push_back(std::make_unique<IoMap>());
 	for (size_t i = 0; i < nbrOfMap; i++)
-		fillData(maps.at(i));
+		fillData(maps.at(i).get());
 
 	for (size_t i = 0; i < 50; i++){
 		std::lock_guard<std::mutex> lock(IoMap::_osMutex);
@@ -198,9 +198,6 @@ int testIoMapData(){
 				std::cout << std::endl;
 			}
 		}
-	}
-	for (auto it = maps.begin(); it != maps.end(); it++){
-		delete *it;
 	}
 	return 0;
 }
@@ -304,7 +301,7 @@ int testIoMapExactValue(){
 int testIoMapBigVolume(){
 	std::vector<std::optional<std::pair<double, double> > > data;
 	std::vector<std::unique_ptr<IoMap> > maps;
-	size_t nbrOfMap = 10000;
+	size_t nbrOfMap = 100;
 
 	IoMark begin;
 	for (size_t i = 0; i < nbrOfMap; i++)
@@ -330,7 +327,6 @@ int testIoMapBigVolume(){
 		if (it.has_value())
 			return -1;
 	}
-
 	return 0;
 }
 

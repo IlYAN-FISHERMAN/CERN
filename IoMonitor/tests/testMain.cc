@@ -30,22 +30,21 @@ TEST(IoMap, exactValue) {
 // }
 
 int main(int ac, char **av) {
+	int code = 0;
 	(void)ac;
 	(void)av;
-	int code = 0;
+	(void)code;
 
 	// testIoMapSpecificCase();
 	// testIoMap();
-	testIoMapSummary() < 0 ? code = -1 : code = 0;
+	// testIoMapSummary() < 0 ? code = -1 : code = 0;
 	// testIoAggregateMap() < 0 ? code = -1 : code = 0;
 	// testIoMapBigVolume() < 0 ? code = -1 :
 	// testIoMapBigVolume() < 0 ? code = -1 :
 	// testIoMapBigVolume() < 0 ? code = -1 : code = 0;
 	// int code = testIoMapExactValue();
 	// int code = testIoStatExactValue();
-	// testInteractiveIoMap();
-	// testIoStatFillData();
-	// testIoStatCleaning();
+	testIoAggregateMap() < 0 ? code = -1 : code = 0;
 	std::cout << "code: " << code << std::endl;
     // ::testing::InitGoogleTest(&ac, av);
     // return RUN_ALL_TESTS();
