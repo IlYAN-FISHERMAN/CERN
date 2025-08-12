@@ -161,8 +161,3 @@ int testIoStatExactValue(){
 		return -1;
 	return 0;
 }
-
-int testIoStatIds(){
-
-	return 0;
-}

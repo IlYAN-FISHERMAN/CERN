@@ -2,7 +2,7 @@
 
 std::ostream& operator<<(std::ostream &os, const std::optional<IoStatSummary> &opt){
 	if (!opt.has_value()){
-		os << "empty" << std::endl;
+		os << "summary empty" << std::endl;
 		return os;
 	}
 	IoStatSummary other = opt.value();
@@ -361,90 +361,6 @@ int testIoMapBigVolume(){
 	return 0;
 }
 
-int testIoMapSummary(){
-	IoMap map;
-	std::pair<double, double> p1;
-	std::pair<double, double> p2;
-	std::pair<double, double> p3;
-	pairTmp(&p1, &p2, &p3);
-
-	map.addWrite(1, "cernbox", 2, 1, 50);
-	map.addWrite(1, "cernbox", 2, 1, 50);
-	map.addWrite(1, "cernbox", 2, 1, 26);
-
-	map.addWrite(1, "cernbox", 42, 42, 64);
-	map.addWrite(1, "cernbox", 42, 42, 97);
-	map.addWrite(1, "cernbox", 42, 42, 34);
-
-	map.addWrite(1, "cernbox", 78, 5, 97);
-	map.addWrite(1, "cernbox", 78, 5, 27);
-	map.addWrite(1, "cernbox", 78, 5, 44);
-
-	map.addRead(1, "cernbox", 2, 1, 50);
-	map.addRead(1, "cernbox", 2, 1, 50);
-	map.addRead(1, "cernbox", 2, 1, 26);
-
-	map.addRead(1, "cernbox", 42, 42, 64);
-	map.addRead(1, "cernbox", 42, 42, 97);
-	map.addRead(1, "cernbox", 42, 42, 34);
-
-	map.addRead(1, "cernbox", 78, 5, 97);
-	map.addRead(1, "cernbox", 78, 5, 27);
-	map.addRead(1, "cernbox", 78, 5, 44);
-
-
-	double rAvrg = 0;
-	double rDeviation = 0;
-
-	double wAvrg = 0;
-	double wDeviation = 0;
-
-	rAvrg += p1.first * 3;
-	rAvrg += p2.first * 3;
-	rAvrg += p3.first * 3;
-	rAvrg /= 9;
-
-	rDeviation += 2 * std::pow(p1.second, 2);
-	rDeviation += 2 * std::pow(p2.second, 2);
-	rDeviation += 2 * std::pow(p3.second, 2);
-	rDeviation = std::sqrt(rDeviation / 6);
-
-	wAvrg += p1.first * 3;
-	wAvrg += p2.first * 3;
-	wAvrg += p3.first * 3;
-	wAvrg /= 9;
-
-	wDeviation += 2 * std::pow(p1.second, 2);
-	wDeviation += 2 * std::pow(p2.second, 2);
-	wDeviation += 2 * std::pow(p3.second, 2);
-	wDeviation = std::sqrt(wDeviation / 6);
-
-	// std::cout << map.getSummary("cernbox") << std::endl;
-	std::optional<std::pair<double, double> > read = map.getBandwidth("cernbox", IoStat::Marks::READ);
-	std::optional<std::pair<double, double> > write = map.getBandwidth("cernbox", IoStat::Marks::READ);
-	if (read.has_value() && write.has_value()){
-		if (read->first != rAvrg || read->second != rDeviation
-			|| write->first != wAvrg || write->second != wDeviation)
-			return -1;
-	}
-	else
-		return -1;
-
-	// std::optional<IoStatSummary> summary = map.getSummary("cernbox");
-	// std::cout << summary << std::endl
-	// if (summary.has_value()){
-	// 	if (!summary->readBandwidth.has_value() || !summary->writeBandwidth.has_value())
-	// 		return -1;
-	// 	if (summary->readBandwidth->first != rAvrg || summary->readBandwidth->second != rDeviation
-	// 		|| summary->writeBandwidth->first != wAvrg || summary->writeBandwidth->second != wDeviation)
-	// 		return -1;
-	// 	else if (summary->readBandwidth->first != read->first || summary->readBandwidth->second != read->second
-	// 		|| summary->writeBandwidth->first != write->first || summary->writeBandwidth->second != write->second)
-	// 		return -1;
-	// }
-	return 0;
-}
-
 int testIoMapIds(){
 	IoMap map;
 
@@ -454,37 +370,142 @@ int testIoMapIds(){
 	map.addRead(1, "eos", 40, 24, 20);
 	map.addRead(1, "eos", 40, 24, 4220);
 	map.addRead(1, "eos", 40, 24, 24250);
+
 	map.addRead(1, "eos", 42, 24, 125);
 	map.addRead(1, "eos", 42, 24, 24);
 	map.addRead(1, "eos", 42, 24, 24);
 	map.addRead(1, "eos", 42, 24, 24);
 	map.addRead(1, "eos", 42, 24, 48);
+
 	map.addRead(4, "eos", 56, 44, 15);
 	map.addRead(4, "eos", 56, 44, 142);
 	map.addRead(4, "eos", 56, 44, 155);
 
 	{
 		auto it = map.getBandwidth("eos", IoStat::Marks::READ);
-		if (it.has_value())
-			std::cout << it.value() << std::endl;
-		else
-			std::cout << "empty\n\n";
+		if (it.has_value()){
+			if (static_cast<int>(it->first) != 2186 || static_cast<int>(it->second) != 6209)
+				return -1;
+		} else
+			return -1;
 	}
-	// {
-	// 	auto it = map.getBandwidth(io::TYPE::GID, 24, IoStat::Marks::READ);
-	// 	if (it.has_value())
-	// 		std::cout << it.value() << std::endl;
-	// 	else
-	// 		std::cout << "empty\n\n";
-	// }
-	// {
-	// 	auto it = map.getBandwidth(io::TYPE::UID, 24, IoStat::Marks::READ);
-	// 	if (it.has_value())
-	// 		std::cout << it.value() << std::endl;
-	// 	else
-	// 		std::cout << "empty\n\n";
-	// }
+	{
+		auto it = map.getBandwidth(io::TYPE::GID, 24, IoStat::Marks::READ);
+		if (it.has_value()){
+			if (static_cast<int>(it->first) != 2754 || static_cast<int>(it->second) != 6897)
+				return -1;
+		} else
+			return -1;
+	}
+	{
+		auto it = map.getBandwidth(io::TYPE::UID, 24, IoStat::Marks::READ);
+		if (it.has_value())
+			return -1;
+	}
 
-	// std::cout << map << std::endl;
+	return 0;
+}
+
+int testIoMapSummary(){
+	IoMap map;
+
+	// Add Read
+	map.addRead(1, "eos", 40, 24, 564);
+	map.addRead(1, "eos", 40, 24, 443);
+	map.addRead(1, "eos", 40, 24, 554);
+	map.addRead(1, "eos", 40, 24, 20);
+	map.addRead(1, "eos", 40, 24, 4220);
+	map.addRead(1, "eos", 40, 24, 24250);
+
+	map.addRead(1, "eos", 42, 24, 125);
+	map.addRead(1, "eos", 42, 24, 24);
+	map.addRead(1, "eos", 42, 24, 24);
+	map.addRead(1, "eos", 42, 24, 24);
+	map.addRead(1, "eos", 42, 24, 48);
+
+	map.addRead(4, "eos", 56, 44, 15);
+	map.addRead(4, "eos", 56, 44, 142);
+	map.addRead(4, "eos", 56, 44, 155);
+
+	// Add unique uid/gid
+	map.addRead(98, "mgm", 222, 2424, 5000);
+
+	// Add Write
+	map.addWrite(1, "eos", 40, 24, 564);
+	map.addWrite(1, "eos", 40, 24, 24250);
+
+	map.addWrite(1, "eos", 42, 24, 125);
+	map.addWrite(1, "eos", 42, 24, 2496);
+	map.addWrite(1, "eos", 42, 24, 2424);
+	map.addWrite(1, "eos", 42, 24, 348);
+
+	map.addWrite(4, "eos", 56, 44, 1425);
+	map.addWrite(4, "eos", 56, 44, 14242);
+	map.addWrite(4, "eos", 56, 44, 1555);
+
+	map.addWrite(4, "eos", 56, 44, 1425);
+	map.addWrite(4, "eos", 56, 44, 14242);
+	map.addWrite(4, "eos", 56, 44, 1555);
+
+	map.addWrite(777, "eos", 999, 999, 0);
+
+	// Add unique app
+	map.addWrite(1, "xrootd", 123, 123, 542);
+	map.addWrite(1, "xrootd", 123, 123, 123);
+	map.addWrite(1, "xrootd", 123, 123, 42);
+
+	map.addWrite(1, "xrootd", 42424, 1253, 53);
+	map.addWrite(1, "xrootd", 53425, 12243, 24);
+	map.addWrite(1, "xrootd", 53244, 12423, 532);
+
+	{
+		auto appEmpty= map.getSummary("nullapp");
+		auto uidEmpty = map.getSummary(io::TYPE::UID, 123456789);
+		auto gidEmpty = map.getSummary(io::TYPE::GID, 123456789);
+
+		if (appEmpty.has_value() || uidEmpty.has_value() || gidEmpty.has_value())
+			return -1;
+	}
+	{
+		auto summary = map.getSummary("xrootd");
+		// std::cout << summary << std::endl;
+		if (summary.has_value() && summary->readBandwidth.has_value() && summary->writeBandwidth.has_value()){
+			if ((summary->rSize != 0 || summary->wSize != 6)
+				|| static_cast<int>(summary->writeBandwidth->first) != 219
+				|| static_cast<int>(summary->writeBandwidth->second) != 226)
+				return -1;
+		} else
+			return -1;
+	}
+	{
+		auto summary = map.getSummary("eos");
+		// std::cout << summary << std::endl;
+		if (summary.has_value()){
+			if ((!summary->readBandwidth.has_value() || !summary->writeBandwidth.has_value())
+			|| (static_cast<int>(summary->readBandwidth->first) != 2186 || static_cast<int>(summary->readBandwidth->second) != 6209))
+				return -1;
+			if (summary->rSize != 14 || summary->wSize != 13)
+				return -1;
+		} else
+			return -1;
+	}
+	{
+		auto summary = map.getSummary(io::TYPE::GID, 999);
+		// std::cout << summary << std::endl;
+		if (summary.has_value()){
+			if (summary->rSize != 0 || summary->wSize != 1)
+				return -1;
+		} else
+			return -1;
+	}
+	{
+		auto summary = map.getSummary(io::TYPE::UID, 222);
+		// std::cout << summary << std::endl;
+		if (summary.has_value()){
+			if (summary->rSize != 1 || summary->wSize != 0 || summary->readBandwidth->first != 5000)
+				return -1;
+		} else
+			return -1;
+	}
 	return 0;
 }

@@ -20,8 +20,9 @@ TEST(IoMap, FillData) {
 TEST(IoMap, exactValue) {
 	ASSERT_FALSE(testIoMapSpecificCase());
 	ASSERT_FALSE(testIoMapExactValue());
-	// ASSERT_FALSE(testIoMapSummary());
+	ASSERT_FALSE(testIoMapSummary());
 	EXPECT_EQ(testIoMapBigVolume(), 0);
+	EXPECT_EQ(testIoMapIds(), 0);
 }
 
 /// Only for debugging
@@ -44,7 +45,6 @@ int main(int ac, char **av) {
 	// code = testIoMapExactValue();
 	// code = testIoStatExactValue();
 	// code = testIoAggregateMap();
-	// code = testIoStatIds();
 	// code = testIoMapIds();
 	// std::cout << "code: " << code << std::endl;
     ::testing::InitGoogleTest(&ac, av);
