@@ -30,7 +30,7 @@ void fillData(IoAggregateMap &map){
 	}
 }
 
-int testIoAggregateMap(){
+int testIoAggregateMapWindow(){
 	IoAggregateMap map;
 	gid_t grps = 3;
 	uid_t user = 42;
@@ -56,5 +56,9 @@ int testIoAggregateMap(){
 		std::cout << map << std::endl;
 	}
 	std::cout << map.getIoMap() << std::endl;
+	return 0;
+}
+
+int testIoAggregateMap(){
 	return 0;
 }

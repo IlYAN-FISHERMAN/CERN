@@ -16,6 +16,7 @@ int testIoMapSummary();
 int testIoMapIds();
 
 int testIoAggregateMap();
+int testIoAggregateMapWindow();
 
 
 void fillData(IoAggregateMap &map);
