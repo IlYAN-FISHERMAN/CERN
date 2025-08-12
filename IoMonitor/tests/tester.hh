@@ -6,6 +6,7 @@
 int testIoStatFillData();
 int testIoStatCleaning();
 int testIoStatExactValue();
+int testIoStatIds();
 
 int testInteractiveIoMap();
 int testIoMapBigVolume();
@@ -13,9 +14,11 @@ int testIoMapSpecificCase();
 int testIoMapExactValue();
 int testIoMapData();
 int testIoMapSummary();
+int testIoMapIds();
 
 int testIoAggregateMap();
 
 
 void fillData(IoAggregateMap &map);
 void fillData(IoMap *map);
+std::ostream& operator<<(std::ostream &os, const std::pair<double, double> &other);

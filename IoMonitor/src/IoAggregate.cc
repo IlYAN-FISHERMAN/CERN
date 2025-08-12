@@ -59,8 +59,13 @@ IoAggregate::IoAggregate(size_t winTime, size_t intervalSec, size_t nbrBins) : _
 }
 
 std::ostream& operator<<(std::ostream &os, const IoAggregate &other){
-	os << C_BLUE << "[IoAggregate]" << std::endl;
+	os << C_GREEN << "[" << C_CYAN << "IoAggregate" << C_GREEN << "]" << C_RESET << std::endl;
+	os << C_GREEN << "[" << C_YELLOW << "window time: " << other._winTime << C_GREEN << "]" << C_RESET;
+	os << C_GREEN << "[" << C_YELLOW << "interval/win: " << other._intervalSec << C_GREEN << "]" << C_RESET;
+	os << C_GREEN << "[" << C_YELLOW << "nbr of bin: " << other._nbrBins << C_GREEN << "]" << C_RESET;
+	os << C_GREEN << "[" << C_YELLOW << "currentIndex: " << other._currentIndex << C_GREEN << "]" << C_RESET << std::endl;
 	
+	os << C_BLUE;
 	os << "\t[Tracks]" << std::endl;
 	os << "\t apps:" << std::endl;
 	for (auto it : other._apps)

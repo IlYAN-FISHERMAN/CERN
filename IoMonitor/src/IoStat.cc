@@ -189,11 +189,11 @@ std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t *range, size_
 		avrg = avrg / std::distance(begin, end);
 
 	// Calcule standard deviation
-	if (std::distance(begin, end) > 1){
+	if (std::distance(begin, end) - 1 > 0){
 		for (std::deque<IoMark>::const_iterator it = begin; it < end; it++){
 			deviation += std::pow(std::abs(it->bytes - avrg), 2);
 		}
-		deviation = std::sqrt(deviation / (std::distance(begin, end) - 1));
+		deviation = std::sqrt(deviation / std::distance(begin, end));
 	}
 
 	return (std::pair<double, double>(avrg, deviation));

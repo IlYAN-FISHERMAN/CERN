@@ -46,6 +46,7 @@
 #include <iomanip>
 #include <numeric>
 #include <assert.h>
+#include <typeinfo>
 #include "color.hh"
 
 
@@ -83,7 +84,7 @@ const char*	getCurrentTime();
 
 
 //--------------------------------------------
-/// Namespace for debugging
+/// Namespace
 ///
 /// if debug is "true" all debug phases of
 /// the corresponding class will be displayed
@@ -94,6 +95,11 @@ namespace io {
 	constexpr bool IoMarkDebug = false;
 	constexpr bool IoAggregateMapDebug = false;
 	constexpr bool IoAggregateDebug = false;
+
+	enum class TYPE : uint8_t {
+		UID,
+		GID
+	};
 }
 
 //--------------------------------------------

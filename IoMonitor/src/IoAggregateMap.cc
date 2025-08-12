@@ -42,8 +42,10 @@ IoAggregateMap::~IoAggregateMap(){
 		_thread.join();
 }
 
-std::vector<size_t> IoAggregateMap::getAvailableWindows() const{
+std::optional<std::vector<size_t> > IoAggregateMap::getAvailableWindows() const{
 	std::lock_guard<std::mutex> lock(_mutex);
+	if (_aggregates.empty())
+		return (std::nullopt);
 	return (std::vector<size_t>(_aggregates.begin()->first, _aggregates.end()->first));
 }
 

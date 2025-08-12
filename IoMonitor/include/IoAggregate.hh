@@ -84,13 +84,19 @@ class IoAggregate{
 		friend std::ostream& operator<<(std::ostream &os, const IoAggregate &other);
 
 		template <typename T>
-		void setTrack(const T index){
+		void setTrack(T index){
+			if (std::is_same_v<T, gid_t>)
+				std::cout << "gid" << std::endl;
+			if (std::is_same_v<T, uid_t>)
+				std::cout << "uid" << std::endl;
 			if constexpr (std::is_same_v<T, std::string> || std::is_same_v<T, const char *>)
-				_apps.insert(index);
-			else if constexpr (std::is_same_v<T, uid_t>)
+				_apps.insert(std::string(index));
+			else if (std::is_same_v<T, uid_t>)
 				_uids.insert(index);
-			else if constexpr (std::is_same_v<T, gid_t>)
+			else if (std::is_same_v<T, gid_t>)
 				_gids.insert(index);
+			else
+				return;
 		}
 
 		template <typename T>
@@ -107,7 +113,7 @@ class IoAggregate{
 						_bins.at(_currentIndex).appStats.clear();
 					}
 				}
-				_bins.at(_currentIndex).appStats.insert({index, summary});
+				_bins.at(_currentIndex).appStats.insert({std::string(index), summary});
 			}
 			else if (std::is_same_v<T, uid_t>){
 				if (_bins.at(_currentIndex).uidStats.size() == _winTime / _intervalSec){

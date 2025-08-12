@@ -235,3 +235,24 @@ std::ostream& operator<<(std::ostream &os, const IoMap &other){
 
 std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoMap::begin(){return _filesMap.begin();}
 std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoMap::end(){return _filesMap.end();}
+
+std::pair<double, double> IoMap::calculeWeighted(std::map<std::pair<double, double>, size_t> &indexData){
+	size_t divisor = 0;
+	std::pair<double, double> weighted = {0, 0};
+
+	for (const auto &it : indexData){
+		weighted.first += (it.first.first * it.second);
+		divisor += it.second;
+	}
+	if (divisor > 0)
+		weighted.first /= divisor;
+
+
+	for (const auto &it : indexData)
+		weighted.second += it.second * (std::pow(it.first.second, 2) + std::pow(it.first.first - weighted.first, 2));
+
+	if (divisor > 0)
+		weighted.second = std::sqrt(weighted.second / divisor);
+
+	return weighted;
+}

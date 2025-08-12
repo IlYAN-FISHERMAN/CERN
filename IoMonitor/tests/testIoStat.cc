@@ -131,9 +131,9 @@ int testIoStatExactValue(){
 	 io3.add(27, IoStat::Marks::READ);
 	 io3.add(44, IoStat::Marks::READ);
 
-	std::pair<double, double> p1 = io1.bandWidth(IoStat::Marks::READ, NULL);
-	std::pair<double, double> p2 = io2.bandWidth(IoStat::Marks::READ, NULL);
-	std::pair<double, double> p3 = io3.bandWidth(IoStat::Marks::READ, NULL);
+	std::pair<double, double> p1 = io1.bandWidth(IoStat::Marks::READ);
+	std::pair<double, double> p2 = io2.bandWidth(IoStat::Marks::READ);
+	std::pair<double, double> p3 = io3.bandWidth(IoStat::Marks::READ);
 
 	if (p1.first != 42 || p2.first != 65 || p3.first != 56)
 		return -1;
@@ -142,22 +142,27 @@ int testIoStatExactValue(){
 	deviation += std::pow(std::abs(50 - p1.first), 2);
 	deviation += std::pow(std::abs(50 - p1.first), 2);
 	deviation += std::pow(std::abs(26 - p1.first), 2);
-	deviation = std::sqrt(deviation / 2);
+	deviation = std::sqrt(deviation / 3);
 	if (deviation != p1.second)
 		return -1;
 	deviation = 0;
 	deviation += std::pow(std::abs(64 - p2.first), 2);
 	deviation += std::pow(std::abs(97 - p2.first), 2);
 	deviation += std::pow(std::abs(34 - p2.first), 2);
-	deviation = std::sqrt(deviation / 2);
+	deviation = std::sqrt(deviation / 3);
 	if (deviation != p2.second)
 		return -1;
 	deviation = 0;
 	deviation += std::pow(std::abs(97 - p3.first), 2);
 	deviation += std::pow(std::abs(27 - p3.first), 2);
 	deviation += std::pow(std::abs(44 - p3.first), 2);
-	deviation = std::sqrt(deviation / 2);
+	deviation = std::sqrt(deviation / 3);
 	if (deviation != p3.second)
 		return -1;
+	return 0;
+}
+
+int testIoStatIds(){
+
 	return 0;
 }
