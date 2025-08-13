@@ -34,10 +34,14 @@ int testIoAggregateMapWindow(){
 	IoAggregateMap map;
 	gid_t grps = 3;
 	uid_t user = 14;
+	int nbrOfBin = 10;
 
-	fillData(map);
-	map.addWindow(60, 10, 10);
-	map.addWindow(120, 14, 11);
+	map.addRead(1, "eos", 14, 3, 5025);
+	map.addRead(1, "eos", 14, 3, 425);
+	map.addRead(1, "eos", 14, 3, 54225);
+
+	map.addWindow(60, 3, nbrOfBin);
+	map.addWindow(120, 3, nbrOfBin);
 
 	if (map.containe(60)){
 		map.setTrack(60, "eos");
@@ -51,9 +55,10 @@ int testIoAggregateMapWindow(){
 		map.setTrack(120, io::TYPE::GID, grps);
 	}
 
-	for(int i = 0; i < 10; i++){
-		std::this_thread::sleep_for(std::chrono::seconds(2));
-		std::cout << i << " " << map << std::endl << "\033c";
+	for (int i = 0; true; i++){
+		std::string input;
+		std::getline(std::cin, input);
+		std::cout << i << " " << map << std::endl;
 	}
 	// std::cout << map << std::endl;
 	// std::cout << map.getIoMap() << std::endl;
