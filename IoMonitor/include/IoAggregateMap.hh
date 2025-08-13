@@ -45,16 +45,6 @@ class IoAggregateMap{
 		
 		mutable std::mutex _mutex;
 
-		template<typename T>
-		std::optional<IoStatSummary> getSummary(const T index, size_t seconds = 10){
-			std::lock_guard<std::mutex> lock(_mutex);
-			// return (_map.getSummary(index, seconds));
-			(void)seconds;
-			(void)index;
-			return(std::nullopt);
-		}
-
-
 	public:
 		IoAggregateMap();
 		IoAggregateMap(int);
@@ -97,4 +87,13 @@ class IoAggregateMap{
 		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator end();
 
 		friend std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other);
+
+		template<typename T>
+		std::optional<IoStatSummary> getSummary(const T index, size_t seconds = 10){
+			std::lock_guard<std::mutex> lock(_mutex);
+			// return (_map.getSummary(index, seconds));
+			(void)seconds;
+			(void)index;
+			return(std::nullopt);
+		}
 };

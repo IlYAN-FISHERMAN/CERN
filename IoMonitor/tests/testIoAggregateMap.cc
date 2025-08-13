@@ -56,8 +56,9 @@ int testIoAggregateMapWindow(){
 	}
 
 	for (int i = 0; true; i++){
-		std::string input;
-		std::getline(std::cin, input);
+		// std::string input;
+		// std::getline(std::cin, input);
+		std::this_thread::sleep_for(std::chrono::seconds(1));
 		std::cout << i << " " << map << std::endl;
 	}
 	// std::cout << map << std::endl;
