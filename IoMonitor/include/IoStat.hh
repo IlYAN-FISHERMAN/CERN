@@ -226,3 +226,6 @@ std::ostream& operator<<(std::ostream &os, const IoStat &other);
 /// the entire multimap
 //--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> > &other);
+
+std::ostream& operator<<(std::ostream &os, const std::optional<IoStatSummary> &opt);
+std::ostream& operator<<(std::ostream &os, const IoStatSummary &opt);

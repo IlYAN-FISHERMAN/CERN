@@ -42,6 +42,7 @@ class IoAggregate{
 		size_t _intervalSec;
 		size_t _winTime;
 		size_t _currentIndex;
+		std::chrono::system_clock::time_point _currentTime;
 
 		std::unordered_set<std::string>	_apps;
 		std::unordered_set<uid_t>		_uids;
@@ -81,22 +82,55 @@ class IoAggregate{
 		//--------------------------------------------
 		explicit IoAggregate(size_t winTime, size_t intervalSec, size_t nbrBins);
 
+		void update(const IoMap &maps);
+
 		friend std::ostream& operator<<(std::ostream &os, const IoAggregate &other);
 
 		template <typename T>
-		void setTrack(T index){
-			if (std::is_same_v<T, gid_t>)
-				std::cout << "gid" << std::endl;
-			if (std::is_same_v<T, uid_t>)
-				std::cout << "uid" << std::endl;
-			if constexpr (std::is_same_v<T, std::string> || std::is_same_v<T, const char *>)
-				_apps.insert(std::string(index));
-			else if (std::is_same_v<T, uid_t>)
+		int setTrack(T index){
+			if (!(std::is_same_v<T, std::string> || std::is_same_v<T, const char *>))
+				return -1;
+			_apps.insert(std::string(index));
+			return 0;
+		}
+
+		template <typename T>
+		int setTrack(io::TYPE type, T index){
+			if (type == io::TYPE::UID)
 				_uids.insert(index);
-			else if (std::is_same_v<T, gid_t>)
+			else if (type == io::TYPE::GID)
 				_gids.insert(index);
 			else
-				return;
+				return -1;
+			return 0;
+		}
+
+		template <typename T>
+		void addSample(io::TYPE type, const T index, IoStatSummary &summary){
+			std::lock_guard<std::mutex> lock(_mutex);
+
+			if (_currentIndex > _bins.size())
+				_currentIndex = 0;
+			if (type == io::TYPE::UID){
+				if (_bins.at(_currentIndex).uidStats.size() == _winTime / _intervalSec){
+					_currentIndex++;
+					if (_currentIndex > _nbrBins){
+						_currentIndex = 0;
+						_bins.at(_currentIndex).uidStats.clear();
+					}
+				}
+				_bins.at(_currentIndex).uidStats.insert({index, summary});
+			}
+			else if (type == io::TYPE::GID){
+				if (_bins.at(_currentIndex).gidStats.size() == _winTime / _intervalSec){
+					_currentIndex++;
+					if (_currentIndex > _nbrBins){
+						_currentIndex = 0;
+						_bins.at(_currentIndex).gidStats.clear();
+					}
+				}
+				_bins.at(_currentIndex).gidStats.insert({index, summary});
+			}
 		}
 
 		template <typename T>
@@ -114,26 +148,6 @@ class IoAggregate{
 					}
 				}
 				_bins.at(_currentIndex).appStats.insert({std::string(index), summary});
-			}
-			else if (std::is_same_v<T, uid_t>){
-				if (_bins.at(_currentIndex).uidStats.size() == _winTime / _intervalSec){
-					_currentIndex++;
-					if (_currentIndex > _nbrBins){
-						_currentIndex = 0;
-						_bins.at(_currentIndex).uidStats.clear();
-					}
-				}
-				_bins.at(_currentIndex).uidStats.insert({index, summary});
-			}
-			else if (std::is_same_v<T, gid_t>){
-				if (_bins.at(_currentIndex).gidStats.size() == _winTime / _intervalSec){
-					_currentIndex++;
-					if (_currentIndex > _nbrBins){
-						_currentIndex = 0;
-						_bins.at(_currentIndex).gidStats.clear();
-					}
-				}
-				_bins.at(_currentIndex).gidStats.insert({index, summary});
 			}
 		}
 };

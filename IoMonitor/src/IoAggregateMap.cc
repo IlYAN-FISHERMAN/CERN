@@ -67,9 +67,8 @@ void IoAggregateMap::updateAggregateLoop(){
 		_cv.wait_until(lock, next_tick, [this]{ return !_running;});
 		if (!_running.load())
 			break;
-		// for (auto &it: _aggregates){
-		// 	it.second.
-		// }
+		for (auto &maps : _aggregates)
+			maps.second->update(_map);
 		next_tick += std::chrono::seconds(TIME_TO_UPDATE);
 	}
 }

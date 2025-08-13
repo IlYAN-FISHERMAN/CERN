@@ -15,10 +15,13 @@ int testIoMapData();
 int testIoMapSummary();
 int testIoMapIds();
 
+
 int testIoAggregateMap();
 int testIoAggregateMapWindow();
 
 
 void fillData(IoAggregateMap &map);
 void fillData(IoMap *map);
+
 std::ostream& operator<<(std::ostream &os, const std::pair<double, double> &other);
+std::ostream& operator<<(std::ostream &os, const std::optional<IoStatSummary> &opt);

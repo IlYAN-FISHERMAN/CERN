@@ -62,7 +62,7 @@ class IoMap {
 		/// @param	msg The message to display
 		/// - Exemple: std::cout/std::cerr
 		//--------------------------------------------
-		void	printInfo(std::ostream &os, const char *);
+		void	printInfo(std::ostream &os, const char *) const;
 
 		//--------------------------------------------
 		/// @brief Displays the string given as a parameter
@@ -73,7 +73,7 @@ class IoMap {
 		/// @param	msg The message to display
 		/// - Exemple: std::cout/std::cerr
 		//--------------------------------------------
-		void	printInfo(std::ostream &os, const std::string &);
+		void	printInfo(std::ostream &os, const std::string &) const;
 
 		//--------------------------------------------
 		/// Main variable that keeps track of all IoStats
@@ -212,7 +212,7 @@ class IoMap {
 
 		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator begin();
 		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator end();
-		std::pair<double, double> calculeWeighted(std::map<std::pair<double, double>, size_t> &indexData);
+		std::pair<double, double> calculeWeighted(std::map<std::pair<double, double>, size_t> &indexData) const;
 
 		//--------------------------------------------
 		/// Template
@@ -241,7 +241,7 @@ class IoMap {
 		/// weighted standard deviation 
 		//--------------------------------------------
 		template <typename T>
-		std::optional<std::pair<double, double> > getBandwidth(io::TYPE type, const T index, IoStat::Marks enumMark, size_t seconds = 10){
+		std::optional<std::pair<double, double> > getBandwidth(io::TYPE type, const T index, IoStat::Marks enumMark, size_t seconds = 10) const{
 			std::lock_guard<std::mutex> lock(_mutex);
 			if ((enumMark != IoStat::Marks::READ && enumMark != IoStat::Marks::WRITE)
 				|| (type != io::TYPE::GID && type != io::TYPE::UID))
@@ -277,7 +277,7 @@ class IoMap {
 		}
 
 		template <typename T>
-		std::optional<std::pair<double, double> > getBandwidth(const T index, IoStat::Marks enumMark, size_t seconds = 10){
+		std::optional<std::pair<double, double> > getBandwidth(const T index, IoStat::Marks enumMark, size_t seconds = 10) const{
 			std::lock_guard<std::mutex> lock(_mutex);
 
 			if (enumMark != IoStat::Marks::READ && enumMark != IoStat::Marks::WRITE)
@@ -340,7 +340,7 @@ class IoMap {
 		/// weighted standard deviation 
 		//--------------------------------------------
 		template <typename T>
-		std::optional<IoStatSummary> getSummary(io::TYPE type, const T index, size_t seconds = 10){
+		std::optional<IoStatSummary> getSummary(io::TYPE type, const T index, size_t seconds = 10) const{
 			std::lock_guard<std::mutex> lock(_mutex);
 
 			if (type != io::TYPE::GID && type != io::TYPE::UID)
@@ -395,7 +395,7 @@ class IoMap {
 		}
 
 		template <typename T>
-		std::optional<IoStatSummary> getSummary(const T index, size_t seconds = 10){
+		std::optional<IoStatSummary> getSummary(const T index, size_t seconds = 10) const{
 			std::lock_guard<std::mutex> lock(_mutex);
 
 		 	if (seconds == 0)

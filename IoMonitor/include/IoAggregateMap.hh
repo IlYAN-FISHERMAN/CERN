@@ -75,9 +75,19 @@ class IoAggregateMap{
 
 		template <typename T>
 		int setTrack(size_t winTime, const T index){
-			if (_aggregates.find(winTime) == _aggregates.end())
+
+			if (!this->containe(winTime))
 				return -1;
 			_aggregates[winTime]->setTrack(index);
+			return 0;
+		}
+
+		template <typename T>
+		int setTrack(size_t winTime, io::TYPE type, const T index){
+
+			if (!this->containe(winTime))
+				return -1;
+			_aggregates[winTime]->setTrack(type, index);
 			return 0;
 		}
 

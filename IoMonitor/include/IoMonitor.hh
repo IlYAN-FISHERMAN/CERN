@@ -96,7 +96,7 @@ namespace io {
 	constexpr bool IoAggregateMapDebug = false;
 	constexpr bool IoAggregateDebug = false;
 
-	enum class TYPE : uint8_t {
+	enum class TYPE {
 		UID,
 		GID
 	};

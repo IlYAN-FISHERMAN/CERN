@@ -33,29 +33,30 @@ void fillData(IoAggregateMap &map){
 int testIoAggregateMapWindow(){
 	IoAggregateMap map;
 	gid_t grps = 3;
-	uid_t user = 42;
+	uid_t user = 14;
 
 	fillData(map);
 	map.addWindow(60, 10, 10);
-	map.addWindow(120, 10, 10);
+	map.addWindow(120, 14, 11);
 
 	if (map.containe(60)){
 		map.setTrack(60, "eos");
-		map.setTrack(60, user);
-		map.setTrack(60, grps);
+		map.setTrack(60, io::TYPE::UID, user);
+		map.setTrack(60, io::TYPE::GID, grps);
 	}
 
 	if (map.containe(120)){
 		map.setTrack(120, "eos");
-		map.setTrack(120, user);
-		map.setTrack(120, grps);
+		map.setTrack(120, io::TYPE::UID, user);
+		map.setTrack(120, io::TYPE::GID, grps);
 	}
 
-	for(int i = 0; i < 1;i++){
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-		std::cout << map << std::endl;
+	for(int i = 0; i < 10; i++){
+		std::this_thread::sleep_for(std::chrono::seconds(2));
+		std::cout << i << " " << map << std::endl << "\033c";
 	}
-	std::cout << map.getIoMap() << std::endl;
+	// std::cout << map << std::endl;
+	// std::cout << map.getIoMap() << std::endl;
 	return 0;
 }
 

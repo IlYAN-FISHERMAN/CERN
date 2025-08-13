@@ -55,7 +55,7 @@ IoMap::IoMap(int) : _running(false){}
 /// Display the string given as parameter in
 /// specific format with the current time
 //--------------------------------------------
-void	IoMap::printInfo(std::ostream &os, const char *msg){
+void	IoMap::printInfo(std::ostream &os, const char *msg) const{
 	const char *time = getCurrentTime();
 	os << IOMAP_NAME << " [" << time << "]: " << msg << std::endl;
 }
@@ -64,7 +64,7 @@ void	IoMap::printInfo(std::ostream &os, const char *msg){
 /// Display the string given as parameter in
 /// specific format with the current time
 //--------------------------------------------
-void	IoMap::printInfo(std::ostream &os, const std::string &msg){
+void	IoMap::printInfo(std::ostream &os, const std::string &msg) const{
 	const char *time = getCurrentTime();
 	os << IOMAP_NAME << " [" << time << "]: " << msg << std::endl;
 }
@@ -236,7 +236,7 @@ std::ostream& operator<<(std::ostream &os, const IoMap &other){
 std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoMap::begin(){return _filesMap.begin();}
 std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoMap::end(){return _filesMap.end();}
 
-std::pair<double, double> IoMap::calculeWeighted(std::map<std::pair<double, double>, size_t> &indexData){
+std::pair<double, double> IoMap::calculeWeighted(std::map<std::pair<double, double>, size_t> &indexData) const{
 	size_t divisor = 0;
 	std::pair<double, double> weighted = {0, 0};
 

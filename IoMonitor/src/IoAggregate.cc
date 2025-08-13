@@ -29,6 +29,10 @@ IoAggregate::IoAggregate(const IoAggregate &other){
 	_intervalSec = other._intervalSec;
 	_currentIndex = other._currentIndex;
 	_bins = other._bins;
+	_currentTime = other._currentTime;
+	_apps = other._apps;
+	_uids = other._uids;
+	_gids = other._gids;
 }
 
 IoAggregate& IoAggregate::operator=(const IoAggregate &other){
@@ -39,11 +43,16 @@ IoAggregate& IoAggregate::operator=(const IoAggregate &other){
 		_intervalSec = other._intervalSec;
 		_currentIndex = other._currentIndex;
 		_bins = other._bins;
+		_currentTime = other._currentTime;
+		_apps = other._apps;
+		_uids = other._uids;
+		_gids = other._gids;
 	}
 	return *this;
 }
 
-IoAggregate::IoAggregate(size_t winTime, size_t intervalSec, size_t nbrBins) : _currentIndex(0){
+IoAggregate::IoAggregate(size_t winTime, size_t intervalSec, size_t nbrBins)
+	: _currentIndex(0), _currentTime(std::chrono::system_clock::now()){
 	if (winTime < 60)
 		winTime = 60;
 	if (intervalSec == 0)
@@ -56,6 +65,30 @@ IoAggregate::IoAggregate(size_t winTime, size_t intervalSec, size_t nbrBins) : _
 	_intervalSec = intervalSec;
 	nbrBins == 0 ? _nbrBins = 1 : _nbrBins = nbrBins;
 	_bins.resize(nbrBins);
+}
+
+void IoAggregate::update(const IoMap &maps){
+	auto diff = std::chrono::system_clock::now() - _currentTime;
+
+	if (diff >= std::chrono::seconds(_intervalSec)){
+		std::cout << "update\n";
+		for (auto it = _apps.begin(); it != _apps.end(); it++){
+			auto summary = maps.getSummary(*it);
+			if (summary.has_value())
+				addSample(*it, summary.value());
+		}
+		for (auto it = _uids.begin(); it != _uids.end(); it++){
+			auto summary = maps.getSummary(io::TYPE::UID, *it);
+			if (summary.has_value())
+				addSample(io::TYPE::UID, *it, summary.value());
+		}
+		for (auto it = _gids.begin(); it != _gids.end(); it++){
+			auto summary = maps.getSummary(io::TYPE::GID, *it);
+			if (summary.has_value())
+				addSample(io::TYPE::GID, *it, summary.value());
+		}
+		_currentTime = std::chrono::system_clock::now();
+	}
 }
 
 std::ostream& operator<<(std::ostream &os, const IoAggregate &other){
@@ -76,6 +109,15 @@ std::ostream& operator<<(std::ostream &os, const IoAggregate &other){
 	os << "\t gids:" << std::endl;
 	for (auto it : other._gids)
 		os << "\t  - " << it << std::endl;
+
+	for (auto it : other._bins){
+		for (auto apps : it.appStats)
+			std::cout << apps.first << ": " << apps.second << std::endl;
+		for (auto uids : it.uidStats)
+			std::cout << uids.first << ": " << uids.second << std::endl;
+		for (auto gids : it.appStats)
+			std::cout << gids.first << ": " << gids.second << std::endl;
+	}
 
 	os << C_RESET << std::endl;
 	return os;

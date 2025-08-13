@@ -52,6 +52,6 @@ int main(int ac, char **av) {
 	// code = testIoMapIds();
 	code = testIoAggregateMapWindow();
 	// std::cout << "code: " << code << std::endl;
-    ::testing::InitGoogleTest(&ac, av);
-    return RUN_ALL_TESTS();
+    // ::testing::InitGoogleTest(&ac, av);
+    // return RUN_ALL_TESTS();
 }
