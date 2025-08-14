@@ -46,6 +46,7 @@ class IoAggregateMap{
 		mutable std::mutex _mutex;
 
 	public:
+
 		IoAggregateMap();
 		IoAggregateMap(int);
 
@@ -54,18 +55,16 @@ class IoAggregateMap{
 
 		~IoAggregateMap();
 
+
 		void addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes);
 		void addWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes);
-
-		std::optional<std::vector<size_t> > getAvailableWindows() const;
-
 		int addWindow(size_t winTime, size_t intervalsec, size_t nbrBins);
 
+		std::optional<std::vector<size_t> > getAvailableWindows() const;
 		const IoMap& getIoMap() const;
 
 		template <typename T>
 		int setTrack(size_t winTime, const T index){
-
 			if (!this->containe(winTime))
 				return -1;
 			_aggregates[winTime]->setTrack(index);
@@ -74,7 +73,6 @@ class IoAggregateMap{
 
 		template <typename T>
 		int setTrack(size_t winTime, io::TYPE type, const T index){
-
 			if (!this->containe(winTime))
 				return -1;
 			_aggregates[winTime]->setTrack(type, index);
@@ -88,15 +86,13 @@ class IoAggregateMap{
 
 		friend std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other);
 
-		void shiftWindow();
+		void shiftWindow(size_t winTime);
 
-		// template<typename T>
-		// std::optional<IoStatSummary> getSummary(const T index, size_t seconds = 10){
-		// 	std::lock_guard<std::mutex> lock(_mutex);
-		// 	std::vector<IoStatSummary> summarys;
-		// 		
-		// 	for (auto it : _aggregates){
-		// 		it.second.
-		// 	}
-		// }
+		template<typename T>
+		std::optional<IoStatSummary> getSummary(size_t winTime, const T index){
+			std::lock_guard<std::mutex> lock(_mutex);
+			if (_aggregates.find(winTime) == _aggregates.end())
+				return std::nullopt;
+			return (_aggregates[winTime].getSummary(index));
+		}
 };

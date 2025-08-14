@@ -83,6 +83,7 @@ class IoAggregate{
 		explicit IoAggregate(size_t winTime, size_t intervalSec, size_t nbrBins);
 
 		void update(const IoMap &maps);
+		void shiftWindow();
 
 		friend std::ostream& operator<<(std::ostream &os, const IoAggregate &other);
 
@@ -107,7 +108,6 @@ class IoAggregate{
 
 		template <typename T>
 		void addSample(io::TYPE type, const T index, IoStatSummary &summary){
-			std::lock_guard<std::mutex> lock(_mutex);
 
 			if (_currentIndex > _bins.size())
 				_currentIndex = 0;
@@ -135,7 +135,6 @@ class IoAggregate{
 
 		template <typename T>
 		void addSample(const T index, IoStatSummary &summary){
-			std::lock_guard<std::mutex> lock(_mutex);
 
 			if (_currentIndex > _bins.size())
 				_currentIndex = 0;
@@ -150,4 +149,15 @@ class IoAggregate{
 				_bins.at(_currentIndex).appStats.insert({std::string(index), summary});
 			}
 		}
+
+		template <typename T>
+		std::optional<IoStatSummary> getSummary(const T index){
+			if (!(std::is_same_v<T, std::string> || std::is_same_v<T, const char *>))
+				return std::nullopt;
+			
+			std::vector<IoStatSummary> summarys;
+			auto &bin = _bins.at(_currentIndex);
+			for (auto &it : bin)
+				;
+	}
 };

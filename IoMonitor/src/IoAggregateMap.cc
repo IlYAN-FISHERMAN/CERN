@@ -27,7 +27,6 @@ IoAggregateMap::IoAggregateMap() : _running(true){
 }
 
 IoAggregateMap::IoAggregateMap(int) : _running(false){
-	// _thread = std::thread(&IoAggregateMap::aggregationLoop, this);
 }
 
 IoAggregateMap::~IoAggregateMap(){
@@ -108,7 +107,14 @@ std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoAggregat
 	return _map.end();
 }
 
+void IoAggregateMap::shiftWindow(size_t winTime){
+	if (_aggregates.find(winTime) == _aggregates.end())
+		return ;
+	_aggregates[winTime].shiftWindow();
+}
+
 std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other){
+	std::lock_guard<std::mutex> lock(other._mutex);
 	os << C_GREEN << "[" << C_CYAN << "IoAggregateMap" << C_GREEN << "]" << C_RESET;
 	os << C_GREEN << "[" << C_CYAN << "available window: " << other._aggregates.size() << C_GREEN << "]" << C_RESET << std::endl << std::endl;
 	for (auto &it : other._aggregates){

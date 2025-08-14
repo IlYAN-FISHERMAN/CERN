@@ -90,7 +90,15 @@ void IoAggregate::update(const IoMap &maps){
 	}
 }
 
+void IoAggregate::shiftWindow(){
+	_currentIndex++;
+	if (_currentIndex >= _bins.size())
+		_currentIndex = 0;
+	_bins.e
+}
+
 std::ostream& operator<<(std::ostream &os, const IoAggregate &other){
+	std::lock_guard<std::mutex> lock(other._mutex);
 	os << C_GREEN << "[" << C_CYAN << "IoAggregate" << C_GREEN << "]" << C_RESET << std::endl;
 	os << C_GREEN << "[" << C_YELLOW << "window time: " << other._winTime << C_GREEN << "]" << C_RESET;
 	os << C_GREEN << "[" << C_YELLOW << "interval/win: " << other._intervalSec << C_GREEN << "]" << C_RESET;
@@ -108,14 +116,28 @@ std::ostream& operator<<(std::ostream &os, const IoAggregate &other){
 	os << "\t gids:" << std::endl;
 	for (auto it : other._gids)
 		os << "\t  - " << it << std::endl;
+	os << std::endl;
 
-	for (auto it : other._bins){
+
+	auto it = other._bins.at(other._currentIndex);
+	if (it.appStats.size() == 0 && it.uidStats.size() == 0 && it.gidStats.size() == 0)
+		os << "[empty]" << std::endl;
+	else
+		os << "[binsNbr: " << other._currentIndex << "]"<< std::endl << std::endl;
+	if (it.appStats.size() > 0){
+		os << "apps:" << std::endl;
 		for (auto apps : it.appStats)
-			std::cout << apps.first << ": " << apps.second << std::endl;
+			os << "\t[" << apps.first << "]" << std::endl << "\t- " << apps.second << std::endl;
+	}
+	if (it.uidStats.size() > 0){
+		os << "uids:" << std::endl;
 		for (auto uids : it.uidStats)
-			std::cout << uids.first << ": " << uids.second << std::endl;
-		for (auto gids : it.appStats)
-			std::cout << gids.first << ": " << gids.second << std::endl;
+			os << "\t[" << uids.first << "]" << std::endl << "\t- " << uids.second << std::endl;
+	}
+	if (it.gidStats.size() > 0){
+		os << "gids:" << std::endl;
+		for (auto gids : it.gidStats)
+			os << "\t[" << gids.first << "]" << std::endl << "\t- " << gids.second << std::endl;
 	}
 
 	os << C_RESET << std::endl;
