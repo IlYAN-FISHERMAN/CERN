@@ -59,7 +59,7 @@ class IoAggregateMap{
 
 		std::optional<std::vector<size_t> > getAvailableWindows() const;
 
-		void addWindow(size_t winTime, size_t intervalsec, size_t nbrBins);
+		int addWindow(size_t winTime, size_t intervalsec, size_t nbrBins);
 
 		const IoMap& getIoMap() const;
 
@@ -88,12 +88,15 @@ class IoAggregateMap{
 
 		friend std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other);
 
-		template<typename T>
-		std::optional<IoStatSummary> getSummary(const T index, size_t seconds = 10){
-			std::lock_guard<std::mutex> lock(_mutex);
-			// return (_map.getSummary(index, seconds));
-			(void)seconds;
-			(void)index;
-			return(std::nullopt);
-		}
+		void shiftWindow();
+
+		// template<typename T>
+		// std::optional<IoStatSummary> getSummary(const T index, size_t seconds = 10){
+		// 	std::lock_guard<std::mutex> lock(_mutex);
+		// 	std::vector<IoStatSummary> summarys;
+		// 		
+		// 	for (auto it : _aggregates){
+		// 		it.second.
+		// 	}
+		// }
 };

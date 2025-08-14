@@ -40,18 +40,19 @@ int main(int ac, char **av) {
 	(void)av;
 	(void)code;
 
+	// code = testIoStatExactValue();
+
 	// code = testIoMapSpecificCase();
 	// code = testIoMapSummary();
-	// code = testIoAggregateMap();
 	// code = testIoMapBigVolume();
 	// code = testIoMapBigVolume();
 	// code = testIoMapBigVolume();
 	// code = testIoMapExactValue();
-	// code = testIoStatExactValue();
-	// code = testIoAggregateMap();
 	// code = testIoMapIds();
-	code = testIoAggregateMapWindow();
-	// std::cout << "code: " << code << std::endl;
+
+	// code = testIoAggregateMapWindow();
+	code = testIoAggregateMap();
+	std::cout << "code: " << code << std::endl;
     // ::testing::InitGoogleTest(&ac, av);
     // return RUN_ALL_TESTS();
 }

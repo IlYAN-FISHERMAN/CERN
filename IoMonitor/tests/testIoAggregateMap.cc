@@ -32,40 +32,64 @@ void fillData(IoAggregateMap &map){
 
 int testIoAggregateMapWindow(){
 	IoAggregateMap map;
-	gid_t grps = 3;
-	uid_t user = 14;
-	int nbrOfBin = 10;
+
+	map.addWindow(60, 3, 42);
+	map.addWindow(120, 3, 13);
+	map.addWindow(31, 3, 13);
+	map.addWindow(9999, 0, 1);
+	map.addWindow(9999, 4, 1);
+	map.addWindow(9999, 1, 1);
+	map.addWindow(9999, 9999, 1);
+	map.addWindow(1, 1, 1);
+	map.addWindow(0, 0, 0);
+
+	auto tmp = map.getAvailableWindows();
+	if (!tmp.has_value())
+		return -1;
+
+	auto windo = tmp.value();
+	if (windo.size() != 4)
+		return -1;
+	if ((std::find(windo.begin(), windo.end(), 9999) == windo.end())
+	|| std::find(windo.begin(), windo.end(), 60) == windo.end()
+	|| std::find(windo.begin(), windo.end(), 120) == windo.end()
+	|| std::find(windo.begin(), windo.end(), 31) == windo.end())
+		return -1;
+	if (!map.containe(9999)
+		|| !map.containe(120)
+		|| !map.containe(31)
+		|| !map.containe(60))
+		return -1;
+	if (map.containe(422425))
+		return -1;
+	return 0;
+}
+
+int testIoAggregateMap(){
+	IoAggregateMap map;
 
 	map.addRead(1, "eos", 14, 3, 5025);
 	map.addRead(1, "eos", 14, 3, 425);
 	map.addRead(1, "eos", 14, 3, 54225);
 
-	map.addWindow(60, 3, nbrOfBin);
-	map.addWindow(120, 3, nbrOfBin);
+	map.addWindow(60, 3, 42);
+	map.addWindow(120, 3, 13);
 
-	if (map.containe(60)){
-		map.setTrack(60, "eos");
-		map.setTrack(60, io::TYPE::UID, user);
-		map.setTrack(60, io::TYPE::GID, grps);
-	}
+	map.setTrack(60, "eos");
+	map.setTrack(60, io::TYPE::UID, 14);
+	map.setTrack(60, io::TYPE::GID, 3);
 
 	if (map.containe(120)){
 		map.setTrack(120, "eos");
-		map.setTrack(120, io::TYPE::UID, user);
-		map.setTrack(120, io::TYPE::GID, grps);
+		map.setTrack(120, io::TYPE::UID, 14);
+		map.setTrack(120, io::TYPE::GID, 3);
 	}
 
 	for (int i = 0; true; i++){
-		// std::string input;
-		// std::getline(std::cin, input);
-		std::this_thread::sleep_for(std::chrono::seconds(1));
+		std::string input;
+		std::getline(std::cin, input);
+		// std::this_thread::sleep_for(std::chrono::seconds(1));
 		std::cout << i << " " << map << std::endl;
 	}
-	// std::cout << map << std::endl;
-	// std::cout << map.getIoMap() << std::endl;
-	return 0;
-}
-
-int testIoAggregateMap(){
 	return 0;
 }

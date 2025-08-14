@@ -44,9 +44,14 @@ IoAggregateMap::~IoAggregateMap(){
 
 std::optional<std::vector<size_t> > IoAggregateMap::getAvailableWindows() const{
 	std::lock_guard<std::mutex> lock(_mutex);
+	std::vector<size_t> windo;
+
 	if (_aggregates.empty())
 		return (std::nullopt);
-	return (std::vector<size_t>(_aggregates.begin()->first, _aggregates.end()->first));
+
+	for (auto &it : _aggregates)
+		windo.emplace_back(it.first);
+	return windo;
 }
 
 void IoAggregateMap::addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes){
@@ -73,9 +78,14 @@ void IoAggregateMap::updateAggregateLoop(){
 	}
 }
 
-void IoAggregateMap::addWindow(size_t winTime, size_t intervalsec, size_t nbrBins){
+int IoAggregateMap::addWindow(size_t winTime, size_t intervalsec, size_t nbrBins){
 	std::lock_guard<std::mutex> lock(this->_mutex);
-	_aggregates[winTime] = std::make_unique<IoAggregate>(winTime, intervalsec, nbrBins);
+	if (winTime < 5 || intervalsec == 0 || nbrBins == 0)
+		return -1;
+	if (_aggregates.find(winTime) != _aggregates.end())
+		_aggregates.erase(winTime);
+	_aggregates.insert({winTime, std::make_unique<IoAggregate>(winTime, intervalsec, nbrBins)});
+	return 0;
 }
 
 bool IoAggregateMap::containe(size_t winTime) const {

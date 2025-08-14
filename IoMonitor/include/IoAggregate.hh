@@ -23,7 +23,7 @@
 #pragma once
 
 #include "IoMap.hh"
-#include <variant>
+
 //--------------------------------------------
 /// The current name of the class when us
 /// printInfo function
