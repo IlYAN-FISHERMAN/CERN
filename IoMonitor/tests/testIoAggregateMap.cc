@@ -88,11 +88,11 @@ int testIoAggregateMap(){
 
 	for (int i = 0; true; i++){
 		std::string input;
-		map.addRead(1, "eos", 14, 3, 5025);
-		map.addRead(1, "eos", 14, 3, 425);
-		map.addRead(1, "eos", 14, 3, 54225);
-		map.addRead(1, "eos", 14, 404, 1050);
-		map.addRead(1, "eos", 14, 404, 500);
+		map.addRead(1, "eos", 14, 3, 5025 * i);
+		map.addRead(1, "eos", 14, 3, 425 * i);
+		map.addRead(1, "eos", 14, 3, 54225 - (i * 100));
+		map.addRead(1, "eos", 14, 404, 1050 + i);
+		map.addRead(1, "eos", 14, 404, 500 * i);
 		map.addRead(1, "eos", 14, 404, 425);
 
 		std::cout << "[enter: " << i  << "]"<< std::endl;

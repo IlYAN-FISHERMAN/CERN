@@ -104,6 +104,9 @@ IoStatSummary IoAggregate::summaryWeighted(std::vector<IoStatSummary> summarys) 
 
 	if (io::IoAggregateDebug)
 		printInfo(std::cout, "summary weighted called");
+	for (const auto &it : summarys)
+		std::cout << it;
+	std::cout << std::endl;
 	for (const auto &it : summarys){
 		if (it.readBandwidth.has_value())
 			weighted.readBandwidth->first += (it.readBandwidth->first * it.rSize);
@@ -120,20 +123,22 @@ IoStatSummary IoAggregate::summaryWeighted(std::vector<IoStatSummary> summarys) 
 
 	for (const auto &it : summarys){
 		if (weighted.readBandwidth.has_value())
-			weighted.readBandwidth->second += (it.readBandwidth->second * \
+			weighted.readBandwidth->second += (it.rSize * \
 				(std::pow(it.readBandwidth->second, 2) + std::pow(it.readBandwidth->first - \
 													  weighted.readBandwidth->first, 2)));
 		if (weighted.writeBandwidth.has_value())
-			weighted.writeBandwidth->second += (it.writeBandwidth->second * \
+			weighted.writeBandwidth->second += (it.wSize * \
 				(std::pow(it.writeBandwidth->second, 2) + std::pow(it.writeBandwidth->first - \
 													  weighted.writeBandwidth->first, 2)));
 	}
+		// weighted.second += it.second * (std::pow(it.first.second, 2) + std::pow(it.first.first - weighted.first, 2));
 
 	if (rDivisor > 0 && weighted.readBandwidth.has_value())
 			weighted.readBandwidth->second = std::sqrt(weighted.readBandwidth->second / rDivisor);
 
 	if (wDivisor > 0 && weighted.writeBandwidth.has_value())
 			weighted.writeBandwidth->second = std::sqrt(weighted.writeBandwidth->second / wDivisor);
+
 
 	weighted.rSize = rDivisor;
 	weighted.wSize = wDivisor;
@@ -187,7 +192,7 @@ std::ostream& operator<<(std::ostream &os, const IoAggregate &other){
 			os << "\t[" << gids.first << "]" << std::endl << "\t- " << gids.second << std::endl;
 	}
 
-	os << C_RESET << std::endl;
+	os << C_RESET;
 	return os;
 }
 
