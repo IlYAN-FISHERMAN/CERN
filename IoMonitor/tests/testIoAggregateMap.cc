@@ -33,15 +33,15 @@ void fillData(IoAggregateMap &map){
 int testIoAggregateMapWindow(){
 	IoAggregateMap map;
 
-	map.addWindow(60, 3, 42);
-	map.addWindow(120, 3, 13);
-	map.addWindow(31, 3, 13);
-	map.addWindow(9999, 0, 1);
-	map.addWindow(9999, 4, 1);
-	map.addWindow(9999, 1, 1);
-	map.addWindow(9999, 9999, 1);
-	map.addWindow(1, 1, 1);
-	map.addWindow(0, 0, 0);
+	map.addWindow(60);
+	map.addWindow(120);
+	map.addWindow(31);
+	map.addWindow(9999);
+	map.addWindow(9999);
+	map.addWindow(9999);
+	map.addWindow(9999);
+	map.addWindow(1);
+	map.addWindow(0);
 
 	auto tmp = map.getAvailableWindows();
 	if (!tmp.has_value())
@@ -69,8 +69,8 @@ int testIoAggregateMap(){
 	IoAggregateMap map;
 	
 	// Add window
-	map.addWindow(60, 3, 3);
-	// map.addWindow(1000, 5, 13);
+	map.addWindow(60);
+	// map.addWindow(1000);
 
 	// set Tracks
 
@@ -97,15 +97,14 @@ int testIoAggregateMap(){
 	}
 
 	for (int i = 0; i < 10; i++){
+		std::cout << "\33c";
 		std::string input;
 		std::cout << "[enter: " << i  << "]"<< std::endl;
 		std::getline(std::cin, input);
 		if (input == "add")
 			map.addRead(1, "eos", 14, 404, 425);
 		auto summary = map.getSummary(60, io::TYPE::GID, 14);
-		summary = map.getSummary(60, "eos");
-		map.shiftWindow(60);
-		map.getWindowSummary(60);
+		std::cout << summary << std::endl;
 	}
 	return 0;
 }

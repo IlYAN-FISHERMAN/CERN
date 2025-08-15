@@ -51,20 +51,13 @@ IoAggregate& IoAggregate::operator=(const IoAggregate &other){
 	return *this;
 }
 
-IoAggregate::IoAggregate(size_t winTime, size_t intervalSec, size_t nbrBins)
-	: _currentIndex(0), _currentTime(std::chrono::system_clock::now()){
-	if (winTime < 60)
-		winTime = 60;
-	if (intervalSec == 0)
-		intervalSec = 1;
-	if (intervalSec > winTime)
-		intervalSec = winTime;
-	if (winTime % intervalSec != 0)
-		winTime -= winTime % intervalSec;
+IoAggregate::IoAggregate(size_t winTime)
+	: _intervalSec(10), _currentIndex(0) ,_currentTime(std::chrono::system_clock::now()){
+	if (winTime < 10)
+		winTime = 10;
+	if (winTime % _intervalSec != 0)
+		winTime -= winTime % _intervalSec;
 	_winTime = winTime;
-	_intervalSec = intervalSec;
-	nbrBins == 0 ? _nbrBins = 1 : _nbrBins = nbrBins;
-	_bins.resize(nbrBins);
 }
 
 void IoAggregate::update(const IoMap &maps){
@@ -92,10 +85,49 @@ void IoAggregate::update(const IoMap &maps){
 
 void IoAggregate::shiftWindow(){
 	_currentIndex++;
-	if (_currentIndex >= _bins.size())
-		_currentIndex = 0;
-	_bins.e
+	_bins.emplace_back(Bin());
 }
+
+IoStatSummary IoAggregate::summaryWeighted(std::vector<IoStatSummary> summarys) const{
+	size_t rDivisor = 0;
+	size_t wDivisor = 0;
+	IoStatSummary weighted;
+
+	for (const auto &it : summarys){
+		if (it.readBandwidth.has_value())
+			weighted.readBandwidth->first += (it.readBandwidth->first * it.rSize);
+		if (it.writeBandwidth.has_value())
+			weighted.writeBandwidth->first += (it.writeBandwidth->first * it.wSize);
+		rDivisor += it.rSize;
+		wDivisor += it.wSize;
+	}
+
+	if (rDivisor > 0)
+		weighted.readBandwidth->first /= rDivisor;
+	if (wDivisor > 0)
+		weighted.writeBandwidth->first /= wDivisor;
+
+	for (const auto &it : summarys){
+		if (weighted.readBandwidth.has_value())
+			weighted.readBandwidth->second += (it.readBandwidth->second * \
+				(std::pow(it.readBandwidth->second, 2) + std::pow(it.readBandwidth->first - \
+													  weighted.readBandwidth->first, 2)));
+		if (weighted.writeBandwidth.has_value())
+			weighted.writeBandwidth->second += (it.writeBandwidth->second * \
+				(std::pow(it.writeBandwidth->second, 2) + std::pow(it.writeBandwidth->first - \
+													  weighted.writeBandwidth->first, 2)));
+	}
+
+	if (rDivisor > 0)
+		if (weighted.readBandwidth.has_value())
+			weighted.readBandwidth->second = std::sqrt(weighted.readBandwidth->second / rDivisor);
+	if (wDivisor > 0)
+		if (weighted.writeBandwidth.has_value())
+			weighted.writeBandwidth->second = std::sqrt(weighted.writeBandwidth->second / wDivisor);
+
+	return weighted;
+}
+
 
 std::ostream& operator<<(std::ostream &os, const IoAggregate &other){
 	std::lock_guard<std::mutex> lock(other._mutex);

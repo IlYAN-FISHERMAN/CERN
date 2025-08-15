@@ -77,13 +77,11 @@ void IoAggregateMap::updateAggregateLoop(){
 	}
 }
 
-int IoAggregateMap::addWindow(size_t winTime, size_t intervalsec, size_t nbrBins){
+int IoAggregateMap::addWindow(size_t winTime){
 	std::lock_guard<std::mutex> lock(this->_mutex);
-	if (winTime < 5 || intervalsec == 0 || nbrBins == 0)
+	if (winTime < 10)
 		return -1;
-	if (_aggregates.find(winTime) != _aggregates.end())
-		_aggregates.erase(winTime);
-	_aggregates.insert({winTime, std::make_unique<IoAggregate>(winTime, intervalsec, nbrBins)});
+	_aggregates.emplace(winTime, std::make_unique<IoAggregate>(winTime));
 	return 0;
 }
 
@@ -110,7 +108,7 @@ std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoAggregat
 void IoAggregateMap::shiftWindow(size_t winTime){
 	if (_aggregates.find(winTime) == _aggregates.end())
 		return ;
-	_aggregates[winTime].shiftWindow();
+	_aggregates[winTime]->shiftWindow();
 }
 
 std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other){

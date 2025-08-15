@@ -58,7 +58,7 @@ class IoAggregateMap{
 
 		void addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes);
 		void addWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes);
-		int addWindow(size_t winTime, size_t intervalsec, size_t nbrBins);
+		int addWindow(size_t winTime);
 
 		std::optional<std::vector<size_t> > getAvailableWindows() const;
 		const IoMap& getIoMap() const;
@@ -93,6 +93,14 @@ class IoAggregateMap{
 			std::lock_guard<std::mutex> lock(_mutex);
 			if (_aggregates.find(winTime) == _aggregates.end())
 				return std::nullopt;
-			return (_aggregates[winTime].getSummary(index));
+			return (_aggregates[winTime]->getSummary(index));
+		}
+
+		template<typename T>
+		std::optional<IoStatSummary> getSummary(size_t winTime, io::TYPE type, const T index){
+			std::lock_guard<std::mutex> lock(_mutex);
+			if (_aggregates.find(winTime) == _aggregates.end())
+				return std::nullopt;
+			return (_aggregates[winTime]->getSummary(type, index));
 		}
 };

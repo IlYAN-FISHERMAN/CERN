@@ -80,12 +80,14 @@ class IoAggregate{
 		//--------------------------------------------
 		/// Main constructor
 		//--------------------------------------------
-		explicit IoAggregate(size_t winTime, size_t intervalSec, size_t nbrBins);
+		explicit IoAggregate(size_t winTime);
 
 		void update(const IoMap &maps);
 		void shiftWindow();
 
 		friend std::ostream& operator<<(std::ostream &os, const IoAggregate &other);
+		
+		IoStatSummary summaryWeighted(std::vector<IoStatSummary> summarys) const;
 
 		template <typename T>
 		int setTrack(T index){
@@ -109,55 +111,54 @@ class IoAggregate{
 		template <typename T>
 		void addSample(io::TYPE type, const T index, IoStatSummary &summary){
 
-			if (_currentIndex > _bins.size())
-				_currentIndex = 0;
-			if (type == io::TYPE::UID){
-				if (_bins.at(_currentIndex).uidStats.size() == _winTime / _intervalSec){
-					_currentIndex++;
-					if (_currentIndex > _nbrBins){
-						_currentIndex = 0;
-						_bins.at(_currentIndex).uidStats.clear();
-					}
-				}
+			if (type == io::TYPE::UID)
 				_bins.at(_currentIndex).uidStats.insert({index, summary});
-			}
-			else if (type == io::TYPE::GID){
-				if (_bins.at(_currentIndex).gidStats.size() == _winTime / _intervalSec){
-					_currentIndex++;
-					if (_currentIndex > _nbrBins){
-						_currentIndex = 0;
-						_bins.at(_currentIndex).gidStats.clear();
-					}
-				}
+			else if (type == io::TYPE::GID)
 				_bins.at(_currentIndex).gidStats.insert({index, summary});
-			}
 		}
 
 		template <typename T>
 		void addSample(const T index, IoStatSummary &summary){
 
-			if (_currentIndex > _bins.size())
-				_currentIndex = 0;
-			if (std::is_same_v<T, std::string> || std::is_same_v<T, const char *>){
-				if (_bins.at(_currentIndex).appStats.size() == _winTime / _intervalSec){
-					_currentIndex++;
-					if (_currentIndex > _nbrBins){
-						_currentIndex = 0;
-						_bins.at(_currentIndex).appStats.clear();
-					}
-				}
+			if (std::is_same_v<T, std::string> || std::is_same_v<T, const char *>)
 				_bins.at(_currentIndex).appStats.insert({std::string(index), summary});
-			}
 		}
 
 		template <typename T>
 		std::optional<IoStatSummary> getSummary(const T index){
-			if (!(std::is_same_v<T, std::string> || std::is_same_v<T, const char *>))
+			std::vector<IoStatSummary> summarys;
+
+			if (!(std::is_same_v<T, std::string> || std::is_same_v<T, const char *>)
+			|| (_apps.find(index) == _apps.end())
+			|| _bins.at(_currentIndex).appStats.find(index) == _bins.at(_currentIndex).appStats.end())
 				return std::nullopt;
 			
+			auto it = _bins.at(_currentIndex);
+			for (auto appsSumarrys : it.appStats)
+				summarys.emplace_back(appsSumarrys.second);
+			return summaryWeighted(summarys);
+		}
+
+		template <typename T>
+		std::optional<IoStatSummary> getSummary(io::TYPE type, const T index){
 			std::vector<IoStatSummary> summarys;
-			auto &bin = _bins.at(_currentIndex);
-			for (auto &it : bin)
-				;
-	}
+
+			if (!(std::is_same_v<T, uid_t> || std::is_same_v<T, gid_t>)
+			|| (type != io::TYPE::GID || type != io::TYPE::UID))
+				return std::nullopt;
+
+			if ((type == io::TYPE::UID && _uids.find(index) == _uids.end())
+			|| (type == io::TYPE::GID && _gids.find(index) == _gids.end()))
+				return std::nullopt;
+			
+			auto it = _bins.at(_currentIndex);
+			if (type == io::TYPE::UID)
+				for (auto uidsSumarrys : it.uidStats)
+					summarys.emplace_back(uidsSumarrys.second);
+			else if (type == io::TYPE::GID)
+				for (auto gidsSumarrys : it.gidStats)
+					summarys.emplace_back(gidsSumarrys.second);
+
+			return summaryWeighted(summarys);
+		}
 };
