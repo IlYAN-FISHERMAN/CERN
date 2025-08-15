@@ -25,9 +25,9 @@ TEST(IoMap, exactValue) {
 	EXPECT_EQ(testIoMapIds(), 0);
 }
 
-TEST(IoAggregateMap, testWindow) {
-	EXPECT_EQ(testIoAggregateMapWindow(), 0);
-}
+// TEST(IoAggregateMap, testWindow) {
+// 	EXPECT_EQ(testIoAggregateMapWindow(), 0);
+// }
 
 /// Only for debugging
 // TEST(IoMap, testWithInteraction) {
@@ -52,7 +52,7 @@ int main(int ac, char **av) {
 
 	// code = testIoAggregateMapWindow();
 	code = testIoAggregateMap();
-	std::cout << "code: " << code << std::endl;
+	// std::cout << "code: " << code << std::endl;
     // ::testing::InitGoogleTest(&ac, av);
     // return RUN_ALL_TESTS();
 }

@@ -71,6 +71,8 @@ void IoAggregateMap::updateAggregateLoop(){
 		_cv.wait_until(lock, next_tick, [this]{ return !_running;});
 		if (!_running.load())
 			break;
+		if constexpr (io::IoAggregateMapDebug)
+			printInfo(std::cerr, "tick");
 		for (auto &maps : _aggregates)
 			maps.second->update(_map);
 		next_tick += std::chrono::seconds(TIME_TO_UPDATE);
@@ -82,6 +84,8 @@ int IoAggregateMap::addWindow(size_t winTime){
 	if (winTime < 10)
 		return -1;
 	_aggregates.emplace(winTime, std::make_unique<IoAggregate>(winTime));
+	if constexpr (io::IoAggregateMapDebug)
+		printInfo(std::cout, "add window succeeded: " + std::to_string(winTime));
 	return 0;
 }
 
@@ -106,9 +110,13 @@ std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoAggregat
 }
 
 void IoAggregateMap::shiftWindow(size_t winTime){
+	if constexpr (io::IoAggregateMapDebug)
+		printInfo(std::cout, "shiftWindow");
 	if (_aggregates.find(winTime) == _aggregates.end())
 		return ;
 	_aggregates[winTime]->shiftWindow();
+	if constexpr (io::IoAggregateMapDebug)
+		printInfo(std::cout, "shiftWindo succeeded");
 }
 
 std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other){
@@ -119,4 +127,22 @@ std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other){
 		os << *it.second.get() << std::endl;
 	}
 	return os;
+}
+
+//--------------------------------------------
+/// Display the string given as parameter in
+/// specific format with the current time
+//--------------------------------------------
+void	IoAggregateMap::printInfo(std::ostream &os, const char *msg) const{
+	const char *time = getCurrentTime();
+	os << IOAGGREGATEMAP_NAME << " [" << time << "]: " << msg << std::endl;
+}
+
+//--------------------------------------------
+/// Display the string given as parameter in
+/// specific format with the current time
+//--------------------------------------------
+void	IoAggregateMap::printInfo(std::ostream &os, const std::string &msg) const{
+	const char *time = getCurrentTime();
+	os << IOAGGREGATEMAP_NAME << " [" << time << "]: " << msg << std::endl;
 }

@@ -39,7 +39,7 @@
 /// The time the cleanloop function must wait
 /// before cleaning the map
 //--------------------------------------------
-#define TIME_TO_CLEAN 2
+#define TIME_TO_CLEAN 60
 
 class IoMap {
 	private:
@@ -343,6 +343,9 @@ class IoMap {
 		std::optional<IoStatSummary> getSummary(io::TYPE type, const T index, size_t seconds = 10) const{
 			std::lock_guard<std::mutex> lock(_mutex);
 
+			if (io::IoMapDebug)
+				printInfo(std::cout, "GetSummary for " + std::to_string(index));
+
 			if (type != io::TYPE::GID && type != io::TYPE::UID)
 				return std::nullopt;
 
@@ -391,6 +394,9 @@ class IoMap {
 			/// Calcule write weighted average/standard deviation
 			if (summary.writeBandwidth.has_value())
 				summary.writeBandwidth = calculeWeighted(writeData);
+
+			if (io::IoMapDebug)
+				printInfo(std::cout, "GetSummary succeeded");
 			return summary;
 		}
 
@@ -398,7 +404,9 @@ class IoMap {
 		std::optional<IoStatSummary> getSummary(const T index, size_t seconds = 10) const{
 			std::lock_guard<std::mutex> lock(_mutex);
 
-		 	if (seconds == 0)
+			if (io::IoMapDebug)
+				printInfo(std::cout, "GetSummary for " + std::string(index));
+			if (seconds == 0)
 				return (IoStatSummary());
 
 			std::map<std::pair<double, double>, size_t> readData;
@@ -447,6 +455,8 @@ class IoMap {
 			if (summary.writeBandwidth.has_value())
 				summary.writeBandwidth = calculeWeighted(writeData);
 
+			if (io::IoMapDebug)
+				printInfo(std::cout, "GetSummary succeeded");
 			return summary;
 		}
 };

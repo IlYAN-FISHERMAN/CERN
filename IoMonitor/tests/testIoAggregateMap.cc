@@ -70,15 +70,11 @@ int testIoAggregateMap(){
 	
 	// Add window
 	map.addWindow(60);
-	// map.addWindow(1000);
 
 	// set Tracks
+	map.setTrack(60, "eos");
 
 	// Does not exist
-	map.setTrack(60, io::TYPE::UID, 123456);
-
-	map.setTrack(60, "eodawd");
-	map.setTrack(60, io::TYPE::GID, 404);
 
 
 	// Add input
@@ -90,20 +86,19 @@ int testIoAggregateMap(){
 	map.addRead(1, "eos", 14, 404, 500);
 	map.addRead(1, "eos", 14, 404, 425);
 
-	if (map.containe(120)){
-		map.setTrack(120, "eos");
-		map.setTrack(120, io::TYPE::UID, 14);
-		map.setTrack(120, io::TYPE::GID, 3);
-	}
-
-	for (int i = 0; i < 10; i++){
-		std::cout << "\33c";
+	for (int i = 0; true; i++){
 		std::string input;
+		map.addRead(1, "eos", 14, 3, 5025);
+		map.addRead(1, "eos", 14, 3, 425);
+		map.addRead(1, "eos", 14, 3, 54225);
+		map.addRead(1, "eos", 14, 404, 1050);
+		map.addRead(1, "eos", 14, 404, 500);
+		map.addRead(1, "eos", 14, 404, 425);
+
 		std::cout << "[enter: " << i  << "]"<< std::endl;
 		std::getline(std::cin, input);
-		if (input == "add")
-			map.addRead(1, "eos", 14, 404, 425);
-		auto summary = map.getSummary(60, io::TYPE::GID, 14);
+		std::cout << "\33c";
+		auto summary = map.getSummary(60, "eos");
 		std::cout << summary << std::endl;
 	}
 	return 0;

@@ -93,8 +93,8 @@ namespace io {
 	constexpr bool IoStatDebug = false;
 	constexpr bool IoMapDebug = false;
 	constexpr bool IoMarkDebug = false;
-	constexpr bool IoAggregateMapDebug = false;
-	constexpr bool IoAggregateDebug = false;
+	constexpr bool IoAggregateMapDebug = true;
+	constexpr bool IoAggregateDebug = true;
 
 	enum class TYPE {
 		UID,

@@ -75,12 +75,15 @@ void	IoMap::printInfo(std::ostream &os, const std::string &msg) const{
 void IoMap::cleanerLoop(){
 	while (_running.load()){
 		std::unique_lock<std::mutex> lock(_mutex);
+
 		_cv.wait_for(lock, std::chrono::seconds(TIME_TO_CLEAN), [this]{ return !_running;});
 		if (!_running.load())
 			break;
+
 		// Clean inactive I/O
 		size_t rsize = 0;
 		size_t wsize = 0;
+
 		for(auto it = _filesMap.begin(); it != _filesMap.end();){
 			std::pair<double, double> read;
 			std::pair<double, double> write;

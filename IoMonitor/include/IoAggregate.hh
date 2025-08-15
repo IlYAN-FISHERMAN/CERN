@@ -85,6 +85,18 @@ class IoAggregate{
 		void update(const IoMap &maps);
 		void shiftWindow();
 
+		//--------------------------------------------
+		/// Display the string given as parameter in
+		/// specific format with the current time
+		//--------------------------------------------
+		void printInfo(std::ostream &os, const std::string &msg) const;
+
+		//--------------------------------------------
+		/// Display the string given as parameter in
+		/// specific format with the current time
+		//--------------------------------------------
+		void printInfo(std::ostream &os, const char *msg) const;
+
 		friend std::ostream& operator<<(std::ostream &os, const IoAggregate &other);
 		
 		IoStatSummary summaryWeighted(std::vector<IoStatSummary> summarys) const;
@@ -111,31 +123,56 @@ class IoAggregate{
 		template <typename T>
 		void addSample(io::TYPE type, const T index, IoStatSummary &summary){
 
-			if (type == io::TYPE::UID)
-				_bins.at(_currentIndex).uidStats.insert({index, summary});
-			else if (type == io::TYPE::GID)
-				_bins.at(_currentIndex).gidStats.insert({index, summary});
+			if constexpr (io::IoAggregateDebug)
+				printInfo(std::cout, "add sample for " + std::to_string(index));
+			if (type == io::TYPE::UID){
+				auto &uid = _bins.at(_currentIndex).uidStats;
+				if (uid.size() >= _winTime / _intervalSec)
+					uid.erase(uid.begin());
+				uid.insert({index, summary});
+				if constexpr (io::IoAggregateDebug)
+					printInfo(std::cout, "add uid sample succeedded");
+			}
+			else if (type == io::TYPE::GID){
+				auto &gid = _bins.at(_currentIndex).gidStats;
+				if (gid.size() >= _winTime / _intervalSec)
+					gid.erase(gid.begin());
+				gid.insert({index, summary});
+				if constexpr (io::IoAggregateDebug)
+					printInfo(std::cout, "add gid sample succeedded");
+			}
 		}
 
 		template <typename T>
 		void addSample(const T index, IoStatSummary &summary){
 
-			if (std::is_same_v<T, std::string> || std::is_same_v<T, const char *>)
-				_bins.at(_currentIndex).appStats.insert({std::string(index), summary});
+			if constexpr (io::IoAggregateDebug)
+				printInfo(std::cout, "add Sample for " + std::string(index));
+			if (std::is_same_v<T, std::string> || std::is_same_v<T, const char *>){
+				auto &app = _bins.at(_currentIndex).appStats;
+				if (app.size() >= _winTime / _intervalSec)
+					app.erase(app.begin());
+				app.insert({std::string(index), summary});
+				if constexpr (io::IoAggregateDebug)
+					printInfo(std::cout, "add app sample succeedded");
+			}
 		}
 
 		template <typename T>
 		std::optional<IoStatSummary> getSummary(const T index){
 			std::vector<IoStatSummary> summarys;
 
+			if constexpr (io::IoAggregateDebug)
+				printInfo(std::cout, "get Summary for " + std::string(index));
 			if (!(std::is_same_v<T, std::string> || std::is_same_v<T, const char *>)
-			|| (_apps.find(index) == _apps.end())
-			|| _bins.at(_currentIndex).appStats.find(index) == _bins.at(_currentIndex).appStats.end())
+			|| _apps.find(index) == _apps.end())
 				return std::nullopt;
-			
-			auto it = _bins.at(_currentIndex);
+			auto &it = _bins.at(_currentIndex);
 			for (auto appsSumarrys : it.appStats)
 				summarys.emplace_back(appsSumarrys.second);
+
+			if constexpr (io::IoAggregateDebug)
+				printInfo(std::cout, "get Summary succeeded");
 			return summaryWeighted(summarys);
 		}
 
@@ -151,7 +188,7 @@ class IoAggregate{
 			|| (type == io::TYPE::GID && _gids.find(index) == _gids.end()))
 				return std::nullopt;
 			
-			auto it = _bins.at(_currentIndex);
+			auto &it = _bins.at(_currentIndex);
 			if (type == io::TYPE::UID)
 				for (auto uidsSumarrys : it.uidStats)
 					summarys.emplace_back(uidsSumarrys.second);

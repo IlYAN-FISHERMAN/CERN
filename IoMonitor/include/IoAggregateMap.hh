@@ -60,22 +60,48 @@ class IoAggregateMap{
 		void addWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes);
 		int addWindow(size_t winTime);
 
+		//--------------------------------------------
+		/// Display the string given as parameter in
+		/// specific format with the current time
+		//--------------------------------------------
+		void printInfo(std::ostream &os, const char *msg) const;
+
+		//--------------------------------------------
+		/// Display the string given as parameter in
+		/// specific format with the current time
+		//--------------------------------------------
+		void printInfo(std::ostream &os, const std::string &msg) const;
+
 		std::optional<std::vector<size_t> > getAvailableWindows() const;
 		const IoMap& getIoMap() const;
 
 		template <typename T>
 		int setTrack(size_t winTime, const T index){
-			if (!this->containe(winTime))
+			if constexpr (io::IoAggregateMapDebug)
+				printInfo(std::cout, "set appName track for " + std::string(index));
+			if (!this->containe(winTime)){
+				if constexpr (io::IoAggregateMapDebug)
+					printInfo(std::cerr, "set appName track failed");
 				return -1;
+			}
 			_aggregates[winTime]->setTrack(index);
+			if constexpr (io::IoAggregateMapDebug)
+				printInfo(std::cout, "set appName track succeeded");
 			return 0;
 		}
 
 		template <typename T>
 		int setTrack(size_t winTime, io::TYPE type, const T index){
-			if (!this->containe(winTime))
+			if constexpr (io::IoAggregateMapDebug)
+				printInfo(std::cout, "set id track for " + std::to_string(index));
+			if (!this->containe(winTime)){
+				if constexpr (io::IoAggregateMapDebug)
+					printInfo(std::cerr, "set id track failed");
 				return -1;
+			}
 			_aggregates[winTime]->setTrack(type, index);
+			if constexpr (io::IoAggregateMapDebug)
+				printInfo(std::cout, "set id track succeeded");
 			return 0;
 		}
 

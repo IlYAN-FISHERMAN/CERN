@@ -58,26 +58,35 @@ IoAggregate::IoAggregate(size_t winTime)
 	if (winTime % _intervalSec != 0)
 		winTime -= winTime % _intervalSec;
 	_winTime = winTime;
+	_bins.emplace_back(Bin());
 }
 
 void IoAggregate::update(const IoMap &maps){
 	auto diff = std::chrono::system_clock::now() - _currentTime;
 
 	if (diff >= std::chrono::seconds(_intervalSec)){
+		if constexpr (io::IoAggregateDebug)
+			printInfo(std::cout, "updating...");
 		for (auto it = _apps.begin(); it != _apps.end(); it++){
 			auto summary = maps.getSummary(*it, _intervalSec);
 			if (summary.has_value())
 				addSample(*it, summary.value());
+			else if constexpr (io::IoAggregateDebug)
+				printInfo(std::cout, "No summary to add for " + std::string(*it));
 		}
 		for (auto it = _uids.begin(); it != _uids.end(); it++){
 			auto summary = maps.getSummary(io::TYPE::UID, *it, _intervalSec);
 			if (summary.has_value())
 				addSample(io::TYPE::UID, *it, summary.value());
+			else if constexpr (io::IoAggregateDebug)
+				printInfo(std::cout, "No summary to add for " + std::to_string(*it));
 		}
 		for (auto it = _gids.begin(); it != _gids.end(); it++){
 			auto summary = maps.getSummary(io::TYPE::GID, *it, _intervalSec);
 			if (summary.has_value())
 				addSample(io::TYPE::GID, *it, summary.value());
+			else if constexpr (io::IoAggregateDebug)
+				printInfo(std::cout, "No summary to add for " + std::to_string(*it));
 		}
 		_currentTime = std::chrono::system_clock::now();
 	}
@@ -93,6 +102,8 @@ IoStatSummary IoAggregate::summaryWeighted(std::vector<IoStatSummary> summarys) 
 	size_t wDivisor = 0;
 	IoStatSummary weighted;
 
+	if (io::IoAggregateDebug)
+		printInfo(std::cout, "summary weighted called");
 	for (const auto &it : summarys){
 		if (it.readBandwidth.has_value())
 			weighted.readBandwidth->first += (it.readBandwidth->first * it.rSize);
@@ -118,13 +129,17 @@ IoStatSummary IoAggregate::summaryWeighted(std::vector<IoStatSummary> summarys) 
 													  weighted.writeBandwidth->first, 2)));
 	}
 
-	if (rDivisor > 0)
-		if (weighted.readBandwidth.has_value())
+	if (rDivisor > 0 && weighted.readBandwidth.has_value())
 			weighted.readBandwidth->second = std::sqrt(weighted.readBandwidth->second / rDivisor);
-	if (wDivisor > 0)
-		if (weighted.writeBandwidth.has_value())
+
+	if (wDivisor > 0 && weighted.writeBandwidth.has_value())
 			weighted.writeBandwidth->second = std::sqrt(weighted.writeBandwidth->second / wDivisor);
 
+	weighted.rSize = rDivisor;
+	weighted.wSize = wDivisor;
+
+	if (io::IoAggregateDebug)
+		printInfo(std::cout, "summary weighted succeeded");
 	return weighted;
 }
 
@@ -174,4 +189,22 @@ std::ostream& operator<<(std::ostream &os, const IoAggregate &other){
 
 	os << C_RESET << std::endl;
 	return os;
+}
+
+//--------------------------------------------
+/// Display the string given as parameter in
+/// specific format with the current time
+//--------------------------------------------
+void	IoAggregate::printInfo(std::ostream &os, const char *msg) const{
+	const char *time = getCurrentTime();
+	os << IOAGGREGATE_NAME << " [" << time << "]: " << msg << std::endl;
+}
+
+//--------------------------------------------
+/// Display the string given as parameter in
+/// specific format with the current time
+//--------------------------------------------
+void	IoAggregate::printInfo(std::ostream &os, const std::string &msg) const{
+	const char *time = getCurrentTime();
+	os << IOAGGREGATE_NAME << " [" << time << "]: " << msg << std::endl;
 }

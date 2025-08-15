@@ -269,20 +269,20 @@ std::ostream& operator<<(std::ostream &os, const std::optional<IoStatSummary> &o
 		return os;
 	}
 	IoStatSummary other = opt.value();
-	os << "[READ]: ";
+	os << "[READ]";
 	if (other.readBandwidth.has_value())
-		os << "average: " << other.readBandwidth->first
-			<< " standard deviation: " << other.readBandwidth->second
-			<< " size: " << other.rSize << std::endl;
+		os << "[average: " << other.readBandwidth->first
+			<< "][standard deviation: " << other.readBandwidth->second
+			<< "][size: " << other.rSize << "] / ";
 	else
-		os << "empty" << std::endl;
-	os << "[WRITE]: ";
+		os << "[empty]" << std::endl;
+	os << "[WRITE]";
 	if (other.writeBandwidth.has_value())
-		os << "average: " << other.writeBandwidth->first
-			<< " standard deviation: " << other.writeBandwidth->second
-			<< " size: " << other.wSize << std::endl;
+		os << "[average: " << other.writeBandwidth->first
+			<< "][standard deviation: " << other.writeBandwidth->second
+			<< "][size: " << other.wSize << "]" << std::endl;
 	else
-		os << "empty" << std::endl;
+		os << "[empty]" << std::endl;
 	return os;
 }
 
