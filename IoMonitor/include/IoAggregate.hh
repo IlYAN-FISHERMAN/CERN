@@ -180,13 +180,13 @@ class IoAggregate{
 		std::optional<IoStatSummary> getSummary(io::TYPE type, const T index){
 			std::vector<IoStatSummary> summarys;
 
-			if (!(std::is_same_v<T, uid_t> || std::is_same_v<T, gid_t>)
-			|| (type != io::TYPE::GID || type != io::TYPE::UID))
+			if (type != io::TYPE::GID || type != io::TYPE::UID)
 				return std::nullopt;
 
 			if ((type == io::TYPE::UID && _uids.find(index) == _uids.end())
 			|| (type == io::TYPE::GID && _gids.find(index) == _gids.end()))
 				return std::nullopt;
+			std::cout << "test\n";
 			
 			auto &it = _bins.at(_currentIndex);
 			if (type == io::TYPE::UID)

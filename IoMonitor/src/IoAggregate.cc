@@ -131,7 +131,6 @@ IoStatSummary IoAggregate::summaryWeighted(std::vector<IoStatSummary> summarys) 
 				(std::pow(it.writeBandwidth->second, 2) + std::pow(it.writeBandwidth->first - \
 													  weighted.writeBandwidth->first, 2)));
 	}
-		// weighted.second += it.second * (std::pow(it.first.second, 2) + std::pow(it.first.first - weighted.first, 2));
 
 	if (rDivisor > 0 && weighted.readBandwidth.has_value())
 			weighted.readBandwidth->second = std::sqrt(weighted.readBandwidth->second / rDivisor);
