@@ -124,6 +124,8 @@ std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other){
 	os << C_GREEN << "[" << C_CYAN << "IoAggregateMap" << C_GREEN << "]" << C_RESET;
 	os << C_GREEN << "[" << C_CYAN << "available window: " << other._aggregates.size() << C_GREEN << "]" << C_RESET << std::endl << std::endl;
 	for (auto &it : other._aggregates){
+		os << C_GREEN << "[" << C_CYAN << "Window" << C_GREEN << "[" <<  C_CYAN
+			<< it.first << C_GREEN << "]" << C_RESET;
 		os << *it.second.get() << std::endl;
 	}
 	return os;

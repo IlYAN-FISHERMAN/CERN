@@ -100,9 +100,9 @@ int testIoAggregateMap(){
 		std::cout << "[enter: " << i  << "]"<< std::endl;
 		std::getline(std::cin, input);
 		std::cout << "\33c";
-		// auto summary = map.getSummary(60, "eos");
-		// std::cout << summary << std::endl;
-		auto summary2 = map.getSummary<gid_t>(120, io::TYPE::UID, 14);
+		auto summary = map.getSummary(60, "eos");
+		std::cout << summary << std::endl;
+		auto summary2 = map.getSummary(120, io::TYPE::UID, 14);
 		std::cout << summary2 << std::endl;
 	}
 	return 0;
