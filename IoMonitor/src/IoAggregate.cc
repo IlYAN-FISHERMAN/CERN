@@ -65,6 +65,7 @@ void IoAggregate::update(const IoMap &maps){
 	auto diff = std::chrono::system_clock::now() - _currentTime;
 
 	if (diff >= std::chrono::seconds(_intervalSec)){
+		printInfo(std::cout, "updating...");
 		if constexpr (io::IoAggregateDebug)
 			printInfo(std::cout, "updating...");
 		for (auto it = _apps.begin(); it != _apps.end(); it++){
@@ -97,16 +98,14 @@ void IoAggregate::shiftWindow(){
 	_bins.emplace_back(Bin());
 }
 
-IoStatSummary IoAggregate::summaryWeighted(std::vector<IoStatSummary> summarys) const{
+std::optional<IoStatSummary> IoAggregate::summaryWeighted(std::vector<IoStatSummary> summarys) const{
 	size_t rDivisor = 0;
 	size_t wDivisor = 0;
 	IoStatSummary weighted;
 
 	if (io::IoAggregateDebug)
 		printInfo(std::cout, "summary weighted called");
-	for (const auto &it : summarys)
-		std::cout << it;
-	std::cout << std::endl;
+
 	for (const auto &it : summarys){
 		if (it.readBandwidth.has_value())
 			weighted.readBandwidth->first += (it.readBandwidth->first * it.rSize);
@@ -144,6 +143,12 @@ IoStatSummary IoAggregate::summaryWeighted(std::vector<IoStatSummary> summarys) 
 
 	if (io::IoAggregateDebug)
 		printInfo(std::cout, "summary weighted succeeded");
+	if (weighted.wSize == 0 && weighted.rSize == 0)
+		return std::nullopt;
+	if (weighted.rSize == 0)
+		weighted.readBandwidth = std::nullopt;
+	if (weighted.wSize == 0)
+		weighted.writeBandwidth = std::nullopt;
 	return weighted;
 }
 
@@ -153,7 +158,7 @@ std::ostream& operator<<(std::ostream &os, const IoAggregate &other){
 	os << C_GREEN << "[" << C_CYAN << "IoAggregate" << C_GREEN << "]" << C_RESET << std::endl;
 	os << C_GREEN << "[" << C_YELLOW << "window time: " << other._winTime << C_GREEN << "]" << C_RESET;
 	os << C_GREEN << "[" << C_YELLOW << "interval/win: " << other._intervalSec << C_GREEN << "]" << C_RESET;
-	os << C_GREEN << "[" << C_YELLOW << "nbr of bin: " << other._bins.size() << "/" << other._nbrBins << C_GREEN << "]" << C_RESET;
+	os << C_GREEN << "[" << C_YELLOW << "nbr of bin: " << other._bins.size() << C_GREEN << "]" << C_RESET;
 	os << C_GREEN << "[" << C_YELLOW << "currentIndex: " << other._currentIndex << C_GREEN << "]" << C_RESET << std::endl;
 	
 	os << C_BLUE;
@@ -167,14 +172,9 @@ std::ostream& operator<<(std::ostream &os, const IoAggregate &other){
 	os << "\t gids:" << std::endl;
 	for (auto it : other._gids)
 		os << "\t  - " << it << std::endl;
-	os << std::endl;
-
+	os << std::fixed << std::setprecision(4);
 
 	auto it = other._bins.at(other._currentIndex);
-	if (it.appStats.size() == 0 && it.uidStats.size() == 0 && it.gidStats.size() == 0)
-		os << "[empty]" << std::endl;
-	else
-		os << "[binsNbr: " << other._currentIndex << "]"<< std::endl << std::endl;
 	if (it.appStats.size() > 0){
 		os << "apps:" << std::endl;
 		for (auto apps : it.appStats)

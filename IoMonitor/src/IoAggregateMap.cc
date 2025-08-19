@@ -81,8 +81,11 @@ void IoAggregateMap::updateAggregateLoop(){
 
 int IoAggregateMap::addWindow(size_t winTime){
 	std::lock_guard<std::mutex> lock(this->_mutex);
-	if (winTime < 10)
+	if (winTime < 10){
+		if constexpr (io::IoAggregateMapDebug)
+			printInfo(std::cout, "add window failed: " + std::to_string(winTime));
 		return -1;
+	}
 	_aggregates.emplace(winTime, std::make_unique<IoAggregate>(winTime));
 	if constexpr (io::IoAggregateMapDebug)
 		printInfo(std::cout, "add window succeeded: " + std::to_string(winTime));
@@ -122,12 +125,11 @@ void IoAggregateMap::shiftWindow(size_t winTime){
 std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other){
 	std::lock_guard<std::mutex> lock(other._mutex);
 	os << C_GREEN << "[" << C_CYAN << "IoAggregateMap" << C_GREEN << "]" << C_RESET;
-	os << C_GREEN << "[" << C_CYAN << "available window: " << other._aggregates.size() << C_GREEN << "]" << C_RESET << std::endl << std::endl;
-	for (auto &it : other._aggregates){
-		os << C_GREEN << "[" << C_CYAN << "Window" << C_GREEN << "[" <<  C_CYAN
-			<< it.first << C_GREEN << "]" << C_RESET;
+	os << C_GREEN << "[" << C_CYAN << "available window: " << other._aggregates.size() << C_GREEN << "]" << C_RESET << std::endl;
+	if (other._aggregates.size() == 0)
+		os << C_CYAN << "empty" << C_RESET << std::endl;
+	for (auto &it : other._aggregates)
 		os << *it.second.get() << std::endl;
-	}
 	return os;
 }
 

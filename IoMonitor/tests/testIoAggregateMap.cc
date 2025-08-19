@@ -65,45 +65,107 @@ int testIoAggregateMapWindow(){
 	return 0;
 }
 
+template <typename T>
+void printSummary(IoAggregateMap &map, size_t winTime, const T index){
+	std::cout << C_GREEN << "[" << C_CYAN << "Summary winTime: " << winTime << C_GREEN << "]" << C_RESET << std::endl;
+	std::cout << map.getSummary(winTime, index) << std::endl;
+}
+template <typename T>
+void printSummary(IoAggregateMap &map, size_t winTime, io::TYPE type, const T index){
+	std::cout << C_GREEN << "[" << C_CYAN << "Summary winTime: " << winTime << C_GREEN << "]" << C_RESET << std::endl;
+	std::cout << map.getSummary(winTime, type, index) << std::endl;
+}
+
 int testIoAggregateMap(){
 	IoAggregateMap map;
 	
 	// Add window
-	map.addWindow(60);
-	map.addWindow(120);
+	// map.addWindow(60);
+	// map.addWindow(120);
+	// Window for random with one unique read/write
+	// map.addWindow(777);
+	// Window track everything
+	// map.addWindow(9999);
+
+	// map.addWindow(42);
+	// map.addWindow(3);
 
 	// set Tracks
 	map.setTrack(60, "eos");
 	map.setTrack(120, io::TYPE::UID, 14);
+	map.setTrack(777, "mgm");
 
 	// Does not exist
+	map.setTrack(60, "dosnotcompile");
+	map.setTrack(4242, io::TYPE::GID, 404);
+	map.setTrack(404, io::TYPE::GID, 404);
+
+	map.setTrack(3, io::TYPE::GID, 404);
 
 
-	// Add input
-	map.addRead(1, "eos", 14, 3, 5025);
-	map.addRead(1, "eos", 14, 3, 425);
-	map.addRead(1, "eos", 14, 3, 54225);
-
-	map.addRead(1, "eos", 14, 404, 1050);
-	map.addRead(1, "eos", 14, 404, 500);
-	map.addRead(1, "eos", 14, 404, 425);
+	map.setTrack(9999, "eos");
+	map.setTrack(9999, "mgm");
+	map.setTrack(9999, io::TYPE::UID, 14);
+	map.setTrack(9999, io::TYPE::GID, 3);
+	map.setTrack(9999, io::TYPE::GID, 404);
 
 	for (int i = 0; true; i++){
 		std::string input;
-		map.addRead(1, "eos", 14, 3, 5025 * i);
-		map.addRead(1, "eos", 14, 3, 425 * i);
-		map.addRead(1, "eos", 14, 3, 54225 - (i * 100));
-		map.addRead(1, "eos", 14, 404, 1050 + i);
-		map.addRead(1, "eos", 14, 404, 500 * i);
-		map.addRead(1, "eos", 14, 404, 425);
-
-		std::cout << "[enter: " << i  << "]"<< std::endl;
+		std::cout << "[" << i << "]IoMonitor-> ";
 		std::getline(std::cin, input);
-		std::cout << "\33c";
-		auto summary = map.getSummary(60, "eos");
-		std::cout << summary << std::endl;
-		auto summary2 = map.getSummary(120, io::TYPE::UID, 14);
-		std::cout << summary2 << std::endl;
+		if (input == "m")
+			std::cout << map << std::endl;
+		else if (input == "c")
+			std::cout << "\033c";
+		else if (input == "exit")
+			break ;
+		else{
+			std::string cmd;
+			std::stringstream stream(input);
+			if (stream >> cmd){
+				int winTime = 0;
+				uid_t uid = 0;
+				gid_t gid = 0;
+				size_t bytes = 0;
+				if (cmd == "set" && stream >> winTime){
+					stream >> cmd;
+					if (cmd == "uid" && stream >> uid)
+						map.setTrack(winTime, io::TYPE::UID, uid);
+					else if (cmd == "gid" && stream >> gid)
+						map.setTrack(winTime, io::TYPE::GID, gid);
+					else
+						map.setTrack(winTime, cmd);
+				}
+				else if (cmd == "add" && stream >> winTime)
+					map.addWindow(winTime);
+				else if (input == "r"){
+					int fileId = 0;
+					std::string appName;
+					if (stream >> fileId >> appName >> uid >> gid >> bytes)
+						map.addRead(fileId, appName, uid, gid, bytes);
+					else
+						std::cout << "add read failed" << std::endl;
+				}
+				else if (input == "w"){
+					int fileId = 0;
+					std::string appName;
+					if (stream >> fileId >> appName >> uid >> gid >> bytes)
+						map.addWrite(fileId, appName, uid, gid, bytes);
+					else
+						std::cout << "add write failed" << std::endl;
+				}
+				else if (input == "p"){
+					if (stream >> winTime >> cmd){
+						if (cmd == "uid" && stream >> uid)
+							printSummary(map, winTime, io::TYPE::UID, uid);
+						else if (cmd == "gid" && stream >> gid)
+							printSummary(map, winTime, io::TYPE::GID, gid);
+						else
+							printSummary(map, winTime, cmd);
+					}
+				}
+			}
+		}
 	}
 	return 0;
 }

@@ -99,7 +99,7 @@ class IoAggregate{
 
 		friend std::ostream& operator<<(std::ostream &os, const IoAggregate &other);
 		
-		IoStatSummary summaryWeighted(std::vector<IoStatSummary> summarys) const;
+		std::optional<IoStatSummary> summaryWeighted(std::vector<IoStatSummary> summarys) const;
 
 		template <typename T>
 		int setTrack(T index){
@@ -169,7 +169,8 @@ class IoAggregate{
 				return std::nullopt;
 			auto &it = _bins.at(_currentIndex);
 			for (auto appsSumarrys : it.appStats)
-				summarys.emplace_back(appsSumarrys.second);
+				if (appsSumarrys.first == index)
+					summarys.emplace_back(appsSumarrys.second);
 
 			if constexpr (io::IoAggregateDebug)
 				printInfo(std::cout, "get Summary succeeded");
