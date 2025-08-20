@@ -84,6 +84,7 @@ class IoAggregate{
 
 		void update(const IoMap &maps);
 		void shiftWindow();
+		void shiftWindow(size_t index);
 
 		//--------------------------------------------
 		/// Display the string given as parameter in
@@ -127,16 +128,36 @@ class IoAggregate{
 				printInfo(std::cout, "add sample for " + std::to_string(index));
 			if (type == io::TYPE::UID){
 				auto &uid = _bins.at(_currentIndex).uidStats;
-				if (uid.size() >= _winTime / _intervalSec)
-					uid.erase(uid.begin());
+				auto range = uid.equal_range(index);
+				if (static_cast<size_t>(std::distance(range.first, range.second)) >= _winTime / _intervalSec){
+					struct timespec now;
+					clock_gettime(CLOCK_REALTIME, &now);
+					for (auto it = range.first; range.first != range.second;){
+						if (difftime(now.tv_sec, range.first->second.io_time.tv_sec) > difftime(now.tv_sec, it->second.io_time.tv_sec))
+							it = range.first;
+						range.first++;
+						if (range.first == range.second)
+							uid.erase(it);
+					}
+				}
 				uid.insert({index, summary});
 				if constexpr (io::IoAggregateDebug)
 					printInfo(std::cout, "add uid sample succeedded");
 			}
 			else if (type == io::TYPE::GID){
 				auto &gid = _bins.at(_currentIndex).gidStats;
-				if (gid.size() >= _winTime / _intervalSec)
-					gid.erase(gid.begin());
+				auto range = gid.equal_range(index);
+				if (static_cast<size_t>(std::distance(range.first, range.second)) >= _winTime / _intervalSec){
+					struct timespec now;
+					clock_gettime(CLOCK_REALTIME, &now);
+					for (auto it = range.first; range.first != range.second;){
+						if (difftime(now.tv_sec, range.first->second.io_time.tv_sec) > difftime(now.tv_sec, it->second.io_time.tv_sec))
+							it = range.first;
+						range.first++;
+						if (range.first == range.second)
+							gid.erase(it);
+					}
+				}
 				gid.insert({index, summary});
 				if constexpr (io::IoAggregateDebug)
 					printInfo(std::cout, "add gid sample succeedded");
@@ -150,8 +171,18 @@ class IoAggregate{
 				printInfo(std::cout, "add Sample for " + std::string(index));
 			if (std::is_same_v<T, std::string> || std::is_same_v<T, const char *>){
 				auto &app = _bins.at(_currentIndex).appStats;
-				if (app.size() >= _winTime / _intervalSec)
-					app.erase(app.begin());
+				auto range = app.equal_range(index);
+				if (static_cast<size_t>(std::distance(range.first, range.second)) >= _winTime / _intervalSec){
+					struct timespec now;
+					clock_gettime(CLOCK_REALTIME, &now);
+					for (auto it = range.first; range.first != range.second;){
+						if (difftime(now.tv_sec, range.first->second.io_time.tv_sec) > difftime(now.tv_sec, it->second.io_time.tv_sec))
+							it = range.first;
+						range.first++;
+						if (range.first == range.second)
+							app.erase(it);
+					}
+				}
 				app.insert({std::string(index), summary});
 				if constexpr (io::IoAggregateDebug)
 					printInfo(std::cout, "add app sample succeedded");

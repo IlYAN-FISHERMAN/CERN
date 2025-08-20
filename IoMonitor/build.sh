@@ -1,2 +1,2 @@
 #!/bin/sh
-mkdir build && cd build && cmake .. && cd tests && cmake --build .. && ./io_monitor_tests
+mkdir build && cd build && cmake .. && cd tests && cmake --build .. && ./monitor

@@ -122,6 +122,16 @@ void IoAggregateMap::shiftWindow(size_t winTime){
 		printInfo(std::cout, "shiftWindo succeeded");
 }
 
+void IoAggregateMap::shiftWindow(size_t winTime, size_t index){
+	if constexpr (io::IoAggregateMapDebug)
+		printInfo(std::cout, "shiftWindow");
+	if (_aggregates.find(winTime) == _aggregates.end())
+		return ;
+	_aggregates[winTime]->shiftWindow(index);
+	if constexpr (io::IoAggregateMapDebug)
+		printInfo(std::cout, "shiftWindo succeeded");
+}
+
 std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other){
 	std::lock_guard<std::mutex> lock(other._mutex);
 	os << C_GREEN << "[" << C_CYAN << "IoAggregateMap" << C_GREEN << "]" << C_RESET;

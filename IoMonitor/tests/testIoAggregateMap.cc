@@ -138,7 +138,7 @@ int testIoAggregateMap(){
 				}
 				else if (cmd == "add" && stream >> winTime)
 					map.addWindow(winTime);
-				else if (input == "r"){
+				else if (cmd == "r"){
 					int fileId = 0;
 					std::string appName;
 					if (stream >> fileId >> appName >> uid >> gid >> bytes)
@@ -146,7 +146,7 @@ int testIoAggregateMap(){
 					else
 						std::cout << "add read failed" << std::endl;
 				}
-				else if (input == "w"){
+				else if (cmd == "w"){
 					int fileId = 0;
 					std::string appName;
 					if (stream >> fileId >> appName >> uid >> gid >> bytes)
@@ -154,7 +154,7 @@ int testIoAggregateMap(){
 					else
 						std::cout << "add write failed" << std::endl;
 				}
-				else if (input == "p"){
+				else if (cmd == "p"){
 					if (stream >> winTime >> cmd){
 						if (cmd == "uid" && stream >> uid)
 							printSummary(map, winTime, io::TYPE::UID, uid);
@@ -163,7 +163,20 @@ int testIoAggregateMap(){
 						else
 							printSummary(map, winTime, cmd);
 					}
+					else
+						std::cout << "print Summary failed" << std::endl;
 				}
+				else if (cmd == "s"){
+					size_t index = 0;
+					if (stream >> winTime){
+						if (stream >> index)
+							map.shiftWindow(winTime, index);
+						else
+							map.shiftWindow(winTime);
+					}
+				}
+				else
+					std::cout << "Monitor: command not found: " << input << std::endl;
 			}
 		}
 	}

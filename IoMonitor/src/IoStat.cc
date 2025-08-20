@@ -151,7 +151,7 @@ uint64_t IoStat::cleanOldsMarks(Marks enumMark, size_t seconds){
 //--------------------------------------------
 std::pair<double, double> IoStat::bandWidth(Marks enumMark, size_t *range, size_t seconds) const{
 	if ((enumMark != Marks::READ && enumMark != Marks::WRITE) || seconds == 0){
-		if (io::IoStatDebug){
+		if constexpr (io::IoStatDebug){
 			if (seconds == 0)
 				IoStat::printInfo(std::cerr, "\033[031mCan't calculate bandwidth with 0s\033[0m");
 			else

@@ -65,9 +65,8 @@ void IoAggregate::update(const IoMap &maps){
 	auto diff = std::chrono::system_clock::now() - _currentTime;
 
 	if (diff >= std::chrono::seconds(_intervalSec)){
-		printInfo(std::cout, "updating...");
 		if constexpr (io::IoAggregateDebug)
-			printInfo(std::cout, "updating...");
+			printInfo(std::cout, "updating window " + std::to_string(_winTime));
 		for (auto it = _apps.begin(); it != _apps.end(); it++){
 			auto summary = maps.getSummary(*it, _intervalSec);
 			if (summary.has_value())
@@ -94,8 +93,14 @@ void IoAggregate::update(const IoMap &maps){
 }
 
 void IoAggregate::shiftWindow(){
-	_currentIndex++;
 	_bins.emplace_back(Bin());
+	_currentIndex = _bins.size() - 1;
+}
+
+void IoAggregate::shiftWindow(size_t index){
+	if (index >= _bins.size())
+		return ;
+	_currentIndex = index;
 }
 
 std::optional<IoStatSummary> IoAggregate::summaryWeighted(std::vector<IoStatSummary> summarys) const{
@@ -176,17 +181,17 @@ std::ostream& operator<<(std::ostream &os, const IoAggregate &other){
 
 	auto it = other._bins.at(other._currentIndex);
 	if (it.appStats.size() > 0){
-		os << "apps:" << std::endl;
+		os << "apps: [" << it.appStats.size() << "]" << std::endl;
 		for (auto apps : it.appStats)
 			os << "\t[" << apps.first << "]" << std::endl << "\t- " << apps.second << std::endl;
 	}
 	if (it.uidStats.size() > 0){
-		os << "uids:" << std::endl;
+		os << "uids: [" << it.uidStats.size() << "]" << std::endl;
 		for (auto uids : it.uidStats)
 			os << "\t[" << uids.first << "]" << std::endl << "\t- " << uids.second << std::endl;
 	}
 	if (it.gidStats.size() > 0){
-		os << "gids:" << std::endl;
+		os << "gids: [" << it.gidStats.size() << "]" << std::endl;
 		for (auto gids : it.gidStats)
 			os << "\t[" << gids.first << "]" << std::endl << "\t- " << gids.second << std::endl;
 	}

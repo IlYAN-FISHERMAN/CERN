@@ -113,6 +113,7 @@ class IoAggregateMap{
 		friend std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other);
 
 		void shiftWindow(size_t winTime);
+		void shiftWindow(size_t winTime, size_t index);
 
 		template<typename T>
 		std::optional<IoStatSummary> getSummary(size_t winTime, const T index){

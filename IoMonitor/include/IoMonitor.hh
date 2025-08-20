@@ -112,8 +112,12 @@ struct IoStatSummary {
 	size_t rSize;
 	size_t wSize;
 
+	struct timespec io_time;
+
 	IoStatSummary() :
 		readBandwidth(std::pair<double, double>(0,0)),
 		writeBandwidth(std::pair<double, double>(0, 0)),
-		rSize(0), wSize(0){}
+		rSize(0), wSize(0){
+			clock_gettime(CLOCK_REALTIME, &io_time);
+		}
 };
