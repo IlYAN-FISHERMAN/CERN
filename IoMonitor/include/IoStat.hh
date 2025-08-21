@@ -47,7 +47,7 @@ public: enum class Marks : uint8_t{
 	private:
 		//--------------------------------------------
 		/// Each IoStat class keeps track of exactly
-		/// where it came from, the file ID, the name
+		/// where it came from. The file ID, the name
 		/// of the app it came from, the user ID and
 		/// the group ID
 		//--------------------------------------------
@@ -227,5 +227,14 @@ std::ostream& operator<<(std::ostream &os, const IoStat &other);
 //--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> > &other);
 
+//--------------------------------------------
+/// @brief Overload operator << to print
+/// a IoStatSummary object from a std::optional
+//--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const std::optional<IoStatSummary> &opt);
+
+//--------------------------------------------
+/// @brief Overload operator << to print
+/// a IoStatSummary object
+//--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const IoStatSummary &opt);

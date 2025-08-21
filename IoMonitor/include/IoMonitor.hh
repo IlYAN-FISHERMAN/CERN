@@ -52,8 +52,7 @@
 
 //--------------------------------------------
 /// Main structure stored in IoStat
-/// It keeps its timestamp when called
-/// by any contructor
+/// Keep the time of class creation
 //--------------------------------------------
 struct IoMark {
 	struct timespec io_time;
@@ -86,7 +85,7 @@ const char*	getCurrentTime();
 //--------------------------------------------
 /// Namespace
 ///
-/// if debug is "true" all debug phases of
+/// If debug is "true" all debug phases of
 /// the corresponding class will be displayed
 //--------------------------------------------
 namespace io {
@@ -96,6 +95,10 @@ namespace io {
 	constexpr bool IoAggregateMapDebug = false;
 	constexpr bool IoAggregateDebug = false;
 
+	//--------------------------------------------
+	/// Enumerator that allows to keep the context
+	/// of UID or GID type of a variable
+	//--------------------------------------------
 	enum class TYPE {
 		UID,
 		GID
@@ -106,14 +109,26 @@ namespace io {
 /// Summary of a IoStat bandwidth
 //--------------------------------------------
 struct IoStatSummary {
+	//--------------------------------------------
+	/// Read/Write bandwidth
+	//--------------------------------------------
 	std::optional<std::pair<double, double> > readBandwidth;
 	std::optional<std::pair<double, double> > writeBandwidth;
 
+	//--------------------------------------------
+	/// Size of the read and write bandwidth
+	//--------------------------------------------
 	size_t rSize;
 	size_t wSize;
 
+	//--------------------------------------------
+	// Keep the time of class creation
+	//--------------------------------------------
 	struct timespec io_time;
 
+	//--------------------------------------------
+	/// Default constructor to initialize the class
+	//--------------------------------------------
 	IoStatSummary() :
 		readBandwidth(std::pair<double, double>(0,0)),
 		writeBandwidth(std::pair<double, double>(0, 0)),

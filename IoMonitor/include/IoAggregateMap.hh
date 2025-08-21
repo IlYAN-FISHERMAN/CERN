@@ -20,6 +20,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.*
  *************************************************************************/
 
+//--------------------------------------------
+/// Each class has a variable define DEBUG which
+/// can be defined in the IoMonitor.hh namespace
+//--------------------------------------------
+
 #pragma once
 
 #include "IoAggregate.hh"

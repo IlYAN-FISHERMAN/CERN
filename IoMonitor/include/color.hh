@@ -1,3 +1,25 @@
+//  File: color.hh
+//  Author: Ilkay Yanar - 42Lausanne / CERN
+//  ----------------------------------------------------------------------
+
+/*************************************************************************
+ *  EOS - the CERN Disk Storage System                                   *
+ *  Copyright (C) 2025 CERN/Switzerland                                  *
+ *                                                                       *
+ *  This program is free software: you can redistribute it and/or modify *
+ *  it under the terms of the GNU General Public License as published by *
+ *  the Free Software Foundation, either version 3 of the License, or    *
+ *  (at your option) any later version.                                  *
+ *                                                                       *
+ *  This program is distributed in the hope that it will be useful,      *
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of       *
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        *
+ *  GNU General Public License for more details.                         *
+ *                                                                       *
+ *  You should have received a copy of the GNU General Public License    *
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.*
+ *************************************************************************/
+
 #pragma once
 
 //--------------------------------------------
@@ -13,7 +35,9 @@
 # define C_WHITE "\001\033[37m\002"
 # define C_RESET "\001\033[0m\002"
 
-//	Text effects definition
+//--------------------------------------------
+/// Text effects definition
+//--------------------------------------------
 # define C_BOLD "\001\033[1m\002"
 # define C_UNDERLINE "\001\033[4m\002"
 # define C_BLINK "\001\033[5m\002"
@@ -22,7 +46,9 @@
 # define C_STRIKETHROUGH "\001\033[9m\002"
 # define C_CLEAR "\001\033[2J\001\033[1;1H"
 
-//	Background colors definition
+//--------------------------------------------
+/// Background colors definition
+//--------------------------------------------
 # define C_BBLACK "\001\033[40m\002"
 # define C_BWHITE "\001\033[47m\002"
 # define C_BRED "\001\033[41m\002"
