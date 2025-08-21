@@ -221,11 +221,14 @@ class IoAggregate{
 			
 			auto &it = _bins.at(_currentIndex);
 			if (type == io::TYPE::UID)
-				for (auto uidsSumarrys : it.uidStats)
-					summarys.emplace_back(uidsSumarrys.second);
+				for (auto uidsSumarrys : it.uidStats){
+					if (uidsSumarrys.first == static_cast<uid_t>(index))
+						summarys.emplace_back(uidsSumarrys.second);
+			}
 			else if (type == io::TYPE::GID)
 				for (auto gidsSumarrys : it.gidStats)
-					summarys.emplace_back(gidsSumarrys.second);
+					if (gidsSumarrys.first == static_cast<gid_t>(index))
+						summarys.emplace_back(gidsSumarrys.second);
 
 			return summaryWeighted(summarys);
 		}

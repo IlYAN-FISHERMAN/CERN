@@ -67,47 +67,61 @@ int testIoAggregateMapWindow(){
 
 template <typename T>
 void printSummary(IoAggregateMap &map, size_t winTime, const T index){
-	std::cout << C_GREEN << "[" << C_CYAN << "Summary winTime: " << winTime << C_GREEN << "]" << C_RESET << std::endl;
+	std::cout << C_GREEN << "[" << C_CYAN << "Summary winTime: "
+		<< winTime << C_GREEN << "][" << C_CYAN << "summary of appName: " << std::string(index)
+		<< C_GREEN << "]" << C_RESET << std::endl;
 	std::cout << map.getSummary(winTime, index) << std::endl;
 }
 template <typename T>
 void printSummary(IoAggregateMap &map, size_t winTime, io::TYPE type, const T index){
-	std::cout << C_GREEN << "[" << C_CYAN << "Summary winTime: " << winTime << C_GREEN << "]" << C_RESET << std::endl;
+	if (type == io::TYPE::UID)
+		std::cout << C_GREEN << "[" << C_CYAN << "Summary winTime: "
+			<< winTime << C_GREEN << "][" << C_CYAN << "summary of uid: " << index
+			<< C_GREEN << "]" << C_RESET << std::endl;
+	if (type == io::TYPE::GID)
+		std::cout << C_GREEN << "[" << C_CYAN << "Summary winTime: "
+			<< winTime << C_GREEN << "][" << C_CYAN << "summary of gid: " << index
+			<< C_GREEN << "]" << C_RESET << std::endl;
+	else
+		return;
 	std::cout << map.getSummary(winTime, type, index) << std::endl;
 }
+
 
 int testIoAggregateMap(){
 	IoAggregateMap map;
 	
 	// Add window
-	// map.addWindow(60);
-	// map.addWindow(120);
-	// Window for random with one unique read/write
-	// map.addWindow(777);
-	// Window track everything
-	// map.addWindow(9999);
-
-	// map.addWindow(42);
-	// map.addWindow(3);
+	map.addWindow(3600);
 
 	// set Tracks
-	map.setTrack(60, "eos");
-	map.setTrack(120, io::TYPE::UID, 14);
-	map.setTrack(777, "mgm");
+	map.setTrack(3600, "eos");
+	map.setTrack(3600, "fdf");
+	map.setTrack(3600, "mgm");
+	map.setTrack(3600, io::TYPE::UID, 12);
+	map.setTrack(3600, io::TYPE::GID, 11);
 
-	// Does not exist
-	map.setTrack(60, "dosnotcompile");
-	map.setTrack(4242, io::TYPE::GID, 404);
-	map.setTrack(404, io::TYPE::GID, 404);
+	for (size_t i = 0; i < 25; i++){
+		map.addWrite(1, "eos", 12, 11, std::abs(rand())%10000);
+		map.addWrite(1, "eos", 1, 11, std::abs(rand())%10000);
+		map.addWrite(1, "mgm", 1, 11, std::abs(rand())%10000);
+		map.addWrite(1, "fdf", 12, 1, std::abs(rand())%10000);
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+	}
+	auto eos = map.getSummary(3600, "eos");
+	auto mgm = map.getSummary(3600, "mgm");
+	auto fdf = map.getSummary(3600, "fdf");
+	auto uid = map.getSummary(3600, io::TYPE::UID, 12);
+	auto gid = map.getSummary(3600, io::TYPE::GID, 11);
 
-	map.setTrack(3, io::TYPE::GID, 404);
+	if (!eos.has_value() || !mgm.has_value() || !fdf.has_value() ||
+		!uid.has_value() || !gid.has_value())
+		return -1;
+	return 0;
+}
 
-
-	map.setTrack(9999, "eos");
-	map.setTrack(9999, "mgm");
-	map.setTrack(9999, io::TYPE::UID, 14);
-	map.setTrack(9999, io::TYPE::GID, 3);
-	map.setTrack(9999, io::TYPE::GID, 404);
+int testIoAggregateMapInteract(){
+	IoAggregateMap map;
 
 	for (int i = 0; true; i++){
 		std::string input;

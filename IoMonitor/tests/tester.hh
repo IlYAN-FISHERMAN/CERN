@@ -17,6 +17,7 @@ int testIoMapIds();
 
 
 int testIoAggregateMap();
+int testIoAggregateMapInteract();
 int testIoAggregateMapWindow();
 
 
