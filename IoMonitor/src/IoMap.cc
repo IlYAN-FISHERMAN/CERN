@@ -22,6 +22,9 @@
 
 #include "../include/IoMap.hh"
 
+//--------------------------------------------
+/// Public static mutex to share outputs stream
+//--------------------------------------------
 std::mutex IoMap::_osMutex;
 
 //--------------------------------------------
@@ -251,10 +254,16 @@ std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoMap::beg
 //--------------------------------------------
 std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoMap::end(){return _filesMap.end();}
 
+
+//--------------------------------------------
+/// Calculates the weighted average and
+/// standard deviation
+//--------------------------------------------
 std::pair<double, double> IoMap::calculeWeighted(std::map<std::pair<double, double>, size_t> &indexData) const{
 	size_t divisor = 0;
 	std::pair<double, double> weighted = {0, 0};
 
+	/// Calcule average
 	for (const auto &it : indexData){
 		weighted.first += (it.first.first * it.second);
 		divisor += it.second;
@@ -262,7 +271,7 @@ std::pair<double, double> IoMap::calculeWeighted(std::map<std::pair<double, doub
 	if (divisor > 0)
 		weighted.first /= divisor;
 
-
+	/// Calcule Standard deviation
 	for (const auto &it : indexData)
 		weighted.second += it.second * (std::pow(it.first.second, 2) + std::pow(it.first.first - weighted.first, 2));
 

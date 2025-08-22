@@ -112,7 +112,6 @@ public: enum class Marks : uint8_t{
 		/// @param	rBytes Number of bytes read
 		/// @param	enumMark READ or WRITE variable comes
 		/// from the IoStat::Marks enumerator
-		/// - Exemple: IoStat::Marks::READ
 		//--------------------------------------------
 		void add(size_t bytes, IoStat::Marks enumMark);
 
@@ -126,7 +125,6 @@ public: enum class Marks : uint8_t{
 		/// 
 		/// @param	enumMark READ or WRITE variable comes
 		/// from the IoStat::Marks enumerator
-		/// - Exemple: IoStat::Marks::READ
 		/// @param seconds(optional) The number of last seconds of
 		/// I/O that will be kept (by default - 10s)
 		///
@@ -150,7 +148,6 @@ public: enum class Marks : uint8_t{
 		/// 
 		/// @param	enumMark READ or WRITE variable comes
 		/// from the IoStat::Marks enumerator
-		/// - Exemple: IoStat::Marks::WRITE
 		/// @param seconds(optional) over how many seconds
 		/// from now the function should calculate
 		/// @param	range Sets the "range" variable to the
@@ -171,7 +168,6 @@ public: enum class Marks : uint8_t{
 		///
 		/// @param	os The output stream
 		/// @param	msg The message to display
-		/// - Exemple: std::cout/std::cerr
 		//--------------------------------------------
 		static void	printInfo(std::ostream &os, const char *msg);
 
@@ -183,7 +179,6 @@ public: enum class Marks : uint8_t{
 		///
 		/// @param	os The output stream
 		/// @param	msg The message to display
-		/// - Exemple: std::cout/std::cerr
 		//--------------------------------------------
 		static void	printInfo(std::ostream &os, const std::string &msg);
 
@@ -208,7 +203,6 @@ public: enum class Marks : uint8_t{
 		///
 		/// @param	enumMark READ or WRITE variable comes
 		/// from the IoStat::Marks enumerator
-		/// - Exemple: IoStat::Marks::WRITE
 		//--------------------------------------------
 		ssize_t getSize(Marks enumMark) const;
 };

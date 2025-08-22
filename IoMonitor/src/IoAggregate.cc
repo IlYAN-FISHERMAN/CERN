@@ -22,6 +22,9 @@
 
 #include "../include/IoAggregate.hh"
 
+//--------------------------------------------
+/// Constructor by copy constructor
+//--------------------------------------------
 IoAggregate::IoAggregate(const IoAggregate &other){
 	std::lock_guard<std::mutex> lock(_mutex);
 	std::lock_guard<std::mutex> otherLock(other._mutex);
@@ -35,6 +38,9 @@ IoAggregate::IoAggregate(const IoAggregate &other){
 	_gids = other._gids;
 }
 
+//--------------------------------------------
+/// Overload the operator =
+//--------------------------------------------
 IoAggregate& IoAggregate::operator=(const IoAggregate &other){
 	std::lock_guard<std::mutex> lock(_mutex);
 	std::lock_guard<std::mutex> otherLock(other._mutex);
@@ -51,6 +57,9 @@ IoAggregate& IoAggregate::operator=(const IoAggregate &other){
 	return *this;
 }
 
+//--------------------------------------------
+/// Main constructor
+//--------------------------------------------
 IoAggregate::IoAggregate(size_t winTime)
 	: _intervalSec(10), _currentIndex(0) ,_currentTime(std::chrono::system_clock::now()){
 	if (winTime < 10)
@@ -61,12 +70,20 @@ IoAggregate::IoAggregate(size_t winTime)
 	_bins.emplace_back(Bin());
 }
 
+//--------------------------------------------
+/// Updates the current bin according to the
+/// appName/uid/gid which are tracked every N seconds
+/// (depending on this->_intervalSec)
+//--------------------------------------------
 void IoAggregate::update(const IoMap &maps){
 	auto diff = std::chrono::system_clock::now() - _currentTime;
 
+	/// If time to update
 	if (diff >= std::chrono::seconds(_intervalSec)){
 		if constexpr (io::IoAggregateDebug)
 			printInfo(std::cout, "updating window " + std::to_string(_winTime));
+		/// for each object in app/uid/gid, get and add summary
+	
 		for (auto it = _apps.begin(); it != _apps.end(); it++){
 			auto summary = maps.getSummary(*it, _intervalSec);
 			if (summary.has_value())
@@ -74,6 +91,7 @@ void IoAggregate::update(const IoMap &maps){
 			else if constexpr (io::IoAggregateDebug)
 				printInfo(std::cout, "No summary to add for " + std::string(*it));
 		}
+
 		for (auto it = _uids.begin(); it != _uids.end(); it++){
 			auto summary = maps.getSummary(io::TYPE::UID, *it, _intervalSec);
 			if (summary.has_value())
@@ -81,6 +99,7 @@ void IoAggregate::update(const IoMap &maps){
 			else if constexpr (io::IoAggregateDebug)
 				printInfo(std::cout, "No summary to add for " + std::to_string(*it));
 		}
+
 		for (auto it = _gids.begin(); it != _gids.end(); it++){
 			auto summary = maps.getSummary(io::TYPE::GID, *it, _intervalSec);
 			if (summary.has_value())
@@ -92,17 +111,29 @@ void IoAggregate::update(const IoMap &maps){
 	}
 }
 
+//--------------------------------------------
+/// Add a Bin object, and set the index
+/// to that Bin
+//--------------------------------------------
 void IoAggregate::shiftWindow(){
 	_bins.emplace_back(Bin());
 	_currentIndex = _bins.size() - 1;
 }
 
+//--------------------------------------------
+/// Changes the position of the current
+/// index (_currentIndex)
+//--------------------------------------------
 void IoAggregate::shiftWindow(size_t index){
 	if (index >= _bins.size())
 		return ;
 	_currentIndex = index;
 }
 
+//--------------------------------------------
+/// Condenses a vector of IoStatSummary
+/// into a single one
+//--------------------------------------------
 std::optional<IoStatSummary> IoAggregate::summaryWeighted(std::vector<IoStatSummary> &summarys) const{
 	size_t rDivisor = 0;
 	size_t wDivisor = 0;
@@ -111,6 +142,7 @@ std::optional<IoStatSummary> IoAggregate::summaryWeighted(std::vector<IoStatSumm
 	if (io::IoAggregateDebug)
 		printInfo(std::cout, "summary weighted called");
 
+	/// Calcule average
 	for (const auto &it : summarys){
 		if (it.readBandwidth.has_value())
 			weighted.readBandwidth->first += (it.readBandwidth->first * it.rSize);
@@ -125,6 +157,7 @@ std::optional<IoStatSummary> IoAggregate::summaryWeighted(std::vector<IoStatSumm
 	if (wDivisor > 0)
 		weighted.writeBandwidth->first /= wDivisor;
 
+	/// Calcule standard deviation
 	for (const auto &it : summarys){
 		if (weighted.readBandwidth.has_value())
 			weighted.readBandwidth->second += (it.rSize * \
@@ -145,7 +178,8 @@ std::optional<IoStatSummary> IoAggregate::summaryWeighted(std::vector<IoStatSumm
 
 	weighted.rSize = rDivisor;
 	weighted.wSize = wDivisor;
-
+	
+	/// Check empty case
 	if (io::IoAggregateDebug)
 		printInfo(std::cout, "summary weighted succeeded");
 	if (weighted.wSize == 0 && weighted.rSize == 0)
@@ -154,10 +188,14 @@ std::optional<IoStatSummary> IoAggregate::summaryWeighted(std::vector<IoStatSumm
 		weighted.readBandwidth = std::nullopt;
 	if (weighted.wSize == 0)
 		weighted.writeBandwidth = std::nullopt;
+
 	return weighted;
 }
 
-
+//--------------------------------------------
+/// Overload operator << to print
+/// a IoAggregate object
+//--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const IoAggregate &other){
 	std::lock_guard<std::mutex> lock(other._mutex);
 	os << C_GREEN << "[" << C_CYAN << "IoAggregate" << C_GREEN << "]" << C_RESET << std::endl;
