@@ -103,7 +103,7 @@ void IoAggregate::shiftWindow(size_t index){
 	_currentIndex = index;
 }
 
-std::optional<IoStatSummary> IoAggregate::summaryWeighted(std::vector<IoStatSummary> summarys) const{
+std::optional<IoStatSummary> IoAggregate::summaryWeighted(std::vector<IoStatSummary> &summarys) const{
 	size_t rDivisor = 0;
 	size_t wDivisor = 0;
 	IoStatSummary weighted;

@@ -448,6 +448,7 @@ class IoMap {
 
 			if (io::IoMapDebug)
 				printInfo(std::cout, "GetSummary succeeded");
+
 			return summary;
 		}
 
@@ -529,6 +530,7 @@ class IoMap {
 
 			if (io::IoMapDebug)
 				printInfo(std::cout, "GetSummary succeeded");
+
 			return summary;
 		}
 };

@@ -230,6 +230,7 @@ class IoAggregateMap{
 		friend std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other);
 
 		//--------------------------------------------
+		/// Template
 		/// @brief Add an app name that would be
 		/// tracked to an existing window
 		///
@@ -255,6 +256,7 @@ class IoAggregateMap{
 		}
 
 		//--------------------------------------------
+		/// Template
 		/// @brief Add an uid/gid that would be
 		/// tracked to an existing window
 		///
