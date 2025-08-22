@@ -37,6 +37,11 @@
 
 class IoAggregate{
 	private:
+
+		//-----------------------------------------
+		/// Structure that keeps all IoStatSummary
+		/// of all appName/uid/gid that are tracked
+		//-----------------------------------------
 		struct Bin{
 			std::unordered_multimap<std::string, IoStatSummary> appStats;
 			std::unordered_multimap<uid_t, IoStatSummary> uidStats;
@@ -58,9 +63,21 @@ class IoAggregate{
 		mutable std::mutex _mutex;
 
 		//--------------------------------------------
-		/// Default constructor
+		/// Deleted default constructor
 		//--------------------------------------------
 		IoAggregate() = delete;
+
+		//--------------------------------------------
+		/// Display the string given as parameter in
+		/// specific format with the current time
+		//--------------------------------------------
+		void printInfo(std::ostream &os, const std::string &msg) const;
+
+		//--------------------------------------------
+		/// Display the string given as parameter in
+		/// specific format with the current time
+		//--------------------------------------------
+		void printInfo(std::ostream &os, const char *msg) const;
 
 	public:
 		//--------------------------------------------
@@ -91,17 +108,6 @@ class IoAggregate{
 		void shiftWindow();
 		void shiftWindow(size_t index);
 
-		//--------------------------------------------
-		/// Display the string given as parameter in
-		/// specific format with the current time
-		//--------------------------------------------
-		void printInfo(std::ostream &os, const std::string &msg) const;
-
-		//--------------------------------------------
-		/// Display the string given as parameter in
-		/// specific format with the current time
-		//--------------------------------------------
-		void printInfo(std::ostream &os, const char *msg) const;
 
 		friend std::ostream& operator<<(std::ostream &os, const IoAggregate &other);
 		

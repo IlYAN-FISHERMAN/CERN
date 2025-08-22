@@ -79,9 +79,9 @@ int main(int ac, char **av) {
 	// code = testIoMapIds();
 
 	// code = testIoAggregateMapWindow();
-	// code = testIoAggregateMap();
+	code = testIoAggregateMap();
 	// code = testIoAggregateMapInteract();
-	// std::cout << "code: " << code << std::endl;
-    ::testing::InitGoogleTest(&ac, av);
-    return RUN_ALL_TESTS();
+	std::cout << "code: " << code << std::endl;
+    // ::testing::InitGoogleTest(&ac, av);
+    // return RUN_ALL_TESTS();
 }

@@ -48,32 +48,10 @@ class IoMap {
 		/// inactive IoStats
 		///
 		/// @details
-		/// Multithreaded function that checks for
-		/// inactive I/Os every 60 seconds and removes them
+		/// Checks for inactive I/Os every N seconds
+		/// (60s by default) and removes them
 		//--------------------------------------------
 		void cleanerLoop();
-
-		//--------------------------------------------
-		/// @brief Displays the string given as a parameter
-		/// in a format corresponding to the class with the
-		/// current timestamp
-		///
-		/// @param	os The output stream
-		/// @param	msg The message to display
-		/// - Exemple: std::cout/std::cerr
-		//--------------------------------------------
-		void	printInfo(std::ostream &os, const char *) const;
-
-		//--------------------------------------------
-		/// @brief Displays the string given as a parameter
-		/// in a format corresponding to the class with the
-		/// current timestamp
-		///
-		/// @param	os The output stream
-		/// @param	msg The message to display
-		/// - Exemple: std::cout/std::cerr
-		//--------------------------------------------
-		void	printInfo(std::ostream &os, const std::string &) const;
 
 		//--------------------------------------------
 		/// Main variable that keeps track of all IoStats
@@ -103,6 +81,26 @@ class IoMap {
 		std::atomic<bool> _running;
 		std::condition_variable _cv;
 
+		//--------------------------------------------
+		/// @brief Displays the string given as a parameter
+		/// in a format corresponding to the class with the
+		/// current timestamp
+		///
+		/// @param os The output stream
+		/// @param msg The message to display
+		//--------------------------------------------
+		void	printInfo(std::ostream &os, const char *) const;
+
+		//--------------------------------------------
+		/// @brief Displays the string given as a parameter
+		/// in a format corresponding to the class with the
+		/// current timestamp
+		///
+		/// @param	os	The output stream
+		/// @param	msg	The message to display
+		//--------------------------------------------
+		void	printInfo(std::ostream &os, const std::string &) const;
+
 	public:
 		//--------------------------------------------
 		/// Orthodoxe canonical form
@@ -119,14 +117,14 @@ class IoMap {
 		~IoMap();
 
 		//--------------------------------------------
-		/// Explicite delete constructor by copy constructor
+		/// Constructor by copy constructor
 		//--------------------------------------------
-		IoMap(const IoMap &other) = delete;
+		IoMap(const IoMap &other);
 
 		//--------------------------------------------
-		/// Explicite block overload the operator =
+		/// Overload the operator =
 		//--------------------------------------------
-		IoMap& operator=(const IoMap &other) = delete;
+		IoMap& operator=(const IoMap &other);
 
 		//--------------------------------------------
 		/// @brief Optional constructor
@@ -144,28 +142,28 @@ class IoMap {
 		/// Public static mutex to share outputs stream
 		//--------------------------------------------
 		static std::mutex _osMutex;
-		
+	
 		//--------------------------------------------
-		/// @brief adds an IoStat object to the multimap
+		/// @brief Adds an IoStat object to the multimap
 		/// with the corresponding elements
 		///
 		/// @param	inode	File id
 		/// @param	app		Name of the application
-		/// @param uid		ID of the corresponding user
-		/// @param gid		ID of the corresponding group
-		/// @param rbytes	Number of bytes read
+		/// @param	uid		ID of the corresponding user
+		/// @param	gid		ID of the corresponding group
+		/// @param	rbytes	Number of bytes read
 		//--------------------------------------------
 		void addRead(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t rbytes);
 
 		//--------------------------------------------
-		/// @brief adds an IoStat object to the multimap
+		/// @brief Adds an IoStat object to the multimap
 		/// with the corresponding elements
 		///
-		/// @param	inode	file id
+		/// @param	inode	File id
 		/// @param	app		Name of the application
-		/// @param uid		ID of the corresponding user
-		/// @param gid		ID of the corresponding group
-		/// @param rbytes	Number of bytes read
+		/// @param	uid		ID of the corresponding user
+		/// @param	gid		ID of the corresponding group
+		/// @param	rbytes	Number of bytes read
 		//--------------------------------------------
 		void addWrite(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t wbytes);
 
@@ -194,7 +192,6 @@ class IoMap {
 		//--------------------------------------------
 		std::vector<gid_t> getGids() const;
 		
-
 		//--------------------------------------------
 		///@brief Get a copy of the multimap
 		///
@@ -254,19 +251,20 @@ class IoMap {
 		/// variable given as a parameter) during the
 		/// last N seconds
 		///
-		/// @param type Allows to keep the context
+		/// @param	type Allows to keep the context
 		/// if you want the uid or gid
 		/// @param	index Template variable
 		/// index type can be const char*/std::string.
 		/// Calculates the weighted bandwidth according to
 		/// the type of the variable and get the data from
 		/// all the corresponding I/Os
-		/// @param enumMark READ or WRITE variable comes
+		/// @param	enumMark READ or WRITE variable comes
 		/// from the IoStat::Marks enumerator
 		/// @param seconds(optional) The second range during
 		/// the last N I/O from now (by default - 10s)
 		///
 		/// @return std::nullopt If an error is encountered
+		///
 		/// @return std::optional<std::pair<double, double>>
 		/// first is the weighted average, second is the
 		/// weighted standard deviation 

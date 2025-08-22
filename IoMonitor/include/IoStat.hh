@@ -69,11 +69,10 @@ public: enum class Marks : uint8_t{
 		std::deque<IoMark> _writeMarks;
 
 
-		//WARNING: --------------------------------------------
-		/// The default constructor is private because
-		/// the instant is required to have tracking information
 		//--------------------------------------------
-		IoStat();
+		/// Deleted default constructor
+		//--------------------------------------------
+		IoStat() = delete;
 
 	public:
 		//--------------------------------------------
