@@ -70,7 +70,8 @@ void	IoMap::printInfo(std::ostream &os, const std::string &msg) const{
 }
 
 //--------------------------------------------
-/// Multithreaded function to clean up inactive IoStats
+/// Multithreaded function to clean up
+/// inactive IoStats
 //--------------------------------------------
 void IoMap::cleanerLoop(){
 	while (_running.load()){
@@ -102,7 +103,8 @@ void IoMap::cleanerLoop(){
 }
 
 //--------------------------------------------
-/// Adds an IoStat object to the multimap with the corresponding elements
+/// Adds an IoStat object to the multimap with
+/// the corresponding elements
 //--------------------------------------------
 void IoMap::addRead(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t rbytes){
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -142,7 +144,8 @@ void IoMap::addRead(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_
 }
 
 //--------------------------------------------
-/// Adds an IoStat object to the multimap with the corresponding elements
+/// Adds an IoStat object to the multimap
+/// with the corresponding elements
 //--------------------------------------------
 void IoMap::addWrite(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t wbytes){
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -236,7 +239,16 @@ std::ostream& operator<<(std::ostream &os, const IoMap &other){
 	return os;
 }
 
+//--------------------------------------------
+/// Returns a iterator that points to the first
+/// element in the %unordered_multimap.
+//--------------------------------------------
 std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoMap::begin(){return _filesMap.begin();}
+
+//--------------------------------------------
+/// Returns a iterator that points to the last
+/// element in the %unordered_multimap.
+//--------------------------------------------
 std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoMap::end(){return _filesMap.end();}
 
 std::pair<double, double> IoMap::calculeWeighted(std::map<std::pair<double, double>, size_t> &indexData) const{
