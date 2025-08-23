@@ -161,3 +161,21 @@ int testIoStatExactValue(){
 		return -1;
 	return 0;
 }
+
+int testIoStatCopy(){
+	IoStat origin(1, "cernbox", 12, 13);
+	IoStat tmp(10, "tmpname", 42, 24);
+
+	origin.add(10, IoStat::Marks::READ);
+	origin.add(100, IoStat::Marks::READ);
+	origin.add(100, IoStat::Marks::WRITE);
+	origin.add(100, IoStat::Marks::WRITE);
+	origin.add(100, IoStat::Marks::WRITE);
+	tmp = origin;
+	if (tmp.getApp() != "cernbox"
+		|| tmp.getUid() != 12 || tmp.getGid() != 13
+		|| tmp.getSize(IoStat::Marks::READ) != 2
+		|| tmp.getSize(IoStat::Marks::WRITE) != 3)
+		return -1;
+	return 0;
+}

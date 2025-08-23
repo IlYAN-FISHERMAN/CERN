@@ -49,7 +49,6 @@
 #include <typeinfo>
 #include "color.hh"
 
-
 //--------------------------------------------
 /// Main structure stored in IoStat
 /// Keep the time of class creation
