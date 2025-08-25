@@ -7,6 +7,7 @@ int testIoStatFillData();
 int testIoStatCleaning();
 int testIoStatExactValue();
 int testIoStatCopy();
+int testIoStatIOPS();
 
 int testInteractiveIoMap();
 int testIoMapBigVolume();

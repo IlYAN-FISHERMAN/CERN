@@ -179,3 +179,30 @@ int testIoStatCopy(){
 		return -1;
 	return 0;
 }
+
+int testIoStatIOPS(){
+	IoStat io(1, "eos", 1, 1);
+	double rAvrg = 0;
+	double wAvrg = 0;
+
+	srand((unsigned int)time(NULL));
+	for (size_t i = 0; i < 10; i++){
+		double read = std::abs(rand()) % 100;
+		double write = std::abs(rand()) % 100;
+		rAvrg += read;
+		wAvrg += write;
+
+		for (size_t j = 0; j < read; j++)
+			io.add((std::abs(rand()) % 10000), IoStat::Marks::READ);
+		for (size_t j = 0; j < write; j++)
+			io.add((std::abs(rand()) % 10000), IoStat::Marks::WRITE);
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+	}
+	rAvrg /= 10;
+	wAvrg /= 10;
+
+	if (rAvrg != io.getIOPS(IoStat::Marks::READ)
+		|| wAvrg != io.getIOPS(IoStat::Marks::WRITE))
+		return -1;
+	return 0;
+}

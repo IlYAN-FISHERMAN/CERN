@@ -228,17 +228,50 @@ ssize_t IoStat::getSize(Marks enumMark) const{
 }
 
 //--------------------------------------------
+/// Get the IOPS of corresponding
+/// READ or WRITE deck
+//--------------------------------------------
+double IoStat::getIOPS(Marks enumMark, size_t seconds) const{
+	if ((enumMark != Marks::READ && enumMark != Marks::WRITE)
+		|| seconds == 0)
+		return -1;
+
+	double iops = 0;
+	auto &mark= (enumMark == Marks::READ) ? _readMarks : _writeMarks;
+
+	if (mark.size() == 0)
+		return 0;
+
+	struct timespec currentTime = mark.begin()->io_time;
+	clock_gettime(CLOCK_REALTIME, &currentTime);
+
+	for (std::deque<IoMark>::const_iterator it = mark.end(); it != mark.begin();){
+		it--;
+		if ((difftime(currentTime.tv_sec, it->io_time.tv_sec) > seconds))
+			break;
+		iops++;
+	}
+	iops /= seconds;
+
+	return iops;
+}
+
+//--------------------------------------------
 /// Overload operator << 
 //--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const IoStat &other){
 	std::pair<double, double> read = other.bandWidth(IoStat::Marks::READ);
 	std::pair<double, double> write = other.bandWidth(IoStat::Marks::WRITE);
 	os << "[IoStat bandwidth from last 10s] " << std::endl;
-	os << std::fixed << std::setprecision(2) << C_BLUE << "[READ]{avrg: " << read.first <<
-		", std: " << read.second <<  "}";
+	os << std::fixed << std::setprecision(2) << C_BLUE
+		<< "[READ][avrg: " << read.first << "][std: " << read.second
+		<< "][s: " << other.getSize(IoStat::Marks::READ)
+		<<  "][IOPS: " << other.getIOPS(IoStat::Marks::READ) << "]";
 	os << " / ";
-	os <<  "[WRITE]{avrg: " << write.first <<
-		", std: " << write.second <<  "}" << C_RESET << std::endl;
+	os <<  "[WRITE][avrg: " << write.first << "][std: " << write.second
+		<< "][s: " << other.getSize(IoStat::Marks::WRITE)
+		<< "][IOPS: " << other.getIOPS(IoStat::Marks::WRITE)
+		<< "]" << C_RESET;
 	return os;
 }
 
@@ -255,11 +288,10 @@ std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_
 		os << C_GREEN << "[" << C_CYAN << "sR:" << it.second->getSize(IoStat::Marks::READ)
 			<< "/sW:"<< it.second->getSize(IoStat::Marks::WRITE) << C_GREEN << "]" << C_RESET;
 		os << std::endl << C_GREEN << "└─[" << C_CYAN << "IoStat" << C_GREEN << "]" << C_RESET;
-		os << C_WHITE << *it.second << C_RESET << std::endl;
+		os << C_WHITE << *it.second << C_RESET;
 	}
 	return os;
 }
-
 
 //--------------------------------------------
 /// Overload operator << to print a IoStatSummary struct
@@ -284,7 +316,7 @@ std::ostream& operator<<(std::ostream &os, const std::optional<IoStatSummary> &o
 			<< "][std: " << other.writeBandwidth->second
 			<< "][s: " << other.wSize << "]" << std::endl;
 	else
-		os << "[empty]" << std::endl;
+		os << "[empty]";
 	return os;
 }
 
@@ -306,6 +338,6 @@ std::ostream& operator<<(std::ostream &os, const IoStatSummary &other){
 			<< "][std: " << other.writeBandwidth->second
 			<< "][s: " << other.wSize << "]" << std::endl;
 	else
-		os << "[empty]" << std::endl;
+		os << "[empty]";
 	return os;
 }

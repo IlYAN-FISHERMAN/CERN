@@ -32,7 +32,9 @@ TEST(IoStat, FillData) {
 }
 
 TEST(IoStat, exactValue) {
-	EXPECT_EQ(testIoStatExactValue(), 0);
+	ASSERT_FALSE(testIoStatIOPS());
+	ASSERT_FALSE(testIoStatExactValue());
+	EXPECT_EQ(testIoStatCopy(), 0);
 }
 
 TEST(IoMap, FillData) {
@@ -63,24 +65,24 @@ TEST(IoAggregateMap, exactValue) {
 // }
 
 int main(int ac, char **av) {
+	srand((unsigned int)time(NULL));
 	int code = 0;
 	(void)ac;
 	(void)av;
 	(void)code;
 
 	// code = testIoStatExactValue();
+	code = testIoStatIOPS();
 
 	// code = testIoMapSpecificCase();
 	// code = testIoMapSummary();
-	// code = testIoMapBigVolume();
-	// code = testIoMapBigVolume();
 	// code = testIoMapBigVolume();
 	// code = testIoMapExactValue();
 	// code = testIoMapIds();
 
 	// code = testIoAggregateMapWindow();
 	// code = testIoAggregateMap();
-	code = testIoAggregateMapInteract();
+	// code = testIoAggregateMapInteract();
 	// code = testIoStatCopy();
 	std::cout << "code: " << code << std::endl;
     // ::testing::InitGoogleTest(&ac, av);

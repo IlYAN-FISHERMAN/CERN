@@ -191,6 +191,29 @@ std::optional<IoStatSummary> IoAggregate::summaryWeighted(const std::vector<IoSt
 }
 
 //--------------------------------------------
+/// Get current index
+//--------------------------------------------
+size_t IoAggregate::getIndex() const{ return _currentIndex;}
+
+//--------------------------------------------
+/// Display the string given as parameter in
+/// specific format with the current time
+//--------------------------------------------
+void	IoAggregate::printInfo(std::ostream &os, const char *msg) const{
+	const char *time = getCurrentTime();
+	os << IOAGGREGATE_NAME << " [" << time << "]: " << msg << std::endl;
+}
+
+//--------------------------------------------
+/// Display the string given as parameter in
+/// specific format with the current time
+//--------------------------------------------
+void	IoAggregate::printInfo(std::ostream &os, const std::string &msg) const{
+	const char *time = getCurrentTime();
+	os << IOAGGREGATE_NAME << " [" << time << "]: " << msg << std::endl;
+}
+
+//--------------------------------------------
 /// Overload operator << to print
 /// a IoAggregate object
 //--------------------------------------------
@@ -233,22 +256,4 @@ std::ostream& operator<<(std::ostream &os, const IoAggregate &other){
 
 	os << C_RESET;
 	return os;
-}
-
-//--------------------------------------------
-/// Display the string given as parameter in
-/// specific format with the current time
-//--------------------------------------------
-void	IoAggregate::printInfo(std::ostream &os, const char *msg) const{
-	const char *time = getCurrentTime();
-	os << IOAGGREGATE_NAME << " [" << time << "]: " << msg << std::endl;
-}
-
-//--------------------------------------------
-/// Display the string given as parameter in
-/// specific format with the current time
-//--------------------------------------------
-void	IoAggregate::printInfo(std::ostream &os, const std::string &msg) const{
-	const char *time = getCurrentTime();
-	os << IOAGGREGATE_NAME << " [" << time << "]: " << msg << std::endl;
 }

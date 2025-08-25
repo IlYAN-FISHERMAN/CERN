@@ -172,6 +172,11 @@ class IoAggregate{
 		std::optional<IoStatSummary> summaryWeighted(const std::vector<IoStatSummary> &summarys) const;
 
 		//--------------------------------------------
+		/// Get current index
+		//--------------------------------------------
+		size_t getIndex() const;
+
+		//--------------------------------------------
 		/// Template
 		/// @brief Add an app name to the set that
 		/// would be tracked

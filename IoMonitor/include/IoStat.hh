@@ -148,17 +148,35 @@ public: enum class Marks : uint8_t{
 		/// 
 		/// @param	enumMark READ or WRITE variable comes
 		/// from the IoStat::Marks enumerator
-		/// @param seconds(optional) over how many seconds
-		/// from now the function should calculate
 		/// @param	range Sets the "range" variable to the
 		/// number of elements that were found
 		/// (can be set to NULL in which case the parameter
 		/// is ignored)
+		/// @param	seconds(optional) over how many seconds
+		/// from now the function should calculate
 		///
 		/// @return std::pair<double, double> fisrt is the
 		/// average, the second is the standard deviation 
 		//--------------------------------------------
 		std::pair<double, double> bandWidth(Marks EnumMark, size_t *range = NULL, size_t seconds = 10) const;
+
+		//--------------------------------------------
+		/// @brief Calculate the write or read IOPS
+		///
+		/// @details
+		/// The function calculates the read or
+		/// write IOPS (depending on the "enumMark" parameter)
+		/// of the last N seconds (by default - 10s)
+		///
+		/// @param	enumMark READ or WRITE variable comes
+		/// from the IoStat::Marks enumerator
+		/// @param seconds(optional) over how many seconds
+		/// from now the function should calculate
+		///
+		/// @return -1 If the enumerator is incorrect
+		/// @return double The IOPS
+		//--------------------------------------------
+		double getIOPS(Marks enumMark, size_t seconds = 10) const;
 
 		//--------------------------------------------
 		/// Static function
