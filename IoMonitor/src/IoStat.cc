@@ -213,7 +213,7 @@ gid_t IoStat::getGid() const {return (_gid);}
 //--------------------------------------------
 /// Get current app name
 //--------------------------------------------
-const std::string& IoStat::getApp() const {return (_app);}
+std::string IoStat::getApp() const {return (_app);}
 
 //--------------------------------------------
 /// Get the size of corresponding

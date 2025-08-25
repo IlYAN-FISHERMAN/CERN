@@ -28,7 +28,6 @@
 IoAggregate::IoAggregate(const IoAggregate &other){
 	std::lock_guard<std::mutex> lock(_mutex);
 	std::lock_guard<std::mutex> otherLock(other._mutex);
-	_nbrBins = other._nbrBins;
 	_intervalSec = other._intervalSec;
 	_currentIndex = other._currentIndex;
 	_bins = other._bins;
@@ -45,7 +44,6 @@ IoAggregate& IoAggregate::operator=(const IoAggregate &other){
 	std::lock_guard<std::mutex> lock(_mutex);
 	std::lock_guard<std::mutex> otherLock(other._mutex);
 	if (this != &other){
-		_nbrBins = other._nbrBins;
 		_intervalSec = other._intervalSec;
 		_currentIndex = other._currentIndex;
 		_bins = other._bins;
@@ -124,7 +122,7 @@ void IoAggregate::shiftWindow(){
 /// Changes the position of the current
 /// index (_currentIndex)
 //--------------------------------------------
-void IoAggregate::shiftWindow(size_t index){
+void IoAggregate::shiftWindow(const size_t index){
 	if (index >= _bins.size())
 		return ;
 	_currentIndex = index;
@@ -134,7 +132,7 @@ void IoAggregate::shiftWindow(size_t index){
 /// Condenses a vector of IoStatSummary
 /// into a single one
 //--------------------------------------------
-std::optional<IoStatSummary> IoAggregate::summaryWeighted(std::vector<IoStatSummary> &summarys) const{
+std::optional<IoStatSummary> IoAggregate::summaryWeighted(const std::vector<IoStatSummary> &summarys) const{
 	size_t rDivisor = 0;
 	size_t wDivisor = 0;
 	IoStatSummary weighted;

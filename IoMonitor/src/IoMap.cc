@@ -109,7 +109,7 @@ void IoMap::cleanerLoop(){
 /// Adds an IoStat object to the multimap with
 /// the corresponding elements
 //--------------------------------------------
-void IoMap::addRead(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t rbytes){
+void IoMap::addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes){
 	std::lock_guard<std::mutex> lock(_mutex);
 
 	auto it = _filesMap.equal_range(inode);
@@ -150,7 +150,7 @@ void IoMap::addRead(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_
 /// Adds an IoStat object to the multimap
 /// with the corresponding elements
 //--------------------------------------------
-void IoMap::addWrite(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t wbytes){
+void IoMap::addWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes){
 	std::lock_guard<std::mutex> lock(_mutex);
 
 	auto it = _filesMap.equal_range(inode);

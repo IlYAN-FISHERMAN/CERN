@@ -153,7 +153,7 @@ class IoMap {
 		/// @param	gid		ID of the corresponding group
 		/// @param	rbytes	Number of bytes read
 		//--------------------------------------------
-		void addRead(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t rbytes);
+		void addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes);
 
 		//--------------------------------------------
 		/// @brief Adds an IoStat object to the multimap
@@ -165,7 +165,7 @@ class IoMap {
 		/// @param	gid		ID of the corresponding group
 		/// @param	rbytes	Number of bytes read
 		//--------------------------------------------
-		void addWrite(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t wbytes);
+		void addWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes);
 
 
 		//--------------------------------------------

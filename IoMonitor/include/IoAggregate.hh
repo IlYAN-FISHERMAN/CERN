@@ -49,11 +49,6 @@ class IoAggregate{
 		};
 
 		//-----------------------------------------
-		/// Number of Bin
-		//-----------------------------------------
-		size_t _nbrBins;
-
-		//-----------------------------------------
 		/// The number of seconds the class must
 		/// wait before updating
 		//-----------------------------------------
@@ -162,7 +157,7 @@ class IoAggregate{
 		/// @param index The new future position of the index
 		/// does nothing if it goes out of range
 		//--------------------------------------------
-		void shiftWindow(size_t index);
+		void shiftWindow(const size_t index);
 	
 		//--------------------------------------------
 		/// @brief Condenses a vector of IoStatSummary
@@ -174,7 +169,7 @@ class IoAggregate{
 		/// or the summary is completely empty else
 		/// a IoStatSummary
 		//--------------------------------------------
-		std::optional<IoStatSummary> summaryWeighted(std::vector<IoStatSummary> &summarys) const;
+		std::optional<IoStatSummary> summaryWeighted(const std::vector<IoStatSummary> &summarys) const;
 
 		//--------------------------------------------
 		/// Template

@@ -195,7 +195,7 @@ public: enum class Marks : uint8_t{
 		//--------------------------------------------
 		/// Get current app name
 		//--------------------------------------------
-		const std::string& getApp() const;
+		std::string getApp() const;
 
 		//--------------------------------------------
 		/// @brief Get the size of corresponding
