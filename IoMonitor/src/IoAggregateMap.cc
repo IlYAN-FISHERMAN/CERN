@@ -163,6 +163,7 @@ std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoAggregat
 /// to that Bin
 //--------------------------------------------
 void IoAggregateMap::shiftWindow(size_t winTime){
+	std::lock_guard<std::mutex> lock(_mutex);
 	if constexpr (io::IoAggregateMapDebug)
 		printInfo(std::cout, "shiftWindow");
 	if (_aggregates.find(winTime) == _aggregates.end())
@@ -177,6 +178,7 @@ void IoAggregateMap::shiftWindow(size_t winTime){
 /// the IoAggregate object  of the specified window
 //--------------------------------------------
 void IoAggregateMap::shiftWindow(size_t winTime, size_t index){
+	std::lock_guard<std::mutex> lock(_mutex);
 	if constexpr (io::IoAggregateMapDebug)
 		printInfo(std::cout, "shiftWindow");
 	if (_aggregates.find(winTime) == _aggregates.end())

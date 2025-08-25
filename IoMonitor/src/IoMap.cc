@@ -237,7 +237,7 @@ std::ostream& operator<<(std::ostream &os, const IoMap &other){
 		os << C_GREEN << "[" << C_CYAN << "sR:" << it.second->getSize(IoStat::Marks::READ)
 			<< "/sW:"<< it.second->getSize(IoStat::Marks::WRITE) << C_GREEN << "]" << C_RESET;
 		os << std::endl << C_GREEN << "└─[" << C_CYAN << "IoStat" << C_GREEN << "]" << C_RESET;
-		os << std::fixed << std::setprecision(3) << C_WHITE << *it.second.get() << C_RESET << std::endl;
+		os << C_WHITE << *it.second.get() << C_RESET << std::endl;
 	}
 	return os;
 }

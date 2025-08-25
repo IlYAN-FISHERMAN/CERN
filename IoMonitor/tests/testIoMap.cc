@@ -102,7 +102,7 @@ void print(IoMap *map){
 		std::cout << C_GREEN << "[" << C_CYAN << "sR:" << it.second->getSize(IoStat::Marks::READ)
 			<< "/sW:"<< it.second->getSize(IoStat::Marks::WRITE) << C_GREEN << "]" << C_RESET;
 		std::cout << std::endl << C_GREEN << "└─[" << C_CYAN << "IoStat" << C_GREEN << "]" << C_RESET;
-		std::cout << std::fixed << std::setprecision(3) << C_WHITE << it.second << C_RESET << std::endl;
+		std::cout << C_WHITE << it.second << C_RESET << std::endl;
 	}
 }
 

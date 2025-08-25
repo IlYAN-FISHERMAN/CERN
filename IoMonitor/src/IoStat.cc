@@ -234,11 +234,11 @@ std::ostream& operator<<(std::ostream &os, const IoStat &other){
 	std::pair<double, double> read = other.bandWidth(IoStat::Marks::READ);
 	std::pair<double, double> write = other.bandWidth(IoStat::Marks::WRITE);
 	os << "[IoStat bandwidth from last 10s] " << std::endl;
-	os << C_BLUE << "[READ]{average: " << read.first <<
-		", standard deviation: " << read.second <<  "}";
+	os << std::fixed << std::setprecision(2) << C_BLUE << "[READ]{avrg: " << read.first <<
+		", std: " << read.second <<  "}";
 	os << " / ";
-	os <<  "[WRITE]{average: " << write.first <<
-		", standard deviation: " << write.second <<  "}" << C_RESET << std::endl;
+	os <<  "[WRITE]{avrg: " << write.first <<
+		", std: " << write.second <<  "}" << C_RESET << std::endl;
 	return os;
 }
 
@@ -255,7 +255,7 @@ std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_
 		os << C_GREEN << "[" << C_CYAN << "sR:" << it.second->getSize(IoStat::Marks::READ)
 			<< "/sW:"<< it.second->getSize(IoStat::Marks::WRITE) << C_GREEN << "]" << C_RESET;
 		os << std::endl << C_GREEN << "└─[" << C_CYAN << "IoStat" << C_GREEN << "]" << C_RESET;
-		os << std::fixed << std::setprecision(3) << C_WHITE << *it.second << C_RESET << std::endl;
+		os << C_WHITE << *it.second << C_RESET << std::endl;
 	}
 	return os;
 }
@@ -270,18 +270,19 @@ std::ostream& operator<<(std::ostream &os, const std::optional<IoStatSummary> &o
 		return os;
 	}
 	IoStatSummary other = opt.value();
+	os << std::fixed << std::setprecision(2);
 	os << "[READ]";
 	if (other.readBandwidth.has_value())
-		os << "[average: " << other.readBandwidth->first
-			<< "][standard deviation: " << other.readBandwidth->second
-			<< "][size: " << other.rSize << "] / ";
+		os << "[avrg: " << other.readBandwidth->first
+			<< "][std: " << other.readBandwidth->second
+			<< "][s: " << other.rSize << "] / ";
 	else
 		os << "[empty] / ";
 	os << "[WRITE]";
 	if (other.writeBandwidth.has_value())
-		os << "[average: " << other.writeBandwidth->first
-			<< "][standard deviation: " << other.writeBandwidth->second
-			<< "][size: " << other.wSize << "]" << std::endl;
+		os << "[avrg: " << other.writeBandwidth->first
+			<< "][std: " << other.writeBandwidth->second
+			<< "][s: " << other.wSize << "]" << std::endl;
 	else
 		os << "[empty]" << std::endl;
 	return os;
@@ -291,18 +292,19 @@ std::ostream& operator<<(std::ostream &os, const std::optional<IoStatSummary> &o
 /// Overload operator << to print a IoStatSummary struct
 //--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const IoStatSummary &other){
+	os << std::fixed << std::setprecision(2);
 	os << "[READ]";
 	if (other.readBandwidth.has_value())
-		os << "[average: " << other.readBandwidth->first
-			<< "][standard deviation: " << other.readBandwidth->second
-			<< "][size: " << other.rSize << "] / ";
+		os << "[avrg: " << other.readBandwidth->first
+			<< "][std: " << other.readBandwidth->second
+			<< "][s: " << other.rSize << "] / ";
 	else
 		os << "[empty] / ";
 	os << "[WRITE]";
 	if (other.writeBandwidth.has_value())
-		os << "[average: " << other.writeBandwidth->first
-			<< "][standard deviation: " << other.writeBandwidth->second
-			<< "][size: " << other.wSize << "]" << std::endl;
+		os << "[avrg: " << other.writeBandwidth->first
+			<< "][std: " << other.writeBandwidth->second
+			<< "][s: " << other.wSize << "]" << std::endl;
 	else
 		os << "[empty]" << std::endl;
 	return os;

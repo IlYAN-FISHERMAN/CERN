@@ -80,8 +80,8 @@ int main(int ac, char **av) {
 
 	// code = testIoAggregateMapWindow();
 	// code = testIoAggregateMap();
-	// code = testIoAggregateMapInteract();
-	code = testIoStatCopy();
+	code = testIoAggregateMapInteract();
+	// code = testIoStatCopy();
 	std::cout << "code: " << code << std::endl;
     // ::testing::InitGoogleTest(&ac, av);
     // return RUN_ALL_TESTS();

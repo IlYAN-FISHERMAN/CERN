@@ -242,9 +242,10 @@ class IoAggregateMap{
 		//--------------------------------------------
 		template <typename T>
 		int setTrack(size_t winTime, const T index){
+			std::lock_guard<std::mutex> lock(_mutex);
 			if constexpr (io::IoAggregateMapDebug)
 				printInfo(std::cout, "set appName track for " + std::string(index));
-			if (!this->containe(winTime)){
+			if (_aggregates.find(winTime) == _aggregates.end()){
 				if constexpr (io::IoAggregateMapDebug)
 					printInfo(std::cerr, "set appName track failed");
 				return -1;
@@ -270,9 +271,10 @@ class IoAggregateMap{
 		//--------------------------------------------
 		template <typename T>
 		int setTrack(size_t winTime, io::TYPE type, const T index){
+			std::lock_guard<std::mutex> lock(_mutex);
 			if constexpr (io::IoAggregateMapDebug)
 				printInfo(std::cout, "set id track for " + std::to_string(index));
-			if (!this->containe(winTime)){
+			if (_aggregates.find(winTime) == _aggregates.end()){
 				if constexpr (io::IoAggregateMapDebug)
 					printInfo(std::cerr, "set id track failed");
 				return -1;

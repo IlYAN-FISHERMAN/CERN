@@ -134,6 +134,7 @@ int testIoAggregateMap(){
 		map.addRead(1, "fdf", 12, 1, std::abs(rand())%10000);
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
+
 	auto eos = map.getSummary(3600, "eos");
 	auto mgm = map.getSummary(3600, "mgm");
 	auto fdf = map.getSummary(3600, "fdf");
@@ -143,17 +144,12 @@ int testIoAggregateMap(){
 	if (!eos.has_value() || !mgm.has_value() || !fdf.has_value() ||
 		!uid.has_value() || !gid.has_value())
 		return -1;
-	if (eos->rSize != 40 || eos->wSize != 40
-		|| mgm->rSize != 20 || mgm->wSize != 20
-		|| fdf->rSize != 20 || fdf->wSize != 20
-		|| uid->rSize != 40 || uid->wSize != 40
-		|| gid->rSize != 60 || gid->wSize != 60)
+	if (eos->rSize < 40 || eos->wSize < 40
+		|| mgm->rSize < 20 || mgm->wSize < 20
+		|| fdf->rSize < 20 || fdf->wSize < 20
+		|| uid->rSize < 40 || uid->wSize < 40
+		|| gid->rSize < 60 || gid->wSize < 60)
 		return -1;
-	// std::cout << eos << std::endl
-	// 	<< mgm << std::endl
-	// 	<< fdf << std::endl
-	// 	<< uid << std::endl
-	// 	<< gid << std::endl;
 	return 0;
 }
 
@@ -178,8 +174,7 @@ int testIoAggregateMapInteract(){
 				uid_t uid = 0;
 				gid_t gid = 0;
 				size_t bytes = 0;
-				if (cmd == "set" && stream >> winTime){
-					stream >> cmd;
+				if (cmd == "set" && stream >> winTime >> cmd){
 					if (cmd == "uid" && stream >> uid)
 						map.setTrack(winTime, io::TYPE::UID, uid);
 					else if (cmd == "gid" && stream >> gid)

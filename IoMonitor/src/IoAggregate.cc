@@ -215,7 +215,6 @@ std::ostream& operator<<(std::ostream &os, const IoAggregate &other){
 	os << "\t gids:" << std::endl;
 	for (auto it : other._gids)
 		os << "\t  - " << it << std::endl;
-	os << std::fixed << std::setprecision(4);
 
 	auto it = other._bins.at(other._currentIndex);
 	if (it.appStats.size() > 0){
