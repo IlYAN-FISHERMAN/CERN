@@ -298,7 +298,7 @@ std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_
 //--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const std::optional<IoStatSummary> &opt){
 	if (!opt.has_value()){
-		os << "summary empty" << std::endl;
+		os << "empty summary" << std::endl;
 		return os;
 	}
 	IoStatSummary other = opt.value();
@@ -307,14 +307,18 @@ std::ostream& operator<<(std::ostream &os, const std::optional<IoStatSummary> &o
 	if (other.readBandwidth.has_value())
 		os << "[avrg: " << other.readBandwidth->first
 			<< "][std: " << other.readBandwidth->second
-			<< "][s: " << other.rSize << "] / ";
+			<< "][s: " << other.rSize
+			<< "][IOPS: " << other.rIops
+			<< "] / ";
 	else
 		os << "[empty] / ";
 	os << "[WRITE]";
 	if (other.writeBandwidth.has_value())
 		os << "[avrg: " << other.writeBandwidth->first
 			<< "][std: " << other.writeBandwidth->second
-			<< "][s: " << other.wSize << "]" << std::endl;
+			<< "][s: " << other.wSize
+			<< "][IOPS: " << other.wIops
+			<< "]";
 	else
 		os << "[empty]";
 	return os;
@@ -329,14 +333,18 @@ std::ostream& operator<<(std::ostream &os, const IoStatSummary &other){
 	if (other.readBandwidth.has_value())
 		os << "[avrg: " << other.readBandwidth->first
 			<< "][std: " << other.readBandwidth->second
-			<< "][s: " << other.rSize << "] / ";
+			<< "][s: " << other.rSize
+			<< "][IOPS: " << other.rIops
+			<< "] / ";
 	else
 		os << "[empty] / ";
 	os << "[WRITE]";
 	if (other.writeBandwidth.has_value())
 		os << "[avrg: " << other.writeBandwidth->first
 			<< "][std: " << other.writeBandwidth->second
-			<< "][s: " << other.wSize << "]" << std::endl;
+			<< "][s: " << other.wSize
+			<< "][IOPS: " << other.wIops
+			<< "]";
 	else
 		os << "[empty]";
 	return os;

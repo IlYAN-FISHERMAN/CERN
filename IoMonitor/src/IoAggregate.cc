@@ -140,20 +140,28 @@ std::optional<IoStatSummary> IoAggregate::summaryWeighted(const std::vector<IoSt
 	if (io::IoAggregateDebug)
 		printInfo(std::cout, "summary weighted called");
 
-	/// Calcule average
+	/// Calcule average and IOPS
 	for (const auto &it : summarys){
-		if (it.readBandwidth.has_value())
+		if (it.readBandwidth.has_value()){
 			weighted.readBandwidth->first += (it.readBandwidth->first * it.rSize);
-		if (it.writeBandwidth.has_value())
+			weighted.rIops += it.rIops * it.rSize;
+		}
+		if (it.writeBandwidth.has_value()){
 			weighted.writeBandwidth->first += (it.writeBandwidth->first * it.wSize);
+			weighted.wIops += it.wIops * it.wSize;
+		}
 		rDivisor += it.rSize;
 		wDivisor += it.wSize;
 	}
 
-	if (rDivisor > 0)
+	if (rDivisor > 0){
 		weighted.readBandwidth->first /= rDivisor;
-	if (wDivisor > 0)
+		weighted.rIops /= rDivisor;
+	}
+	if (wDivisor > 0){
 		weighted.writeBandwidth->first /= wDivisor;
+		weighted.wIops /= wDivisor;
+	}
 
 	/// Calcule standard deviation
 	for (const auto &it : summarys){

@@ -121,6 +121,12 @@ struct IoStatSummary {
 	size_t wSize;
 
 	//--------------------------------------------
+	/// read and write IOPS
+	//--------------------------------------------
+	double rIops;
+	double wIops;
+
+	//--------------------------------------------
 	// Keep the time of class creation
 	//--------------------------------------------
 	struct timespec io_time;
@@ -131,7 +137,7 @@ struct IoStatSummary {
 	IoStatSummary() :
 		readBandwidth(std::pair<double, double>(0,0)),
 		writeBandwidth(std::pair<double, double>(0, 0)),
-		rSize(0), wSize(0){
+		rSize(0), wSize(0), rIops(0), wIops(0){
 			clock_gettime(CLOCK_REALTIME, &io_time);
 		}
 };
