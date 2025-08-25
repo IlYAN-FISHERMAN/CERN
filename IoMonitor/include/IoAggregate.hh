@@ -20,6 +20,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.*
  *************************************************************************/
 
+//--------------------------------------------
+/// Each class has a variable define DEBUG which
+/// can be defined in the IoMonitor.hh namespace
+//--------------------------------------------
+
 #pragma once
 
 #include "IoMap.hh"
@@ -32,30 +37,76 @@
 
 class IoAggregate{
 	private:
+
+		//-----------------------------------------
+		/// Structure that keeps all IoStatSummary
+		/// of all appName/uid/gid that are tracked
+		//-----------------------------------------
 		struct Bin{
 			std::unordered_multimap<std::string, IoStatSummary> appStats;
 			std::unordered_multimap<uid_t, IoStatSummary> uidStats;
 			std::unordered_multimap<gid_t, IoStatSummary> gidStats;
 		};
 
+		//-----------------------------------------
+		/// Number of Bin
+		//-----------------------------------------
 		size_t _nbrBins;
+
+		//-----------------------------------------
+		/// The number of seconds the class must
+		/// wait before updating
+		//-----------------------------------------
 		size_t _intervalSec;
+
+		//-----------------------------------------
+		/// The total track time interval
+		//-----------------------------------------
 		size_t _winTime;
+
+		//-----------------------------------------
+		/// The index of the object to know which Bin
+		/// we are on
+		//-----------------------------------------
 		size_t _currentIndex;
+
+		//-----------------------------------------
+		/// The class keeps up to date with the last
+		/// time it was updated
+		//-----------------------------------------
 		std::chrono::system_clock::time_point _currentTime;
 
+		//-----------------------------------------
+		/// set of unordered_set which is a list of
+		/// all appName/uid/gid that are tracked
+		//-----------------------------------------
 		std::unordered_set<std::string>	_apps;
 		std::unordered_set<uid_t>		_uids;
 		std::unordered_set<gid_t>		_gids;
- 
+
+		//-----------------------------------------
+		/// The buffer that keeps all the bins
+		//-----------------------------------------
 		std::vector<Bin> _bins;
 
 		mutable std::mutex _mutex;
 
 		//--------------------------------------------
-		/// Default constructor
+		/// Deleted default constructor
 		//--------------------------------------------
 		IoAggregate() = delete;
+
+		//--------------------------------------------
+		/// Display the string given as parameter in
+		/// specific format with the current time
+		//--------------------------------------------
+		void printInfo(std::ostream &os, const std::string &msg) const;
+
+		//--------------------------------------------
+		/// Display the string given as parameter in
+		/// specific format with the current time
+		//--------------------------------------------
+		void printInfo(std::ostream &os, const char *msg) const;
 
 	public:
 		//--------------------------------------------
@@ -80,28 +131,62 @@ class IoAggregate{
 		//--------------------------------------------
 		/// Main constructor
 		//--------------------------------------------
-		explicit IoAggregate(size_t winTime);
-
-		void update(const IoMap &maps);
-		void shiftWindow();
-		void shiftWindow(size_t index);
+		IoAggregate(size_t winTime);
 
 		//--------------------------------------------
-		/// Display the string given as parameter in
-		/// specific format with the current time
+		/// @brief Overload operator << to print
+		/// a IoAggregate object
 		//--------------------------------------------
-		void printInfo(std::ostream &os, const std::string &msg) const;
-
-		//--------------------------------------------
-		/// Display the string given as parameter in
-		/// specific format with the current time
-		//--------------------------------------------
-		void printInfo(std::ostream &os, const char *msg) const;
-
 		friend std::ostream& operator<<(std::ostream &os, const IoAggregate &other);
-		
-		std::optional<IoStatSummary> summaryWeighted(std::vector<IoStatSummary> summarys) const;
 
+		//--------------------------------------------
+		/// @brief Updates the current bin according to the
+		/// appName/uid/gid which are tracked every N seconds
+		/// (depending on _intervalSec)
+		///
+		/// @param maps A reference to an ioMap object to
+		/// extract the summary from it
+		//--------------------------------------------
+		void update(const IoMap &maps);
+
+		//--------------------------------------------
+		/// @brief Add a Bin object, and set the index
+		/// to that Bin
+		//--------------------------------------------
+		void shiftWindow();
+
+		//--------------------------------------------
+		/// @brief Changes the position of the current
+		/// index (_currentIndex)
+		///
+		/// @param index The new future position of the index
+		/// does nothing if it goes out of range
+		//--------------------------------------------
+		void shiftWindow(size_t index);
+	
+		//--------------------------------------------
+		/// @brief Condenses a vector of IoStatSummary
+		/// into a single one
+		///
+		/// @param summarys A vector of summary
+		///
+		/// @return std::nullopt If an error is encountered
+		/// or the summary is completely empty else
+		/// a IoStatSummary
+		//--------------------------------------------
+		std::optional<IoStatSummary> summaryWeighted(std::vector<IoStatSummary> &summarys) const;
+
+		//--------------------------------------------
+		/// Template
+		/// @brief Add an app name to the set that
+		/// would be tracked
+		///
+		/// @param index Template variable
+		/// The new tracked app Name
+		///
+		/// @return -1 If the variable type doesn't match
+		/// @return 0 If the track has been set correctly
+		//--------------------------------------------
 		template <typename T>
 		int setTrack(T index){
 			if (!(std::is_same_v<T, std::string> || std::is_same_v<T, const char *>))
@@ -110,6 +195,19 @@ class IoAggregate{
 			return 0;
 		}
 
+		//--------------------------------------------
+		/// Template
+		/// @brief Add an uid/gid to the set that
+		/// would be tracked
+		///
+		/// @param type Allows to keep the context
+		/// if you want the uid or gid
+		/// @param index Template variable
+		/// The new tracked app Name
+		///
+		/// @return -1 If the type variable doesn't match
+		/// @return 0 If the track has been set correctly
+		//--------------------------------------------
 		template <typename T>
 		int setTrack(io::TYPE type, T index){
 			if (type == io::TYPE::UID)
@@ -121,6 +219,22 @@ class IoAggregate{
 			return 0;
 		}
 
+		//--------------------------------------------
+		/// Template
+		/// @brief Add an IoStatSummary to the current Bin
+		///
+		/// @details Adds an ioStatSummary to the current
+		/// Bin, maintaining a circular buffer of size
+		/// "_winTime / _intervaleSec". This means that if
+		/// the Bin is full, the oldest Summary will be
+		/// overwritten.
+		///
+		/// @param type Allows to keep the context
+		/// if you want the uid or gid
+		/// @param index Template variable
+		/// index type can be uid_t/gid_t
+		/// @param summary The summary to add
+		//--------------------------------------------
 		template <typename T>
 		void addSample(io::TYPE type, const T index, IoStatSummary &summary){
 
@@ -164,6 +278,20 @@ class IoAggregate{
 			}
 		}
 
+		//--------------------------------------------
+		/// Template
+		/// @brief Add an IoStatSummary to the current Bin
+		///
+		/// @details Adds an ioStatSummary to the current
+		/// Bin, maintaining a circular buffer of size
+		/// "_winTime / _intervaleSec". This means that if
+		/// the Bin is full, the oldest Summary will be
+		/// overwritten.
+		///
+		/// @param index Template variable
+		/// index type can const char*/std::string
+		/// @param summary The summary to add
+		//--------------------------------------------
 		template <typename T>
 		void addSample(const T index, IoStatSummary &summary){
 
@@ -189,15 +317,31 @@ class IoAggregate{
 			}
 		}
 
+
+		//--------------------------------------------
+		/// Template
+		/// @brief Get the appName index summary
+		///
+		/// @param index Template variable
+		/// index type can be const char*/std::string
+		///
+		/// @return std::nullopt If an error is encountered
+		/// or the summary is completely empty
+		/// @return std::optional<IoStatSummary>
+		/// Total index summary of the window
+		//--------------------------------------------
 		template <typename T>
 		std::optional<IoStatSummary> getSummary(const T index){
 			std::vector<IoStatSummary> summarys;
 
 			if constexpr (io::IoAggregateDebug)
 				printInfo(std::cout, "get Summary for " + std::string(index));
+
 			if (!(std::is_same_v<T, std::string> || std::is_same_v<T, const char *>)
 			|| _apps.find(index) == _apps.end())
 				return std::nullopt;
+
+			/// Fill in the corresponding summary vector
 			auto &it = _bins.at(_currentIndex);
 			for (auto appsSumarrys : it.appStats)
 				if (appsSumarrys.first == index)
@@ -205,12 +349,30 @@ class IoAggregate{
 
 			if constexpr (io::IoAggregateDebug)
 				printInfo(std::cout, "get Summary succeeded");
+
 			return summaryWeighted(summarys);
 		}
 
+		//--------------------------------------------
+		/// Template
+		/// @brief Get the uid/gid index summary
+		///
+		/// @param type Allows to keep the context
+		/// if you want the uid or gid
+		/// @param index Template variable
+		/// index type can be uid_t/gid_t
+		///
+		/// @return std::nullopt If an error is encountered
+		/// or the summary is completely empty
+		/// @return std::optional<IoStatSummary>
+		/// Total index summary of the window
+		//--------------------------------------------
 		template <typename T>
 		std::optional<IoStatSummary> getSummary(io::TYPE type, const T index){
 			std::vector<IoStatSummary> summarys;
+
+			if constexpr (io::IoAggregateDebug)
+				printInfo(std::cout, "get Summary for " + std::to_string(index));
 
 			if (type != io::TYPE::GID && type != io::TYPE::UID)
 				return std::nullopt;
@@ -219,6 +381,7 @@ class IoAggregate{
 			|| (type == io::TYPE::GID && _gids.find(index) == _gids.end()))
 				return std::nullopt;
 			
+			/// Fill in the corresponding summary vector
 			auto &it = _bins.at(_currentIndex);
 			if (type == io::TYPE::UID)
 				for (auto uidsSumarrys : it.uidStats){
@@ -229,6 +392,9 @@ class IoAggregate{
 				for (auto gidsSumarrys : it.gidStats)
 					if (gidsSumarrys.first == static_cast<gid_t>(index))
 						summarys.emplace_back(gidsSumarrys.second);
+
+			if constexpr (io::IoAggregateDebug)
+				printInfo(std::cout, "get Summary succeeded");
 
 			return summaryWeighted(summarys);
 		}

@@ -22,6 +22,9 @@
 
 #include "../include/IoMap.hh"
 
+//--------------------------------------------
+/// Public static mutex to share outputs stream
+//--------------------------------------------
 std::mutex IoMap::_osMutex;
 
 //--------------------------------------------
@@ -70,7 +73,8 @@ void	IoMap::printInfo(std::ostream &os, const std::string &msg) const{
 }
 
 //--------------------------------------------
-/// Multithreaded function to clean up inactive IoStats
+/// Multithreaded function to clean up
+/// inactive IoStats
 //--------------------------------------------
 void IoMap::cleanerLoop(){
 	while (_running.load()){
@@ -102,7 +106,8 @@ void IoMap::cleanerLoop(){
 }
 
 //--------------------------------------------
-/// Adds an IoStat object to the multimap with the corresponding elements
+/// Adds an IoStat object to the multimap with
+/// the corresponding elements
 //--------------------------------------------
 void IoMap::addRead(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t rbytes){
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -142,7 +147,8 @@ void IoMap::addRead(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_
 }
 
 //--------------------------------------------
-/// Adds an IoStat object to the multimap with the corresponding elements
+/// Adds an IoStat object to the multimap
+/// with the corresponding elements
 //--------------------------------------------
 void IoMap::addWrite(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t wbytes){
 	std::lock_guard<std::mutex> lock(_mutex);
@@ -236,13 +242,28 @@ std::ostream& operator<<(std::ostream &os, const IoMap &other){
 	return os;
 }
 
+//--------------------------------------------
+/// Returns a iterator that points to the first
+/// element in the %unordered_multimap.
+//--------------------------------------------
 std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoMap::begin(){return _filesMap.begin();}
+
+//--------------------------------------------
+/// Returns a iterator that points to the last
+/// element in the %unordered_multimap.
+//--------------------------------------------
 std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoMap::end(){return _filesMap.end();}
 
+
+//--------------------------------------------
+/// Calculates the weighted average and
+/// standard deviation
+//--------------------------------------------
 std::pair<double, double> IoMap::calculeWeighted(std::map<std::pair<double, double>, size_t> &indexData) const{
 	size_t divisor = 0;
 	std::pair<double, double> weighted = {0, 0};
 
+	/// Calcule average
 	for (const auto &it : indexData){
 		weighted.first += (it.first.first * it.second);
 		divisor += it.second;
@@ -250,7 +271,7 @@ std::pair<double, double> IoMap::calculeWeighted(std::map<std::pair<double, doub
 	if (divisor > 0)
 		weighted.first /= divisor;
 
-
+	/// Calcule Standard deviation
 	for (const auto &it : indexData)
 		weighted.second += it.second * (std::pow(it.first.second, 2) + std::pow(it.first.first - weighted.first, 2));
 

@@ -48,32 +48,10 @@ class IoMap {
 		/// inactive IoStats
 		///
 		/// @details
-		/// Multithreaded function that checks for
-		/// inactive I/Os every 60 seconds and removes them
+		/// Checks for inactive I/Os every N seconds
+		/// (60s by default) and removes them
 		//--------------------------------------------
 		void cleanerLoop();
-
-		//--------------------------------------------
-		/// @brief Displays the string given as a parameter
-		/// in a format corresponding to the class with the
-		/// current timestamp
-		///
-		/// @param	os The output stream
-		/// @param	msg The message to display
-		/// - Exemple: std::cout/std::cerr
-		//--------------------------------------------
-		void	printInfo(std::ostream &os, const char *) const;
-
-		//--------------------------------------------
-		/// @brief Displays the string given as a parameter
-		/// in a format corresponding to the class with the
-		/// current timestamp
-		///
-		/// @param	os The output stream
-		/// @param	msg The message to display
-		/// - Exemple: std::cout/std::cerr
-		//--------------------------------------------
-		void	printInfo(std::ostream &os, const std::string &) const;
 
 		//--------------------------------------------
 		/// Main variable that keeps track of all IoStats
@@ -103,6 +81,26 @@ class IoMap {
 		std::atomic<bool> _running;
 		std::condition_variable _cv;
 
+		//--------------------------------------------
+		/// @brief Displays the string given as a parameter
+		/// in a format corresponding to the class with the
+		/// current timestamp
+		///
+		/// @param os The output stream
+		/// @param msg The message to display
+		//--------------------------------------------
+		void	printInfo(std::ostream &os, const char *) const;
+
+		//--------------------------------------------
+		/// @brief Displays the string given as a parameter
+		/// in a format corresponding to the class with the
+		/// current timestamp
+		///
+		/// @param	os	The output stream
+		/// @param	msg	The message to display
+		//--------------------------------------------
+		void	printInfo(std::ostream &os, const std::string &) const;
+
 	public:
 		//--------------------------------------------
 		/// Orthodoxe canonical form
@@ -119,14 +117,14 @@ class IoMap {
 		~IoMap();
 
 		//--------------------------------------------
-		/// Explicite block constructor by copy constructor
+		/// Constructor by copy constructor
 		//--------------------------------------------
-		IoMap(const IoMap &other) = delete;
+		IoMap(const IoMap &other);
 
 		//--------------------------------------------
-		/// Explicite block overload the operator =
+		/// Overload the operator =
 		//--------------------------------------------
-		IoMap& operator=(const IoMap &other) = delete;
+		IoMap& operator=(const IoMap &other);
 
 		//--------------------------------------------
 		/// @brief Optional constructor
@@ -136,7 +134,7 @@ class IoMap {
 		/// the multithreaded cleanLoop function will
 		/// not be run, making debugging easier.
 		///
-		/// @param	int		ignored
+		/// @param	int ignored
 		//--------------------------------------------
 		IoMap(int);
 
@@ -144,28 +142,28 @@ class IoMap {
 		/// Public static mutex to share outputs stream
 		//--------------------------------------------
 		static std::mutex _osMutex;
-		
+	
 		//--------------------------------------------
-		/// @brief adds an IoStat object to the multimap
+		/// @brief Adds an IoStat object to the multimap
 		/// with the corresponding elements
 		///
 		/// @param	inode	File id
 		/// @param	app		Name of the application
-		/// @param uid		ID of the corresponding user
-		/// @param gid		ID of the corresponding group
-		/// @param rbytes	Number of bytes read
+		/// @param	uid		ID of the corresponding user
+		/// @param	gid		ID of the corresponding group
+		/// @param	rbytes	Number of bytes read
 		//--------------------------------------------
 		void addRead(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t rbytes);
 
 		//--------------------------------------------
-		/// @brief adds an IoStat object to the multimap
+		/// @brief Adds an IoStat object to the multimap
 		/// with the corresponding elements
 		///
-		/// @param	inode	file id
+		/// @param	inode	File id
 		/// @param	app		Name of the application
-		/// @param uid		ID of the corresponding user
-		/// @param gid		ID of the corresponding group
-		/// @param rbytes	Number of bytes read
+		/// @param	uid		ID of the corresponding user
+		/// @param	gid		ID of the corresponding group
+		/// @param	rbytes	Number of bytes read
 		//--------------------------------------------
 		void addWrite(uint64_t inode, std::string app, uid_t uid, gid_t gid, size_t wbytes);
 
@@ -194,13 +192,11 @@ class IoMap {
 		//--------------------------------------------
 		std::vector<gid_t> getGids() const;
 		
-
 		//--------------------------------------------
 		///@brief Get a copy of the multimap
 		///
 		/// @return std::unordered_multimap<uint64_t, 
-		/// std::shared_ptr<IoStat> > Vector of
-		/// all current active gids
+		/// std::shared_ptr<IoStat> >
 		//--------------------------------------------
 		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> > GetAllStatsSnapshot() const;
 
@@ -210,8 +206,39 @@ class IoMap {
 		//--------------------------------------------
 		friend std::ostream& operator<<(std::ostream &os, const IoMap &other);
 
+		//--------------------------------------------
+		/// @brief Returns a iterator that points to the first
+    	/// element in the %unordered_multimap.
+		///
+		/// @return std::unordered_multimap<uint64_t, 
+		/// std::shared_ptr<IoStat> >::iterator
+		//--------------------------------------------
 		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator begin();
+
+		//--------------------------------------------
+		/// @brief Returns a iterator that points to the last
+    	/// element in the %unordered_multimap.
+		///
+		/// @return std::unordered_multimap<uint64_t, 
+		/// std::shared_ptr<IoStat> >::iterator
+		//--------------------------------------------
 		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator end();
+
+		//--------------------------------------------
+		/// @brief Calculates the weighted average and
+		/// standard deviation
+		/// 
+		/// @details
+		/// Takes as parameters a map reference of std::pair
+		/// containing the average and standard deviations
+		/// as well as the size of the total number of elements
+		/// 
+		/// @param indexData the map that will be used to
+		/// calculate the weighted average and standard deviation
+		///
+		/// @return std::pair<double, double> first is
+		/// the average, second the standard deviation
+		//--------------------------------------------
 		std::pair<double, double> calculeWeighted(std::map<std::pair<double, double>, size_t> &indexData) const;
 
 		//--------------------------------------------
@@ -222,20 +249,22 @@ class IoMap {
 		/// The function calculates the READ or WRITE
 		/// weighted bandwidth (depending on the enumMark
 		/// variable given as a parameter) during the
-		/// last N seconds depending on the index variable
+		/// last N seconds
 		///
+		/// @param	type Allows to keep the context
+		/// if you want the uid or gid
 		/// @param	index Template variable
-		/// index type can be const char*/std::string/uint_t/gid_t.
+		/// index type can be const char*/std::string.
 		/// Calculates the weighted bandwidth according to
 		/// the type of the variable and get the data from
 		/// all the corresponding I/Os
 		/// @param	enumMark READ or WRITE variable comes
 		/// from the IoStat::Marks enumerator
-		/// - Exemple: IoStat::Marks::READ
 		/// @param seconds(optional) The second range during
 		/// the last N I/O from now (by default - 10s)
 		///
 		/// @return std::nullopt If an error is encountered
+		///
 		/// @return std::optional<std::pair<double, double>>
 		/// first is the weighted average, second is the
 		/// weighted standard deviation 
@@ -253,7 +282,7 @@ class IoMap {
 			std::pair<double, double> tmp = {0, 0};
 			size_t size = 0;
 
-			/// Check the type of the index variable
+			/// Check the type of the index variable and store necessary bandwidth
 			if (type == io::TYPE::UID || type == io::TYPE::GID){
 				for (auto it : _filesMap){
 					if ((type == io::TYPE::UID && it.second->getUid() == static_cast<uid_t>(index))
@@ -276,6 +305,31 @@ class IoMap {
 			return (calculeWeighted(indexData));
 		}
 
+		//--------------------------------------------
+		/// Template
+		/// @brief Get the WRITE or READ bandwidth
+		///
+		/// @details
+		/// The function calculates the READ or WRITE
+		/// weighted bandwidth (depending on the enumMark
+		/// variable given as a parameter) during the
+		/// last N seconds
+		///
+		/// @param index Template variable
+		/// index type can be uid_t/gid_t.
+		/// Calculates the weighted bandwidth according to
+		/// the type of the variable and get the data from
+		/// all the corresponding I/Os
+		/// @param	enumMark READ or WRITE variable comes
+		/// from the IoStat::Marks enumerator
+		/// @param seconds(optional) The second range during
+		/// the last N I/O from now (by default - 10s)
+		///
+		/// @return std::nullopt If an error is encountered
+		/// @return std::optional<std::pair<double, double>>
+		/// first is the weighted average, second is the
+		/// weighted standard deviation 
+		//--------------------------------------------
 		template <typename T>
 		std::optional<std::pair<double, double> > getBandwidth(const T index, IoStat::Marks enumMark, size_t seconds = 10) const{
 			std::lock_guard<std::mutex> lock(_mutex);
@@ -289,7 +343,7 @@ class IoMap {
 			std::pair<double, double> tmp = {0, 0};
 			size_t size = 0;
 
-			/// Check the type of the index variable
+			/// Check the type of the index variable and store necessary bandwidth
 			if (std::is_same_v<T, std::string> || std::is_same_v<T, const char *>){
 				std::string id(index);
 				for (auto it : _filesMap){
@@ -315,29 +369,24 @@ class IoMap {
 	
 		//--------------------------------------------
 		/// Template
-		/// @brief Get the WRITE or READ bandwidth
+		/// @brief Get a bandwidth summary over the
+		/// last N seconds (10s by default)
 		///
-		/// @details
-		/// The function calculates the READ or WRITE
-		/// weighted bandwidth (depending on the enumMark
-		/// variable given as a parameter) during the
-		/// last N seconds depending on the index variable
-		///
-		/// @param	index Template variable
-		/// index type can be const char*/std::string/uint_t/gid_t.
+		/// @param type Allows to keep the context
+		/// if you want the uid or gid
+		/// @param index Template variable
+		/// index type can be uid_t/gid_t.
 		/// Calculates the weighted bandwidth according to
 		/// the type of the variable and get the data from
 		/// all the corresponding I/Os
-		/// @param	enumMark READ or WRITE variable comes
-		/// from the IoStat::Marks enumerator
-		/// - Exemple: IoStat::Marks::READ
 		/// @param seconds(optional) The second range during
 		/// the last N I/O from now (by default - 10s)
 		///
 		/// @return std::nullopt If an error is encountered
-		/// @return std::optional<std::pair<double, double>>
-		/// first is the weighted average, second is the
-		/// weighted standard deviation 
+		/// or the summary is completely empty
+		/// @return std::optional<IoStatSummary>
+		/// A summary of write and read bandwidth
+		/// over the last N seconds.
 		//--------------------------------------------
 		template <typename T>
 		std::optional<IoStatSummary> getSummary(io::TYPE type, const T index, size_t seconds = 10) const{
@@ -357,16 +406,19 @@ class IoMap {
 
 			IoStatSummary summary;
 
+			/// Check the type of the index variable and store necessary bandwidth
 			if (type == io::TYPE::UID || type == io::TYPE::GID){
 				for (auto it : _filesMap){
 					if ((type == io::TYPE::UID && it.second->getUid() == static_cast<uid_t>(index))
 					|| (type == io::TYPE::GID && it.second->getGid() == static_cast<gid_t>(index))){
+						/// Get read bandwidth and size
 						read = it.second->bandWidth(IoStat::Marks::READ, &size, seconds);
 						summary.rSize += size;
 						readData.insert({read, size});
 						size = 0;
 						read = {0, 0};
 
+						/// Get write bandwidth and size
 						write = it.second->bandWidth(IoStat::Marks::WRITE, &size, seconds);
 						summary.wSize += size;
 						writeData.insert({write, size});
@@ -380,6 +432,7 @@ class IoMap {
 				return std::nullopt;
 			}
 
+			/// Check empty I/O case
 			if (writeData.size() <= 0 && readData.size() <= 0)
 				return std::nullopt;
 			if (writeData.size() <= 0)
@@ -387,19 +440,37 @@ class IoMap {
 			if (readData.size() <= 0)
 				summary.readBandwidth = std::nullopt;
 
-			/// Calcule read weighted average/standard deviation
+			/// Calcule read/write weighted average and standard deviation
 			if (summary.readBandwidth.has_value())
 				summary.readBandwidth = calculeWeighted(readData);
-
-			/// Calcule write weighted average/standard deviation
 			if (summary.writeBandwidth.has_value())
 				summary.writeBandwidth = calculeWeighted(writeData);
 
 			if (io::IoMapDebug)
 				printInfo(std::cout, "GetSummary succeeded");
+
 			return summary;
 		}
 
+		//--------------------------------------------
+		/// Template
+		/// @brief Get a bandwidth summary over the
+		/// last N seconds (10s by default)
+		///
+		/// @param index Template variable
+		/// index type can be const char*/std::string.
+		/// Calculates the weighted bandwidth according to
+		/// the type of the variable and get the data from
+		/// all the corresponding I/Os
+		/// @param seconds(optional) The second range during
+		/// the last N I/O from now (by default - 10s)
+		///
+		/// @return std::nullopt If an error is encountered
+		/// or the summary is completely empty
+		/// @return std::optional<IoStatSummary>
+		/// A summary of write and read bandwidth
+		/// over the last N seconds.
+		//--------------------------------------------
 		template <typename T>
 		std::optional<IoStatSummary> getSummary(const T index, size_t seconds = 10) const{
 			std::lock_guard<std::mutex> lock(_mutex);
@@ -417,16 +488,19 @@ class IoMap {
 
 			IoStatSummary summary;
 
+			/// Check the type of the index variable and store necessary bandwidth
 			if (std::is_same_v<T, std::string> || std::is_same_v<T, const char *>){
 				std::string id(index);
 				for (auto it : _filesMap){
 					if (it.second->getApp() == id){
+						/// Get read bandwidth and size
 						read = it.second->bandWidth(IoStat::Marks::READ, &size, seconds);
 						summary.rSize += size;
 						readData.insert({read, size});
 						size = 0;
 						read = {0, 0};
 
+						/// Get write bandwidth and size
 						write = it.second->bandWidth(IoStat::Marks::WRITE, &size, seconds);
 						summary.wSize += size;
 						writeData.insert({write, size});
@@ -440,6 +514,7 @@ class IoMap {
 				return std::nullopt;
 			}
 
+			/// Check empty I/O case
 			if (writeData.size() <= 0 && readData.size() <= 0)
 				return std::nullopt;
 			if (writeData.size() <= 0)
@@ -447,16 +522,15 @@ class IoMap {
 			if (readData.size() <= 0)
 				summary.readBandwidth = std::nullopt;
 
-			/// Calcule read weighted average/standard deviation
+			/// Calcule read/write weighted average and standard deviation
 			if (summary.readBandwidth.has_value())
 				summary.readBandwidth = calculeWeighted(readData);
-
-			/// Calcule write weighted average/standard deviation
 			if (summary.writeBandwidth.has_value())
 				summary.writeBandwidth = calculeWeighted(writeData);
 
 			if (io::IoMapDebug)
 				printInfo(std::cout, "GetSummary succeeded");
+
 			return summary;
 		}
 };

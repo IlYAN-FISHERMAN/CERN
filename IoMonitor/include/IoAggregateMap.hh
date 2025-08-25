@@ -20,10 +20,19 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.*
  *************************************************************************/
 
+//--------------------------------------------
+/// Each class has a variable define DEBUG which
+/// can be defined in the IoMonitor.hh namespace
+//--------------------------------------------
+
 #pragma once
 
 #include "IoAggregate.hh"
 
+//--------------------------------------------
+/// The time the updateAggregateLoop function
+/// must wait before updating all IoAggregate object
+//--------------------------------------------
 #define TIME_TO_UPDATE 1
 
 //--------------------------------------------
@@ -34,31 +43,30 @@
 
 class IoAggregateMap{
 	private:
+		//--------------------------------------------
+		/// @brief Multithreaded function update all
+		/// IoAggregate object in _aggregates variable
+		/// every N seconds (1s by default)
+		//--------------------------------------------
 		void updateAggregateLoop();
 
+		//--------------------------------------------
+		/// Wrapped map
+		//--------------------------------------------
 		IoMap _map;
+
+		//--------------------------------------------
+		/// Main variable that keeps window of all IoAggregate
+		//--------------------------------------------
 		std::unordered_map<size_t, std::unique_ptr<IoAggregate> > _aggregates;
 
+		//--------------------------------------------
+		/// Variables to manage multithreading
+		//--------------------------------------------
 		std::thread _thread;
 		std::atomic<bool> _running;
 		std::condition_variable _cv;
-		
 		mutable std::mutex _mutex;
-
-	public:
-
-		IoAggregateMap();
-		IoAggregateMap(int);
-
-		IoAggregateMap(const IoAggregateMap &other) = delete;
-		IoAggregateMap& operator=(const IoAggregateMap &other) = delete;
-
-		~IoAggregateMap();
-
-
-		void addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes);
-		void addWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes);
-		int addWindow(size_t winTime);
 
 		//--------------------------------------------
 		/// Display the string given as parameter in
@@ -72,9 +80,166 @@ class IoAggregateMap{
 		//--------------------------------------------
 		void printInfo(std::ostream &os, const std::string &msg) const;
 
+	public:
+		//--------------------------------------------
+		/// Orthodoxe canonical form
+		//--------------------------------------------
+
+		//--------------------------------------------
+		/// Main constructor
+		//--------------------------------------------
+		IoAggregateMap();
+
+		//--------------------------------------------
+		/// Destructor
+		//--------------------------------------------
+		~IoAggregateMap();
+
+		//--------------------------------------------
+		/// Constructor by copy constructor
+		//--------------------------------------------
+		IoAggregateMap(const IoAggregateMap &other);
+
+		//--------------------------------------------
+		/// Overload the operator =
+		//--------------------------------------------
+		IoAggregateMap& operator=(const IoAggregateMap &other);
+
+		//--------------------------------------------
+		/// @brief Optional constructor
+		///
+		/// @details
+		/// If the constructor is called with any int,
+		/// the multithreaded updateAggregateLoop function
+		/// will not be run, making debugging easier.
+		///
+		/// @param	int ignored
+		//--------------------------------------------
+		IoAggregateMap(int);
+
+
+		//--------------------------------------------
+		/// @brief Adds an IoStat object to the map
+		/// with the corresponding elements
+		///
+		/// @param	inode	File id
+		/// @param	app		Name of the application
+		/// @param	uid		ID of the corresponding user
+		/// @param	gid		ID of the corresponding group
+		/// @param	rbytes	Number of bytes read
+		//--------------------------------------------
+		void addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes);
+
+		//--------------------------------------------
+		/// @brief Adds an IoStat object to the map
+		/// with the corresponding elements
+		///
+		/// @param	inode	file id
+		/// @param	app		Name of the application
+		/// @param	uid		ID of the corresponding user
+		/// @param	gid		ID of the corresponding group
+		/// @param	rbytes	Number of bytes read
+		//--------------------------------------------
+		void addWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes);
+
+		//--------------------------------------------
+		/// @brief	Add a new window time to the aggregatation
+		///
+		/// @details
+		/// The function adds an aggregation window of N seconds
+		/// (minimum 10s) which extracts every 10s a summary of
+		/// the I/O of all the appname/uid/gid which track.
+		/// The IoAggregate buffer is of size winTime / 10.
+		/// The buffer is circular, which means that if it
+		/// fills up, the oldest entries will be overwritten.
+		///
+		/// @param	winTime The number of seconds of
+		/// window monitoring
+		///
+		/// @return -1 If an error is encountered
+		/// @return 0 All other cases
+		//--------------------------------------------
+		int addWindow(size_t winTime);
+
+		//--------------------------------------------
+		/// @brief Returns a vector of all available windows
+		///
+		/// @return std::nullopt
+		/// If the _aggregation window is empty
+		/// @return std::optional<std::vector<size_t> >
+		//--------------------------------------------
 		std::optional<std::vector<size_t> > getAvailableWindows() const;
+
+		//--------------------------------------------
+		/// @brief Returns a reference to the IoMap object
+		//--------------------------------------------
 		const IoMap& getIoMap() const;
 
+		//--------------------------------------------
+		/// @brief Return true if the window exists,
+		/// otherwise returns false
+		///
+		/// @param winTime The targeted window
+		///
+		/// @return bool
+		//--------------------------------------------
+		bool containe(size_t winTime) const;
+
+		//--------------------------------------------
+		/// @brief Returns a iterator that points to the
+    	/// first element in the %IoMap.
+		///
+		/// @return std::unordered_map<uint64_t, 
+		/// std::shared_ptr<IoStat> >::iterator
+		//--------------------------------------------
+		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator begin();
+
+		//--------------------------------------------
+		/// @brief Returns a iterator that points to the
+    	/// last element in the %IoMap.
+		///
+		/// @return std::unordered_map<uint64_t, 
+		/// std::shared_ptr<IoStat> >::iterator
+		//--------------------------------------------
+		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator end();
+
+		//--------------------------------------------
+		/// @brief Add a Bin object to the window's
+		/// IoAggregate, and set the window's index
+		/// to that Bin
+		///
+		/// @param winTime The targeted window
+		//--------------------------------------------
+		void shiftWindow(size_t winTime);
+
+		//--------------------------------------------
+		/// @brief Changes the position of the index in
+		/// the IoAggregate object  of the specified window
+		///
+		/// @param winTime The targeted window
+		/// @param index The new future position of the index
+		/// does nothing if it goes out of range
+		//--------------------------------------------
+		void shiftWindow(size_t winTime, size_t index);
+
+		//--------------------------------------------
+		/// @brief Overload operator << to print
+		/// all window and IoAggregate object from
+		/// the %unordored_map _aggregation
+		//--------------------------------------------
+		friend std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other);
+
+		//--------------------------------------------
+		/// Template
+		/// @brief Add an app name that would be
+		/// tracked to an existing window
+		///
+		/// @param winTime The targeted window
+		/// @param index The new tracked app Name
+		///
+		/// @return -1 If the window does not exist
+		/// @return 0 If the track has been set correctly
+		//--------------------------------------------
 		template <typename T>
 		int setTrack(size_t winTime, const T index){
 			if constexpr (io::IoAggregateMapDebug)
@@ -90,6 +255,19 @@ class IoAggregateMap{
 			return 0;
 		}
 
+		//--------------------------------------------
+		/// Template
+		/// @brief Add an uid/gid that would be
+		/// tracked to an existing window
+		///
+		/// @param winTime The targeted window
+		/// @param type Allows to keep the context
+		/// if you want the uid or gid
+		/// @param index The new tracked uid/gid
+		///
+		/// @return -1 If the window does not exist
+		/// @return 0 If the track has been set correctly
+		//--------------------------------------------
 		template <typename T>
 		int setTrack(size_t winTime, io::TYPE type, const T index){
 			if constexpr (io::IoAggregateMapDebug)
@@ -105,16 +283,21 @@ class IoAggregateMap{
 			return 0;
 		}
 
-		bool containe(size_t winTime) const;
 
-		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator begin();
-		std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator end();
-
-		friend std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other);
-
-		void shiftWindow(size_t winTime);
-		void shiftWindow(size_t winTime, size_t index);
-
+		//--------------------------------------------
+		/// Template
+		/// @brief Get the total index summary in the
+		/// specified window
+		///
+		/// @param winTime The targeted window
+		/// @param index Template variable
+		/// index type can be const char*/std::string.
+		///
+		/// @return std::nullopt If an error is encountered
+		/// or the summary is completely empty
+		/// @return std::optional<IoStatSummary>
+		/// Total index summary of the window
+		//--------------------------------------------
 		template<typename T>
 		std::optional<IoStatSummary> getSummary(size_t winTime, const T index){
 			std::lock_guard<std::mutex> lock(_mutex);
@@ -123,6 +306,22 @@ class IoAggregateMap{
 			return (_aggregates[winTime]->getSummary(index));
 		}
 
+		//--------------------------------------------
+		/// Template
+		/// @brief Get the total index summary in the
+		/// specified window
+		///
+		/// @param winTime The targeted window
+		/// @param type Allows to keep the context
+		/// if you want the uid or gid
+		/// @param index Template variable
+		/// index type can be uid_t/gid_t
+		///
+		/// @return std::nullopt If an error is encountered
+		/// or the summary is completely empty
+		/// @return std::optional<IoStatSummary>
+		/// Total index summary of the window
+		//--------------------------------------------
 		template<typename T>
 		std::optional<IoStatSummary> getSummary(size_t winTime, io::TYPE type, const T index){
 			std::lock_guard<std::mutex> lock(_mutex);

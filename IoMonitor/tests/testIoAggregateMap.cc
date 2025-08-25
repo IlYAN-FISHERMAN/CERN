@@ -1,3 +1,25 @@
+//  File: testIoAggregateMap.cc
+//  Author: Ilkay Yanar - 42Lausanne / CERN
+//  ----------------------------------------------------------------------
+
+/*************************************************************************
+ *  EOS - the CERN Disk Storage System                                   *
+ *  Copyright (C) 2025 CERN/Switzerland                                  *
+ *                                                                       *
+ *  This program is free software: you can redistribute it and/or modify *
+ *  it under the terms of the GNU General Public License as published by *
+ *  the Free Software Foundation, either version 3 of the License, or    *
+ *  (at your option) any later version.                                  *
+ *                                                                       *
+ *  This program is distributed in the hope that it will be useful,      *
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of       *
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        *
+ *  GNU General Public License for more details.                         *
+ *                                                                       *
+ *  You should have received a copy of the GNU General Public License    *
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.*
+ *************************************************************************/
+
 #include "tester.hh"
 
 void fillData(IoAggregateMap &map){
@@ -106,6 +128,10 @@ int testIoAggregateMap(){
 		map.addWrite(1, "eos", 1, 11, std::abs(rand())%10000);
 		map.addWrite(1, "mgm", 1, 11, std::abs(rand())%10000);
 		map.addWrite(1, "fdf", 12, 1, std::abs(rand())%10000);
+		map.addRead(1, "eos", 12, 11, std::abs(rand())%10000);
+		map.addRead(1, "eos", 1, 11, std::abs(rand())%10000);
+		map.addRead(1, "mgm", 1, 11, std::abs(rand())%10000);
+		map.addRead(1, "fdf", 12, 1, std::abs(rand())%10000);
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 	auto eos = map.getSummary(3600, "eos");
@@ -117,6 +143,17 @@ int testIoAggregateMap(){
 	if (!eos.has_value() || !mgm.has_value() || !fdf.has_value() ||
 		!uid.has_value() || !gid.has_value())
 		return -1;
+	if (eos->rSize != 40 || eos->wSize != 40
+		|| mgm->rSize != 20 || mgm->wSize != 20
+		|| fdf->rSize != 20 || fdf->wSize != 20
+		|| uid->rSize != 40 || uid->wSize != 40
+		|| gid->rSize != 60 || gid->wSize != 60)
+		return -1;
+	// std::cout << eos << std::endl
+	// 	<< mgm << std::endl
+	// 	<< fdf << std::endl
+	// 	<< uid << std::endl
+	// 	<< gid << std::endl;
 	return 0;
 }
 

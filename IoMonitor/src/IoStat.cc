@@ -36,6 +36,18 @@ const char* getCurrentTime(){
 }
 
 //--------------------------------------------
+/// Main constructor
+//--------------------------------------------
+IoStat::IoStat(uint64_t fileId, const std::string& app, uid_t uid, gid_t gid) :
+	_fileId(fileId), _app(app), _uid(uid), _gid(gid){
+}
+
+//--------------------------------------------
+/// Destructor
+//--------------------------------------------
+IoStat::~IoStat(){}
+
+//--------------------------------------------
 /// Operator = overloaded
 //--------------------------------------------
 IoStat& IoStat::operator=(const IoStat &other){
@@ -48,6 +60,14 @@ IoStat& IoStat::operator=(const IoStat &other){
 		_writeMarks = other._writeMarks;
 	}
 	return (*this);
+}
+
+//--------------------------------------------
+/// Constructor by copy constructor
+//--------------------------------------------
+IoStat::IoStat(const IoStat &other) :
+	_fileId(other._fileId), _app(other._app), _uid(other._uid),
+	_gid(other._gid), _readMarks(other._readMarks), _writeMarks(other._writeMarks){
 }
 
 //--------------------------------------------
@@ -68,25 +88,6 @@ void	IoStat::printInfo(std::ostream &os, const std::string &msg){
 	os << IOSTAT_NAME << " [" << time << "]: " << msg << std::endl;
 }
 
-//--------------------------------------------
-/// Constructor by copy constructor
-//--------------------------------------------
-IoStat::IoStat(const IoStat &other) :
-	_fileId(other._fileId), _app(other._app), _uid(other._uid),
-	_gid(other._gid), _readMarks(other._readMarks), _writeMarks(other._writeMarks){
-}
-
-//--------------------------------------------
-/// Main constructor
-//--------------------------------------------
-IoStat::IoStat(uint64_t fileId, const std::string& app, uid_t uid, gid_t gid) :
-	_fileId(fileId), _app(app), _uid(uid), _gid(gid){
-}
-
-//--------------------------------------------
-/// Destructor
-//--------------------------------------------
-IoStat::~IoStat(){}
 
 //--------------------------------------------
 /// Add bytes to the corresponding Read/Write deque

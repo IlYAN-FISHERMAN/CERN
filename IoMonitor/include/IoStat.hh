@@ -47,7 +47,7 @@ public: enum class Marks : uint8_t{
 	private:
 		//--------------------------------------------
 		/// Each IoStat class keeps track of exactly
-		/// where it came from, the file ID, the name
+		/// where it came from. The file ID, the name
 		/// of the app it came from, the user ID and
 		/// the group ID
 		//--------------------------------------------
@@ -69,11 +69,10 @@ public: enum class Marks : uint8_t{
 		std::deque<IoMark> _writeMarks;
 
 
-		//WARNING: --------------------------------------------
-		/// The default constructor is private because
-		/// the instant is required to have tracking information
 		//--------------------------------------------
-		IoStat();
+		/// Deleted default constructor
+		//--------------------------------------------
+		IoStat() = delete;
 
 	public:
 		//--------------------------------------------
@@ -113,7 +112,6 @@ public: enum class Marks : uint8_t{
 		/// @param	rBytes Number of bytes read
 		/// @param	enumMark READ or WRITE variable comes
 		/// from the IoStat::Marks enumerator
-		/// - Exemple: IoStat::Marks::READ
 		//--------------------------------------------
 		void add(size_t bytes, IoStat::Marks enumMark);
 
@@ -127,7 +125,6 @@ public: enum class Marks : uint8_t{
 		/// 
 		/// @param	enumMark READ or WRITE variable comes
 		/// from the IoStat::Marks enumerator
-		/// - Exemple: IoStat::Marks::READ
 		/// @param seconds(optional) The number of last seconds of
 		/// I/O that will be kept (by default - 10s)
 		///
@@ -151,7 +148,6 @@ public: enum class Marks : uint8_t{
 		/// 
 		/// @param	enumMark READ or WRITE variable comes
 		/// from the IoStat::Marks enumerator
-		/// - Exemple: IoStat::Marks::WRITE
 		/// @param seconds(optional) over how many seconds
 		/// from now the function should calculate
 		/// @param	range Sets the "range" variable to the
@@ -172,7 +168,6 @@ public: enum class Marks : uint8_t{
 		///
 		/// @param	os The output stream
 		/// @param	msg The message to display
-		/// - Exemple: std::cout/std::cerr
 		//--------------------------------------------
 		static void	printInfo(std::ostream &os, const char *msg);
 
@@ -184,7 +179,6 @@ public: enum class Marks : uint8_t{
 		///
 		/// @param	os The output stream
 		/// @param	msg The message to display
-		/// - Exemple: std::cout/std::cerr
 		//--------------------------------------------
 		static void	printInfo(std::ostream &os, const std::string &msg);
 
@@ -209,7 +203,6 @@ public: enum class Marks : uint8_t{
 		///
 		/// @param	enumMark READ or WRITE variable comes
 		/// from the IoStat::Marks enumerator
-		/// - Exemple: IoStat::Marks::WRITE
 		//--------------------------------------------
 		ssize_t getSize(Marks enumMark) const;
 };
@@ -227,5 +220,14 @@ std::ostream& operator<<(std::ostream &os, const IoStat &other);
 //--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> > &other);
 
+//--------------------------------------------
+/// @brief Overload operator << to print
+/// a IoStatSummary object from a std::optional
+//--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const std::optional<IoStatSummary> &opt);
+
+//--------------------------------------------
+/// @brief Overload operator << to print
+/// a IoStatSummary object
+//--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const IoStatSummary &opt);

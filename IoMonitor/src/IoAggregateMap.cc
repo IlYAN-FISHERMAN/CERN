@@ -22,25 +22,39 @@
 
 #include "../include/IoAggregateMap.hh"
 
+//--------------------------------------------
+/// Main constructor
+//--------------------------------------------
 IoAggregateMap::IoAggregateMap() : _running(true){
 	_thread = std::thread(&IoAggregateMap::updateAggregateLoop, this);
 }
 
+//--------------------------------------------
+/// Optional constructor to not launch the
+/// multithreading function
+//--------------------------------------------
 IoAggregateMap::IoAggregateMap(int) : _running(false){
 }
 
+//--------------------------------------------
+/// Destructor
+//--------------------------------------------
 IoAggregateMap::~IoAggregateMap(){
-	{
-		std::unique_lock<std::mutex> lock(_mutex);
-		if (io::IoAggregateMapDebug)
-			assert(lock.owns_lock());
-		_running.store(false);
-		_cv.notify_one();
+	if (_running.load()){
+			std::unique_lock<std::mutex> lock(_mutex);
+			if (io::IoAggregateMapDebug)
+				assert(lock.owns_lock());
+			_running.store(false);
+			_cv.notify_one();
 	}
 	if (_thread.joinable())
 		_thread.join();
 }
 
+
+//--------------------------------------------
+/// Returns a vector of all available windows
+//--------------------------------------------
 std::optional<std::vector<size_t> > IoAggregateMap::getAvailableWindows() const{
 	std::lock_guard<std::mutex> lock(_mutex);
 	std::vector<size_t> windo;
@@ -53,16 +67,29 @@ std::optional<std::vector<size_t> > IoAggregateMap::getAvailableWindows() const{
 	return windo;
 }
 
+//--------------------------------------------
+/// @brief Adds an IoStat object to the map
+/// with the corresponding elements
+//--------------------------------------------
 void IoAggregateMap::addRead(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t rbytes){
 	std::lock_guard<std::mutex> lock(_mutex);
 	_map.addRead(inode, app, uid, gid, rbytes);
 }
 
+//--------------------------------------------
+/// @brief Adds an IoStat object to the map
+/// with the corresponding elements
+//--------------------------------------------
 void IoAggregateMap::addWrite(uint64_t inode, const std::string &app, uid_t uid, gid_t gid, size_t wbytes){
 	std::lock_guard<std::mutex> lock(_mutex);
 	_map.addWrite(inode, app, uid, gid, wbytes);
 }
 
+//--------------------------------------------
+/// Multithreaded function update all
+/// IoAggregate object in _aggregates variable
+/// every N seconds (1s by default)
+//--------------------------------------------
 void IoAggregateMap::updateAggregateLoop(){
 	auto next_tick = std::chrono::steady_clock::now() + std::chrono::seconds(TIME_TO_UPDATE);
 
@@ -79,6 +106,9 @@ void IoAggregateMap::updateAggregateLoop(){
 	}
 }
 
+//--------------------------------------------
+/// Add a new window time to the aggregatation
+//--------------------------------------------
 int IoAggregateMap::addWindow(size_t winTime){
 	std::lock_guard<std::mutex> lock(this->_mutex);
 	if (winTime < 10){
@@ -92,26 +122,46 @@ int IoAggregateMap::addWindow(size_t winTime){
 	return 0;
 }
 
+//--------------------------------------------
+/// Return true if the window exists,
+/// otherwise returns false
+//--------------------------------------------
 bool IoAggregateMap::containe(size_t winTime) const {
 	std::lock_guard<std::mutex> lock(_mutex);
 	return (_aggregates.find(winTime) != _aggregates.end());
 }
 
+//--------------------------------------------
+/// Returns a reference to the IoMap object
+//--------------------------------------------
 const IoMap& IoAggregateMap::getIoMap() const{
 	std::lock_guard<std::mutex> lock(_mutex);
 	return _map;
 }
 
+//--------------------------------------------
+/// Returns a iterator that points to the
+/// first element in the %IoMap.
+//--------------------------------------------
 std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoAggregateMap::begin(){
 	std::lock_guard<std::mutex> lock(_mutex);
 	return _map.begin();
 }
 
+//--------------------------------------------
+/// Returns a iterator that points to the
+/// last element in the %IoMap.
+//--------------------------------------------
 std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoAggregateMap::end(){
 	std::lock_guard<std::mutex> lock(_mutex);
 	return _map.end();
 }
 
+//--------------------------------------------
+/// Add a Bin object to the window's
+/// IoAggregate, and set the window's index
+/// to that Bin
+//--------------------------------------------
 void IoAggregateMap::shiftWindow(size_t winTime){
 	if constexpr (io::IoAggregateMapDebug)
 		printInfo(std::cout, "shiftWindow");
@@ -122,6 +172,10 @@ void IoAggregateMap::shiftWindow(size_t winTime){
 		printInfo(std::cout, "shiftWindo succeeded");
 }
 
+//--------------------------------------------
+/// Changes the position of the index in
+/// the IoAggregate object  of the specified window
+//--------------------------------------------
 void IoAggregateMap::shiftWindow(size_t winTime, size_t index){
 	if constexpr (io::IoAggregateMapDebug)
 		printInfo(std::cout, "shiftWindow");
@@ -132,6 +186,11 @@ void IoAggregateMap::shiftWindow(size_t winTime, size_t index){
 		printInfo(std::cout, "shiftWindo succeeded");
 }
 
+//--------------------------------------------
+/// Overload operator << to print
+/// all window and IoAggregate object from
+/// the %unordored_map _aggregation
+//--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other){
 	std::lock_guard<std::mutex> lock(other._mutex);
 	os << C_GREEN << "[" << C_CYAN << "IoAggregateMap" << C_GREEN << "]" << C_RESET;
