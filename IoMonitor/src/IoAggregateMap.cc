@@ -162,30 +162,26 @@ std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> >::iterator IoAggregat
 /// IoAggregate, and set the window's index
 /// to that Bin
 //--------------------------------------------
-void IoAggregateMap::shiftWindow(size_t winTime){
+int IoAggregateMap::shiftWindow(size_t winTime){
 	std::lock_guard<std::mutex> lock(_mutex);
 	if constexpr (io::IoAggregateMapDebug)
 		printInfo(std::cout, "shiftWindow");
 	if (_aggregates.find(winTime) == _aggregates.end())
-		return ;
-	_aggregates[winTime]->shiftWindow();
-	if constexpr (io::IoAggregateMapDebug)
-		printInfo(std::cout, "shiftWindo succeeded");
+		return -1;
+	return _aggregates[winTime]->shiftWindow();
 }
 
 //--------------------------------------------
 /// Changes the position of the index in
 /// the IoAggregate object  of the specified window
 //--------------------------------------------
-void IoAggregateMap::shiftWindow(size_t winTime, size_t index){
+int IoAggregateMap::shiftWindow(size_t winTime, size_t index){
 	std::lock_guard<std::mutex> lock(_mutex);
 	if constexpr (io::IoAggregateMapDebug)
 		printInfo(std::cout, "shiftWindow");
 	if (_aggregates.find(winTime) == _aggregates.end())
-		return ;
-	_aggregates[winTime]->shiftWindow(index);
-	if constexpr (io::IoAggregateMapDebug)
-		printInfo(std::cout, "shiftWindo succeeded");
+		return -1;
+	return _aggregates[winTime]->shiftWindow(index);
 }
 
 //--------------------------------------------
@@ -199,8 +195,10 @@ std::ostream& operator<<(std::ostream &os, const IoAggregateMap &other){
 	os << C_GREEN << "[" << C_CYAN << "available window: " << other._aggregates.size() << C_GREEN << "]" << C_RESET << std::endl;
 	if (other._aggregates.size() == 0)
 		os << C_CYAN << "empty" << C_RESET << std::endl;
-	for (auto &it : other._aggregates)
+	for (auto &it : other._aggregates){
+		os << C_GREEN << "[" << C_CYAN << "Window: " << it.first << C_GREEN << "]" << C_RESET;
 		os << *it.second.get() << std::endl;
+	}
 	return os;
 }
 

@@ -209,8 +209,11 @@ class IoAggregateMap{
 		/// to that Bin
 		///
 		/// @param winTime The targeted window
+		///
+		/// @return -1 If an error is encountered
+		/// @return the position of the new index
 		//--------------------------------------------
-		void shiftWindow(size_t winTime);
+		int shiftWindow(size_t winTime);
 
 		//--------------------------------------------
 		/// @brief Changes the position of the index in
@@ -219,8 +222,11 @@ class IoAggregateMap{
 		/// @param winTime The targeted window
 		/// @param index The new future position of the index
 		/// does nothing if it goes out of range
+		///
+		/// @return -1 If an error is encountered
+		/// @return the position of the new index
 		//--------------------------------------------
-		void shiftWindow(size_t winTime, size_t index);
+		int shiftWindow(size_t winTime, size_t index);
 
 		//--------------------------------------------
 		/// @brief Overload operator << to print

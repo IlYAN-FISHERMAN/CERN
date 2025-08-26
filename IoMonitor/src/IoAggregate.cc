@@ -113,19 +113,25 @@ void IoAggregate::update(const IoMap &maps){
 /// Add a Bin object, and set the index
 /// to that Bin
 //--------------------------------------------
-void IoAggregate::shiftWindow(){
+int IoAggregate::shiftWindow(){
 	_bins.emplace_back(Bin());
 	_currentIndex = _bins.size() - 1;
+	if constexpr (io::IoAggregateDebug)
+		printInfo(std::cout, "shift Window succeeded");
+	return _currentIndex;
 }
 
 //--------------------------------------------
 /// Changes the position of the current
 /// index (_currentIndex)
 //--------------------------------------------
-void IoAggregate::shiftWindow(const size_t index){
+int IoAggregate::shiftWindow(const size_t index){
 	if (index >= _bins.size())
-		return ;
+		return -1;
 	_currentIndex = index;
+	if constexpr (io::IoAggregateDebug)
+		printInfo(std::cout, "shift Window succeeded");
+	return _currentIndex;
 }
 
 //--------------------------------------------

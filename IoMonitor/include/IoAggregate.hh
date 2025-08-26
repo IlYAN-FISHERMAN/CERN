@@ -147,8 +147,11 @@ class IoAggregate{
 		//--------------------------------------------
 		/// @brief Add a Bin object, and set the index
 		/// to that Bin
+		///
+		/// @return -1 If an error is encountered
+		/// @return the position of the new index
 		//--------------------------------------------
-		void shiftWindow();
+		int shiftWindow();
 
 		//--------------------------------------------
 		/// @brief Changes the position of the current
@@ -156,8 +159,11 @@ class IoAggregate{
 		///
 		/// @param index The new future position of the index
 		/// does nothing if it goes out of range
+		///
+		/// @return -1 If an error is encountered
+		/// @return the position of the new index
 		//--------------------------------------------
-		void shiftWindow(const size_t index);
+		int shiftWindow(const size_t index);
 	
 		//--------------------------------------------
 		/// @brief Condenses a vector of IoStatSummary
