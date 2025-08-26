@@ -507,3 +507,71 @@ int testIoMapSummary(){
 	}
 	return 0;
 }
+
+int testIoMapCopy(){
+	IoMap map;
+
+	// Calculate raw data
+	std::pair<double, double> p1;
+	std::pair<double, double> p2;
+	std::pair<double, double> p3;
+
+	pairTmp(&p1, &p2, &p3);
+	double avrg = 0;
+	double deviation = 0;
+
+	// weighted average
+	avrg += p1.first * 3;
+	avrg += p2.first * 3;
+	avrg += p3.first * 3;
+	avrg /= 9;
+
+	// weighted standard deviation
+	deviation += 3 * (std::pow(p1.second, 2) + std::pow(p1.first - avrg, 2));
+	deviation += 3 * (std::pow(p2.second, 2) + std::pow(p2.first - avrg, 2));
+	deviation += 3 * (std::pow(p3.second, 2) + std::pow(p3.first - avrg, 2));
+	deviation = std::sqrt(deviation / 9);
+
+	// Test IoMap function
+	map.addWrite(1, "cernbox", 2, 1, 50);
+	map.addWrite(1, "cernbox", 2, 1, 50);
+	map.addWrite(1, "cernbox", 2, 1, 26);
+
+	map.addWrite(1, "cernbox", 42, 42, 64);
+	map.addWrite(1, "cernbox", 42, 42, 97);
+	map.addWrite(1, "cernbox", 42, 42, 34);
+
+	map.addWrite(1, "cernbox", 78, 5, 97);
+	map.addWrite(1, "cernbox", 78, 5, 27);
+	map.addWrite(1, "cernbox", 78, 5, 44);
+
+	// if no data or difference between raw data and function return -1
+	{
+		std::optional<std::pair<double, double> > it = map.getBandwidth("cernbox", IoStat::Marks::WRITE);
+		if (it.has_value()){
+			if (it->first != avrg || it->second != deviation)
+				return -1;
+		}
+		else
+			return -1;
+	}
+	{
+		IoMap copyMap(map);
+
+		std::optional<std::pair<double, double> > it = copyMap.getBandwidth("cernbox", IoStat::Marks::WRITE);
+		if (it.has_value()){
+			if (it->first != avrg || it->second != deviation)
+				return -1;
+		}
+	}
+	{
+		IoMap copyMap = map;
+
+		std::optional<std::pair<double, double> > it = copyMap.getBandwidth("cernbox", IoStat::Marks::WRITE);
+		if (it.has_value()){
+			if (it->first != avrg || it->second != deviation)
+				return -1;
+		}
+	}
+	return 0;
+}

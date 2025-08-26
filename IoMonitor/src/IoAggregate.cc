@@ -26,7 +26,6 @@
 /// Constructor by copy constructor
 //--------------------------------------------
 IoAggregate::IoAggregate(const IoAggregate &other){
-	std::lock_guard<std::mutex> lock(_mutex);
 	std::lock_guard<std::mutex> otherLock(other._mutex);
 	_intervalSec = other._intervalSec;
 	_currentIndex = other._currentIndex;
@@ -41,9 +40,8 @@ IoAggregate::IoAggregate(const IoAggregate &other){
 /// Overload the operator =
 //--------------------------------------------
 IoAggregate& IoAggregate::operator=(const IoAggregate &other){
-	std::lock_guard<std::mutex> lock(_mutex);
-	std::lock_guard<std::mutex> otherLock(other._mutex);
 	if (this != &other){
+		std::scoped_lock lock(_mutex, other._mutex);
 		_intervalSec = other._intervalSec;
 		_currentIndex = other._currentIndex;
 		_bins = other._bins;

@@ -47,11 +47,14 @@ TEST(IoMap, exactValue) {
 	ASSERT_FALSE(testIoMapSummary());
 	EXPECT_EQ(testIoMapBigVolume(), 0);
 	EXPECT_EQ(testIoMapIds(), 0);
+	EXPECT_EQ(testIoMapCopy(), 0);
 }
 
 TEST(IoAggregateMap, exactValue) {
 	ASSERT_FALSE(testIoAggregateMapWindow());
 	EXPECT_EQ(testIoAggregateMap(), 0);
+	// EXPECT_EQ(testIoAggregateCopy(), 0);
+	// EXPECT_EQ(testIoAggregateMapCopy(), 0);
 }
 
 /// Only for debugging, interaction mode with command line
@@ -82,8 +85,10 @@ int main(int ac, char **av) {
 
 	// code = testIoAggregateMapWindow();
 	// code = testIoAggregateMap();
-	code = testIoAggregateMapInteract();
+	// code = testIoAggregateMapInteract();
 	// code = testIoStatCopy();
+	// code = testIoMapCopy();
+	code = testIoAggregateMapCopy();
 	std::cout << "code: " << code << std::endl;
     // ::testing::InitGoogleTest(&ac, av);
     // return RUN_ALL_TESTS();

@@ -6,8 +6,8 @@
 int testIoStatFillData();
 int testIoStatCleaning();
 int testIoStatExactValue();
-int testIoStatCopy();
 int testIoStatIOPS();
+int testIoStatCopy();
 
 int testInteractiveIoMap();
 int testIoMapBigVolume();
@@ -16,11 +16,15 @@ int testIoMapExactValue();
 int testIoMapData();
 int testIoMapSummary();
 int testIoMapIds();
+int testIoMapCopy();
 
 
 int testIoAggregateMap();
 int testIoAggregateMapInteract();
 int testIoAggregateMapWindow();
+int testIoAggregateMapCopy();
+
+int testIoAggregateCopy();
 
 
 void fillData(IoAggregateMap &map);

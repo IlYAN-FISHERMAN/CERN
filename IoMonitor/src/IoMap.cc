@@ -35,6 +35,48 @@ IoMap::IoMap() : _running(true){
 }
 
 //--------------------------------------------
+/// Constructor by copy constructor
+//--------------------------------------------
+IoMap::IoMap(const IoMap &other){
+	std::lock_guard<std::mutex> lock(other._mutex);
+	_filesMap = other._filesMap;
+	_apps = other._apps;
+	_uids = other._uids;
+	_gids = other._gids;
+	_running = other._running.load();
+	if (_running.load())
+		_cleaner = std::thread(&IoMap::cleanerLoop, this);
+}
+
+//--------------------------------------------
+/// Overload the operator =
+//--------------------------------------------
+IoMap& IoMap::operator=(const IoMap &other){
+	if (this != &other){
+		{
+			std::scoped_lock lock(_mutex, other._mutex);
+			_filesMap = other._filesMap;
+			_apps = other._apps;
+			_uids = other._uids;
+			_gids = other._gids;
+			_running.store(other._running.load());
+		}
+		{
+			if (!_running.load()){
+				std::unique_lock<std::mutex> lock(_mutex);
+				if (io::IoAggregateMapDebug)
+					assert(lock.owns_lock());
+				_cv.notify_one();
+			if (_cleaner.joinable())
+				_cleaner.join();
+			}
+		}
+	}
+
+	return *this;
+}
+
+//--------------------------------------------
 /// Destructor
 //--------------------------------------------
 IoMap::~IoMap() {

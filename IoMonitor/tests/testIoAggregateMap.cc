@@ -156,6 +156,87 @@ int testIoAggregateMap(){
 	return 0;
 }
 
+int testIoAggregateMapCopy(){
+	IoAggregateMap map;
+	
+	// Add window
+	map.addWindow(3600);
+
+	// set Tracks
+	map.setTrack(3600, "eos");
+	map.setTrack(3600, "fdf");
+	map.setTrack(3600, "mgm");
+	map.setTrack(3600, io::TYPE::UID, 12);
+	map.setTrack(3600, io::TYPE::GID, 11);
+
+	for (size_t i = 0; i < 25; i++){
+		map.addWrite(1, "eos", 12, 11, std::abs(rand())%10000);
+		map.addWrite(1, "eos", 1, 11, std::abs(rand())%10000);
+		map.addWrite(1, "mgm", 1, 11, std::abs(rand())%10000);
+		map.addWrite(1, "fdf", 12, 1, std::abs(rand())%10000);
+		map.addRead(1, "eos", 12, 11, std::abs(rand())%10000);
+		map.addRead(1, "eos", 1, 11, std::abs(rand())%10000);
+		map.addRead(1, "mgm", 1, 11, std::abs(rand())%10000);
+		map.addRead(1, "fdf", 12, 1, std::abs(rand())%10000);
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+	}
+	{
+		// auto eos = map.getSummary(3600, "eos");
+		// auto mgm = map.getSummary(3600, "mgm");
+		// auto fdf = map.getSummary(3600, "fdf");
+		// auto uid = map.getSummary(3600, io::TYPE::UID, 12);
+		// auto gid = map.getSummary(3600, io::TYPE::GID, 11);
+		//
+		// if (!eos.has_value() || !mgm.has_value() || !fdf.has_value() ||
+		// 	!uid.has_value() || !gid.has_value())
+		// 	return -1;
+		// if (eos->rSize < 40 || eos->wSize < 40
+		// 	|| mgm->rSize < 20 || mgm->wSize < 20
+		// 	|| fdf->rSize < 20 || fdf->wSize < 20
+		// 	|| uid->rSize < 40 || uid->wSize < 40
+		// 	|| gid->rSize < 60 || gid->wSize < 60)
+		// 	return -1;
+	}
+	{
+		IoAggregateMap copyMap = map;
+		auto eos = copyMap.getSummary(3600, "eos");
+		auto mgm = copyMap.getSummary(3600, "mgm");
+		auto fdf = copyMap.getSummary(3600, "fdf");
+		auto uid = copyMap.getSummary(3600, io::TYPE::UID, 12);
+		auto gid = copyMap.getSummary(3600, io::TYPE::GID, 11);
+
+		if (!eos.has_value() || !mgm.has_value() || !fdf.has_value() ||
+			!uid.has_value() || !gid.has_value())
+			return -1;
+		if (eos->rSize < 40 || eos->wSize < 40
+			|| mgm->rSize < 20 || mgm->wSize < 20
+			|| fdf->rSize < 20 || fdf->wSize < 20
+			|| uid->rSize < 40 || uid->wSize < 40
+			|| gid->rSize < 60 || gid->wSize < 60)
+			return -1;
+	}
+	{
+		IoAggregateMap copyMap(map);
+		auto eos = copyMap.getSummary(3600, "eos");
+		auto mgm = copyMap.getSummary(3600, "mgm");
+		auto fdf = copyMap.getSummary(3600, "fdf");
+		auto uid = copyMap.getSummary(3600, io::TYPE::UID, 12);
+		auto gid = copyMap.getSummary(3600, io::TYPE::GID, 11);
+
+		if (!eos.has_value() || !mgm.has_value() || !fdf.has_value() ||
+			!uid.has_value() || !gid.has_value())
+			return -1;
+		if (eos->rSize < 40 || eos->wSize < 40
+			|| mgm->rSize < 20 || mgm->wSize < 20
+			|| fdf->rSize < 20 || fdf->wSize < 20
+			|| uid->rSize < 40 || uid->wSize < 40
+			|| gid->rSize < 60 || gid->wSize < 60)
+			return -1;
+	}
+
+	return 0;
+}
+
 int fillMapInteract(IoAggregateMap &map){
 	srand((unsigned int)time(NULL));
 

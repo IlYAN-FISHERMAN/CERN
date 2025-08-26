@@ -37,6 +37,45 @@ IoAggregateMap::IoAggregateMap(int) : _running(false){
 }
 
 //--------------------------------------------
+/// Constructor by copy constructor
+//--------------------------------------------
+IoAggregateMap::IoAggregateMap(const IoAggregateMap &other){
+	std::lock_guard<std::mutex> lock(other._mutex);
+	_map = other._map;
+	for (const auto &it: other._aggregates)
+		_aggregates.emplace(it.first, std::make_unique<IoAggregate>(*it.second.get()));
+	_running.store(other._running.load());
+	if (_running.load())
+		_thread = std::thread(&IoAggregateMap::updateAggregateLoop, this);
+}
+
+//--------------------------------------------
+/// Overload the operator =
+//--------------------------------------------
+IoAggregateMap& IoAggregateMap::operator=(const IoAggregateMap &other){
+	if (this != &other){
+		{
+			std::scoped_lock lock(_mutex, other._mutex);
+			_map = other._map;
+			_aggregates.clear();
+			for (const auto &it: other._aggregates)
+				_aggregates.emplace(it.first, std::make_unique<IoAggregate>(*it.second.get()));
+			_running.store(other._running.load());
+		}
+		if (!_running.load()){
+			std::unique_lock<std::mutex> lock(_mutex);
+			if (io::IoAggregateMapDebug)
+				assert(lock.owns_lock());
+			_cv.notify_one();
+		if (_thread.joinable())
+			_thread.join();
+		}
+	}
+
+	return *this;
+}
+
+//--------------------------------------------
 /// Destructor
 //--------------------------------------------
 IoAggregateMap::~IoAggregateMap(){
