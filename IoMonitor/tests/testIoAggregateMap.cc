@@ -452,6 +452,8 @@ int printSums(IoAggregateMap &map, std::stringstream &stream){
 		}
 		else if (!stream.eof())
 			return -1;
+		else
+			break;
 	}
 
 	return 0;
