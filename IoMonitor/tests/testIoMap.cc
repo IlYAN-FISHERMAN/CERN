@@ -22,62 +22,6 @@
 
 #include "tester.hh"
 
-void fillData(IoMap *map){
-	if(!map)
-		return;
-	for (size_t i = 0; i < 10; i++){
-		int uid = std::abs(rand() % 100);
-		int gid = std::abs(rand() % 100);
-		for (size_t it = 0, max = std::abs(rand() % 100); it < max;it++){
-			size_t bytes = std::abs(rand() % 100000);
-			map->addRead(i, "mgm", uid, gid, bytes);
-			map->addWrite(i, "mgm", uid, gid, bytes * 3);
-		}
-	}
-	for (size_t i = 10; i < 20; i++){
-		int uid = std::abs(rand() % 100);
-		int gid = std::abs(rand() % 100);
-		for (size_t it = 0, max = std::abs(rand() % 100); it < max;it++){
-			size_t bytes = std::abs(rand() % 100000);
-			map->addRead(i, "fdf", uid, gid, bytes);
-			map->addWrite(i, "fdf", uid, gid, bytes * 4);
-		}
-	}
-	for (size_t i = 20; i < 30; i++){
-		int uid = std::abs(rand() % 100);
-		int gid = std::abs(rand() % 100);
-		for (size_t it = 0, max = std::abs(rand() % 100); it < max;it++){
-			size_t bytes = std::abs(rand() % 100000);
-			map->addRead(i, "miniRT", uid, gid, bytes);
-			map->addWrite(i, "miniRT", uid, gid, bytes * 9);
-		}
-	}
-}
-
-void fillGroup1(IoMap *map){
-	map->addRead(1, "eos", 1, 1, std::abs(rand() % 100));
-	map->addRead(1, "eos", 1, 1, std::abs(rand() % 100));
-	map->addRead(1, "eos", 1, 1, std::abs(rand() % 100));
-	map->addRead(1, "eos", 1, 1, std::abs(rand() % 100));
-	map->addRead(1, "eos", 1, 1, std::abs(rand() % 100));
-}
-
-void fillGroup2(IoMap *map){
-	map->addRead(1, "jpeg", 2, 2, std::abs(rand() % 1000));
-	map->addRead(1, "jpeg", 2, 2, std::abs(rand() % 1000));
-	map->addRead(1, "jpeg", 2, 2, std::abs(rand() % 1000));
-	map->addRead(1, "jpeg", 2, 2, std::abs(rand() % 1000));
-	map->addRead(1, "jpeg", 2, 2, std::abs(rand() % 1000));
-}
-
-void fillGroup3(IoMap *map){
-	map->addRead(1, "jpeg", 3, 3, std::abs(rand() % 10000));
-	map->addRead(1, "jpeg", 3, 3, std::abs(rand() % 10000));
-	map->addRead(1, "jpeg", 3, 3, std::abs(rand() % 10000));
-	map->addRead(1, "jpeg", 3, 3, std::abs(rand() % 10000));
-	map->addRead(1, "jpeg", 3, 3, std::abs(rand() % 10000));
-}
-
 void prompt(bool &isMultiT, std::string &input){
 	while (true){
 		if (isMultiT)
@@ -102,25 +46,29 @@ void print(IoMap *map){
 		std::cout << C_GREEN << "[" << C_CYAN << "sR:" << it.second->getSize(IoStat::Marks::READ)
 			<< "/sW:"<< it.second->getSize(IoStat::Marks::WRITE) << C_GREEN << "]" << C_RESET;
 		std::cout << std::endl << C_GREEN << "└─[" << C_CYAN << "IoStat" << C_GREEN << "]" << C_RESET;
-		std::cout << C_WHITE << it.second << C_RESET << std::endl;
+		std::cout << C_WHITE << *it.second << C_RESET << std::endl;
 	}
 }
 
-void fill(IoMap *map, std::stringstream &os){
-	std::string cmd;
-	os >> cmd;
-	if (cmd.empty()){
-		fillData(map);
-		std::cout << "fillData" << std::endl;
+void fill(IoMap &map){
+	std::string input;
+	while (true){
+		std::cout << "fill with interaction? [y/n]: ";
+		std::getline(std::cin, input);
+		if (input.empty())
+			continue;
+		else if (input == "n"){
+			fillData(map);
+			std::cout << "fill data succeed" << std::endl;
+		}
+		else if (input == "y"){
+			if (!fillDataInteract(map))
+				std::cout << "fill data interact succeed" << std::endl;
+			else
+				std::cout << "fill data interact failed" << std::endl;
+		}
+		break;
 	}
-	else if (cmd == "1")
-		fillGroup1(map);
-	else if (cmd == "2")
-		fillGroup2(map);
-	else if (cmd == "3")
-		fillGroup3(map);
-	else
-		std::cerr << "IoMap: " << "fill: @params[1, 2 , 3, NULL]" << std::endl;
 }
 
 void purge(bool &isMultiT, IoMap *map){
@@ -133,6 +81,24 @@ void purge(bool &isMultiT, IoMap *map){
 	}
 }
 
+static void printUsage(){
+	std::cout << "Usage:" << std::endl;
+	std::cout << "./IoMap [command]" << std::endl;
+	std::cout << std::endl;
+
+	std::cout << "META OPTIONS" << std::endl;
+	std::cout << "  h, help \tshow list of command-line options." << std::endl;
+	std::cout << std::endl;
+
+	std::cout << "COMMANDS" << std::endl;
+	std::cout << "  p, \tprint \tprint the map" << std::endl;
+	std::cout << "  fill, \tfill the map with I/O" << std::endl;
+	std::cout << "  purge, \tclear the map" << std::endl;
+	std::cout << "  c, \tclear\tclear the terminal" << std::endl;
+	std::cout << "  exit, \texit monitor" << std::endl;
+	std::cout << std::endl;
+}
+
 int execCmd(std::string &input, IoMap *map, bool &isMultiT){
 	std::stringstream os(input);
 	std::string cmd;
@@ -143,12 +109,18 @@ int execCmd(std::string &input, IoMap *map, bool &isMultiT){
 	}
 	else if (cmd == "print" || cmd == "p")
 		print(map);
-	else if (cmd == "fill")
-		fill(map, os);
+	else if (cmd == "fill"){
+		if (os >> cmd)
+			std::cerr << "IoMap: " << input << " :command not found" << std::endl;
+		else
+			fill(*map);
+	}
 	else if (cmd == "clear" || cmd == "c")
 		std::cout << "\033c";
 	else if (cmd == "purge")
 		purge(isMultiT, map);
+	else if (cmd == "h" || cmd == "help")
+		printUsage();
 	else
 		std::cerr << "IoMap: " << input << " :command not found" << std::endl;
 	if (cmd != "clear" && cmd != "c")
@@ -195,8 +167,9 @@ int testIoMapData(){
 
 	for (size_t i = 0; i < nbrOfMap; i++)
 		maps.push_back(std::make_unique<IoMap>());
-	for (size_t i = 0; i < nbrOfMap; i++)
-		fillData(maps.at(i).get());
+	for (size_t i = 0; i < nbrOfMap; i++){
+		fillData(*maps.at(i).get());
+	}
 
 	for (size_t i = 0; i < 50; i++){
 		std::lock_guard<std::mutex> lock(IoMap::_osMutex);
@@ -336,7 +309,7 @@ int testIoMapBigVolume(){
 	for (size_t i = 0; i < nbrOfMap; i++)
 		maps.push_back(std::make_unique<IoMap>());
 	for (size_t i = 0; i < nbrOfMap; i++)
-		fillData(maps.at(i).get());
+		fillData(*maps.at(i).get());
 
 	IoMark end;
 	long diff = TIME_TO_CLEAN * 2 + 1;

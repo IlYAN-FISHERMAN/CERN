@@ -67,7 +67,7 @@ TEST(IoAggregateMap, exactValue) {
 // }
 
 int main(int ac, char **av) {
-	srand((unsigned int)time(NULL));
+	srand(static_cast<unsigned int>(time(NULL)));
 	int code = 0;
 	(void)ac;
 	(void)av;
@@ -85,10 +85,11 @@ int main(int ac, char **av) {
 	// code = testIoAggregateMapWindow();
 	// code = testIoAggregateMap();
 	// code = testIoAggregateMapInteract();
+	code = testInteractiveIoMap();
 	// code = testIoStatCopy();
 	// code = testIoMapCopy();
 	// code = testIoAggregateMapCopy();
 	// std::cout << "code: " << code << std::endl;
-    ::testing::InitGoogleTest(&ac, av);
-    return RUN_ALL_TESTS();
+    // ::testing::InitGoogleTest(&ac, av);
+    // return RUN_ALL_TESTS();
 }

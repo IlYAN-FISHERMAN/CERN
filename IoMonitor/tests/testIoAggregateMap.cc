@@ -88,7 +88,7 @@ int testIoAggregateMapWindow(){
 }
 
 template <typename T>
-int printSummary(IoAggregateMap &map, size_t winTime, const T index){
+static int printSummary(IoAggregateMap &map, size_t winTime, const T index){
 	std::cout << C_GREEN << "[" << C_CYAN << "Summary winTime: "
 		<< winTime << C_GREEN << "][" << C_CYAN << "summary of appName: " << std::string(index)
 		<< C_GREEN << "]" << C_RESET << std::endl;
@@ -96,7 +96,7 @@ int printSummary(IoAggregateMap &map, size_t winTime, const T index){
 	return 0;
 }
 template <typename T>
-int printSummary(IoAggregateMap &map, size_t winTime, io::TYPE type, const T index){
+static int printSummary(IoAggregateMap &map, size_t winTime, io::TYPE type, const T index){
 	if (type == io::TYPE::UID)
 		std::cout << C_GREEN << "[" << C_CYAN << "Summary winTime: "
 			<< winTime << C_GREEN << "][" << C_CYAN << "summary of uid: " << index
@@ -237,98 +237,7 @@ int testIoAggregateMapCopy(){
 	return 0;
 }
 
-int fillMapInteract(IoAggregateMap &map){
-	srand((unsigned int)time(NULL));
-
-	std::string input;
-	std::string appName;
-	size_t fileId = 0;
-	size_t uid = 0;
-	size_t gid = 0;
-	size_t nbrOfLoop = 0;
-	size_t maxInteraction = 0;
-	size_t maxByte = 0;
-	bool rw = false;
-
-	try {
-		std::cout << "Write ran for random data" << std::endl << std::endl;
-		std::cout << "fileId: ";
-		std::getline(std::cin, input);
-		if (input == "ran")
-			fileId = std::abs(rand()) % 100;
-		else
-			fileId = std::stoi(input);
-		std::cout << "\033[F\033[K";
-		std::cout << "appName: ";
-		std::getline(std::cin, appName);
-		std::cout << "\033[F\033[K";
-		std::cout << "uid: ";
-		std::getline(std::cin, input);
-		if (input == "ran")
-			uid = std::abs(rand()) % 100;
-		else
-			uid = std::stoi(input);
-		std::cout << "\033[F\033[K";
-		std::cout  << "gid: ";
-		std::getline(std::cin, input);
-		if (input == "ran")
-			gid = std::abs(rand()) % 100;
-		else
-			gid = std::stoi(input);
-		std::cout << "\033[F\033[K";
-		std::cout << "number of loop: ";
-		std::getline(std::cin, input);
-		if (input == "ran")
-			nbrOfLoop = std::abs(rand()) % 10;
-		else
-			nbrOfLoop = std::stoi(input);
-		std::cout << "\033[F\033[K";
-		std::cout << "max iteration/loop: ";
-		std::getline(std::cin, input);
-		if (input == "ran")
-			maxInteraction = std::abs(rand()) % 200;
-		else
-			maxInteraction = std::stoi(input);
-		std::cout << "\033[F\033[K";
-		std::cout << "max Bytes: ";
-		std::getline(std::cin, input);
-		if (input == "ran")
-			maxByte = std::abs(rand()) % 10000;
-		else
-			maxByte = std::stoi(input);
-		std::cout << "\033[F\033[K";
-		std::cout << "Read or Write[r/w]: ";
-		while (std::getline(std::cin, input)){
-			if (input == "r" || input == "w"){
-				if (input == "r")
-					rw = false;
-				else if (input == "w")
-					rw = true;
-				break;
-			}
-			std::cout << "\033[F\033[K";
-			std::cout << "Read or Write[r/w]: ";
-		}
-	} catch(std::exception &e){
-		std::cerr << "Monitor: Error: " << e.what() << std::endl;
-		return -1;
-	}
-
-	for (size_t i = 0; i < nbrOfLoop; i++){
-		for (size_t j = (std::abs(rand()) % maxInteraction); j < maxInteraction; j++){
-			if (!rw)
-				map.addRead(fileId, appName, uid, gid, std::abs(rand()) % maxByte);
-			else
-				map.addWrite(fileId, appName, uid, gid, std::abs(rand()) % maxByte);
-		}
-		std::cout << "\033[F\033[K";
-		std::cout << "fill the map[" << (i + 1) << "/" << nbrOfLoop << "]" << std::endl;
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-	}
-	return 0;
-}
-
-void printUsage(){
+static void printUsage(){
 	std::cout << "Usage:" << std::endl;
 	std::cout << "./monitor [command] [options...]" << std::endl;
 	std::cout << std::endl;
@@ -543,7 +452,7 @@ int testIoAggregateMapInteract(){
 					if (stream >> cmd)
 						std::cout << "Monitor: command not found: " << input << std::endl;
 					else{
-						if (!fillMapInteract(map))
+						if (!fillDataInteract(map))
 							std::cout << "fill map succeed" << std::endl;
 						else
 							std::cout << "fill map failed" << std::endl;

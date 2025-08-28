@@ -26,9 +26,117 @@ int testIoAggregateMapCopy();
 
 int testIoAggregateCopy();
 
+template<typename T>
+void fillData(T &map){
+	for (size_t i = 0; i < 10; i++){
+		int uid = std::abs(rand() % 100);
+		int gid = std::abs(rand() % 100);
+		for (size_t it = 0, max = std::abs(rand())% 100; it < max;it++){
+			size_t bytes = std::abs(rand() % 100000);
+			map.addRead(i, "mgm", uid, gid, bytes);
+			map.addWrite(i, "mgm", uid, gid, bytes * 3);
+		}
+	}
+	for (size_t i = 10; i < 20; i++){
+		int uid = std::abs(rand() % 100);
+		int gid = std::abs(rand() % 100);
+		for (size_t it = 0, max = std::abs(rand()) % 100; it < max;it++){
+			size_t bytes = std::abs(rand() % 100000);
+			map.addRead(i, "fdf", uid, gid, bytes);
+			map.addWrite(i, "fdf", uid, gid, bytes * 4);
+		}
+	}
+	for (size_t i = 20; i < 30; i++){
+		int uid = std::abs(rand() % 100);
+		int gid = std::abs(rand() % 100);
+		for (size_t it = 0, max = std::abs(rand()) % 100; it < max;it++){
+			size_t bytes = std::abs(rand() % 100000);
+			map.addRead(i, "miniRT", uid, gid, bytes);
+			map.addWrite(i, "miniRT", uid, gid, bytes * 9);
+		}
+	}
+}
 
-void fillData(IoAggregateMap &map);
-void fillData(IoMap *map);
+template<typename T>
+int fillDataInteract(T &map){
+	srand((unsigned int)time(NULL));
+
+	std::string input;
+	std::string appName;
+	size_t fileId = 0;
+	size_t uid = 0;
+	size_t gid = 0;
+	size_t nbrOfLoop = 0;
+	size_t maxInteraction = 0;
+	size_t maxByte = 0;
+	bool rw = false;
+
+	try {
+		std::cout << "Write ran for random data" << std::endl << std::endl;
+		std::cout << "fileId: ";
+		std::getline(std::cin, input);
+		if (input == "ran")
+			fileId = std::abs(rand()) % 100;
+		else
+			fileId = std::stoi(input);
+		std::cout << "\033[F\033[K";
+		std::cout << "appName: ";
+		std::getline(std::cin, appName);
+		std::cout << "\033[F\033[K";
+		std::cout << "number of loop: ";
+		std::getline(std::cin, input);
+		if (input == "ran")
+			nbrOfLoop = std::abs(rand()) % 10;
+		else
+			nbrOfLoop = std::stoi(input);
+		std::cout << "\033[F\033[K";
+		std::cout << "max iteration/loop: ";
+		std::getline(std::cin, input);
+		if (input == "ran")
+			maxInteraction = std::abs(rand()) % 200;
+		else
+			maxInteraction = std::stoi(input);
+		std::cout << "\033[F\033[K";
+		std::cout << "max Bytes: ";
+		std::getline(std::cin, input);
+		if (input == "ran")
+			maxByte = std::abs(rand()) % 10000;
+		else
+			maxByte = std::stoi(input);
+		std::cout << "\033[F\033[K";
+		std::cout << "Read or Write[r/w]: ";
+		while (std::getline(std::cin, input)){
+			if (input == "r" || input == "w"){
+				if (input == "r")
+					rw = false;
+				else if (input == "w")
+					rw = true;
+				break;
+			}
+			std::cout << "\033[F\033[K";
+			std::cout << "Read or Write[r/w]: ";
+		}
+	} catch(std::exception &e){
+		std::cerr << "Monitor: Error: " << e.what() << std::endl;
+		return -1;
+	}
+
+	for (size_t i = 0; i < nbrOfLoop; i++){
+		uid = std::abs(rand() % 100);
+		gid = std::abs(rand() % 100);
+		std::cout << "std::abs(rand()) % maxByte: " << std::abs(rand()) % maxByte << std::endl;
+		for (size_t j = (std::abs(rand()) % maxInteraction); j < maxInteraction; j++){
+			if (!rw)
+				map.addRead(fileId, appName, uid, gid, std::abs(rand()) % maxByte);
+			else
+				map.addWrite(fileId, appName, uid, gid, std::abs(rand()) % maxByte);
+		}
+		std::cout << "\033[F\033[K";
+		std::cout << "fill the map[" << (i + 1) << "/" << nbrOfLoop << "]" << std::endl;
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+	}
+	return 0;
+}
 
 std::ostream& operator<<(std::ostream &os, const std::pair<double, double> &other);
 std::ostream& operator<<(std::ostream &os, const std::optional<IoStatSummary> &opt);

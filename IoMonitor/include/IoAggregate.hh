@@ -95,13 +95,13 @@ class IoAggregate{
 		/// Display the string given as parameter in
 		/// specific format with the current time
 		//--------------------------------------------
-		void printInfo(std::ostream &os, const std::string &msg) const;
+		static void printInfo(std::ostream &os, const std::string &msg);
 
 		//--------------------------------------------
 		/// Display the string given as parameter in
 		/// specific format with the current time
 		//--------------------------------------------
-		void printInfo(std::ostream &os, const char *msg) const;
+		static void printInfo(std::ostream &os, const char *msg);
 
 	public:
 		//--------------------------------------------
@@ -175,7 +175,7 @@ class IoAggregate{
 		/// or the summary is completely empty else
 		/// a IoStatSummary
 		//--------------------------------------------
-		std::optional<IoStatSummary> summaryWeighted(const std::vector<IoStatSummary> &summarys) const;
+		static std::optional<IoStatSummary> summaryWeighted(const std::vector<IoStatSummary> &summarys);
 
 		//--------------------------------------------
 		/// Get current index

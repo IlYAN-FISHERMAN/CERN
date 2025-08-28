@@ -136,7 +136,7 @@ int IoAggregate::shiftWindow(const size_t index){
 /// Condenses a vector of IoStatSummary
 /// into a single one
 //--------------------------------------------
-std::optional<IoStatSummary> IoAggregate::summaryWeighted(const std::vector<IoStatSummary> &summarys) const{
+std::optional<IoStatSummary> IoAggregate::summaryWeighted(const std::vector<IoStatSummary> &summarys){
 	size_t rDivisor = 0;
 	size_t wDivisor = 0;
 	IoStatSummary weighted;
@@ -211,7 +211,7 @@ size_t IoAggregate::getIndex() const{ return _currentIndex;}
 /// Display the string given as parameter in
 /// specific format with the current time
 //--------------------------------------------
-void	IoAggregate::printInfo(std::ostream &os, const char *msg) const{
+void	IoAggregate::printInfo(std::ostream &os, const char *msg){
 	const char *time = getCurrentTime();
 	os << IOAGGREGATE_NAME << " [" << time << "]: " << msg << std::endl;
 }
@@ -220,7 +220,7 @@ void	IoAggregate::printInfo(std::ostream &os, const char *msg) const{
 /// Display the string given as parameter in
 /// specific format with the current time
 //--------------------------------------------
-void	IoAggregate::printInfo(std::ostream &os, const std::string &msg) const{
+void	IoAggregate::printInfo(std::ostream &os, const std::string &msg){
 	const char *time = getCurrentTime();
 	os << IOAGGREGATE_NAME << " [" << time << "]: " << msg << std::endl;
 }

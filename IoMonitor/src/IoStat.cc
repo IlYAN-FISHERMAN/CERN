@@ -278,8 +278,8 @@ std::ostream& operator<<(std::ostream &os, const IoStat &other){
 //--------------------------------------------
 /// Overload operator << to print a entire multimap
 //--------------------------------------------
-std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_t, std::shared_ptr<IoStat> > &other){
-	for (auto it : other){
+std::ostream& operator<<(std::ostream &os, const std::unordered_multimap<uint64_t, const std::shared_ptr<IoStat> > &other){
+	for (auto &it : other){
 		os << C_GREEN << "┌─[" << C_CYAN << "IoMap" << C_GREEN << "]" << C_RESET;
 		os << C_GREEN << "[" << C_CYAN << "id:" << it.first << C_GREEN << "]" << C_RESET;
 		os << C_GREEN << "[" <<  C_CYAN << "app:"<< it.second->getApp() << C_GREEN << "]" << C_RESET;
