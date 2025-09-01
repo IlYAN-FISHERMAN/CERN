@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package IoBuffer;
+
+message Summary {
+  optional uint32 rAvrg = 1;
+  optional uint32 rstd  = 2;
+  optional uint32 wAvrg = 3;
+  optional uint32 wstd  = 4;
+  required uint32 rSize = 5;
+  required uint32 wSize = 6;
+  required double rIops = 7;
+  required double wIops = 8;
+}

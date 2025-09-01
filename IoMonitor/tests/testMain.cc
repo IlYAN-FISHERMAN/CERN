@@ -72,7 +72,8 @@ int main(int ac, char **av) {
 	(void)ac;
 	(void)av;
 	(void)code;
-
+	
+	// std::cout << "test\n";
 	// code = testIoStatExactValue();
 	// code = testIoStatIOPS();
 
@@ -84,8 +85,9 @@ int main(int ac, char **av) {
 
 	// code = testIoAggregateMapWindow();
 	// code = testIoAggregateMap();
+	code = testIoBuffer();
 	// code = testIoAggregateMapInteract();
-	code = testInteractiveIoMap();
+	// code = testInteractiveIoMap();
 	// code = testIoStatCopy();
 	// code = testIoMapCopy();
 	// code = testIoAggregateMapCopy();

@@ -48,6 +48,7 @@
 #include <assert.h>
 #include <typeinfo>
 #include "color.hh"
+#include "../proto/IoBuffer.pb.h"
 
 //--------------------------------------------
 /// Main structure stored in IoStat
@@ -140,4 +141,33 @@ struct IoStatSummary {
 		rSize(0), wSize(0), rIops(0), wIops(0){
 			clock_gettime(CLOCK_REALTIME, &io_time);
 		}
+
+	IoStatSummary(const IoBuffer::Summary &sum) :
+		readBandwidth({sum.ravrg(), sum.rstd()}),
+		writeBandwidth({sum.wavrg(), sum.wstd()}),
+		rSize(sum.rsize()), wSize(sum.wsize()), rIops(sum.riops()), wIops(sum.wiops()){
+			clock_gettime(CLOCK_REALTIME, &io_time);
+		}
+
+	void Serialize(IoBuffer::Summary &sum) const{
+		sum.set_ravrg(readBandwidth->first);
+		sum.set_rstd(readBandwidth->second);
+		sum.set_wavrg(writeBandwidth->first);
+		sum.set_wstd(writeBandwidth->second);
+		sum.set_rsize(rSize);
+		sum.set_wsize(wSize);
+		sum.set_riops(rIops);
+		sum.set_wiops(wIops);
+	};
+
+	void Deserialize(const IoBuffer::Summary &sum){
+		readBandwidth->first = sum.ravrg();
+		readBandwidth->second = sum.rstd();
+		writeBandwidth->first = sum.wavrg();
+		writeBandwidth->second = sum.wstd();
+		rSize = sum.rsize();
+		wSize = sum.wsize();
+		rIops = sum.riops();
+		wIops = sum.wiops();
+	};
 };

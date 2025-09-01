@@ -26,6 +26,8 @@ int testIoAggregateMapCopy();
 
 int testIoAggregateCopy();
 
+int testIoBuffer();
+
 template<typename T>
 void fillData(T &map){
 	for (size_t i = 0; i < 10; i++){

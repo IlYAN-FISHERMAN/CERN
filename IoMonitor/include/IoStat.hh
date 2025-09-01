@@ -249,3 +249,9 @@ std::ostream& operator<<(std::ostream &os, const std::optional<IoStatSummary> &o
 /// a IoStatSummary object
 //--------------------------------------------
 std::ostream& operator<<(std::ostream &os, const IoStatSummary &opt);
+
+//--------------------------------------------
+/// @brief Overload operator << to print
+/// a IoBuffer::Summary object
+//--------------------------------------------
+std::ostream& operator<<(std::ostream &os, const IoBuffer::Summary &sum);

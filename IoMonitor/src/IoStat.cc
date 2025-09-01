@@ -349,3 +349,12 @@ std::ostream& operator<<(std::ostream &os, const IoStatSummary &other){
 		os << "[empty]";
 	return os;
 }
+
+//--------------------------------------------
+/// Overload operator << to print a IoStatSummary struct
+//--------------------------------------------
+std::ostream& operator<<(std::ostream &os, const IoBuffer::Summary &sum){
+	IoStatSummary summary(sum);
+	os << summary;
+	return os;
+}
