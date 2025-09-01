@@ -248,7 +248,7 @@ class Summary final :
   void _internal_set_wstd(::uint32_t value);
 
   public:
-  // optional uint32 rSize = 5;
+  // required uint32 rSize = 5;
   bool has_rsize() const;
   void clear_rsize() ;
   ::uint32_t rsize() const;
@@ -259,7 +259,7 @@ class Summary final :
   void _internal_set_rsize(::uint32_t value);
 
   public:
-  // optional uint32 wSize = 6;
+  // required uint32 wSize = 6;
   bool has_wsize() const;
   void clear_wsize() ;
   ::uint32_t wsize() const;
@@ -270,7 +270,7 @@ class Summary final :
   void _internal_set_wsize(::uint32_t value);
 
   public:
-  // optional double rIops = 7;
+  // required double rIops = 7;
   bool has_riops() const;
   void clear_riops() ;
   double riops() const;
@@ -281,7 +281,7 @@ class Summary final :
   void _internal_set_riops(double value);
 
   public:
-  // optional double wIops = 8;
+  // required double wIops = 8;
   bool has_wiops() const;
   void clear_wiops() ;
   double wiops() const;
@@ -295,6 +295,9 @@ class Summary final :
   // @@protoc_insertion_point(class_scope:IoBuffer.Summary)
  private:
   class _Internal;
+
+  // helper for ByteSizeLong()
+  ::size_t RequiredFieldsByteSizeFallback() const;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
@@ -431,7 +434,7 @@ inline void Summary::_internal_set_wstd(::uint32_t value) {
   _impl_.wstd_ = value;
 }
 
-// optional uint32 rSize = 5;
+// required uint32 rSize = 5;
 inline bool Summary::has_rsize() const {
   bool value = (_impl_._has_bits_[0] & 0x00000010u) != 0;
   return value;
@@ -456,7 +459,7 @@ inline void Summary::_internal_set_rsize(::uint32_t value) {
   _impl_.rsize_ = value;
 }
 
-// optional uint32 wSize = 6;
+// required uint32 wSize = 6;
 inline bool Summary::has_wsize() const {
   bool value = (_impl_._has_bits_[0] & 0x00000020u) != 0;
   return value;
@@ -481,7 +484,7 @@ inline void Summary::_internal_set_wsize(::uint32_t value) {
   _impl_.wsize_ = value;
 }
 
-// optional double rIops = 7;
+// required double rIops = 7;
 inline bool Summary::has_riops() const {
   bool value = (_impl_._has_bits_[0] & 0x00000040u) != 0;
   return value;
@@ -506,7 +509,7 @@ inline void Summary::_internal_set_riops(double value) {
   _impl_.riops_ = value;
 }
 
-// optional double wIops = 8;
+// required double wIops = 8;
 inline bool Summary::has_wiops() const {
   bool value = (_impl_._has_bits_[0] & 0x00000080u) != 0;
   return value;

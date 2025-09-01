@@ -95,8 +95,8 @@ static const ::_pb::Message* const file_default_instances[] = {
 const char descriptor_table_protodef_IoBuffer_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n\016IoBuffer.proto\022\010IoBuffer\"\177\n\007Summary\022\r\n"
     "\005rAvrg\030\001 \001(\r\022\014\n\004rstd\030\002 \001(\r\022\r\n\005wAvrg\030\003 \001("
-    "\r\022\014\n\004wstd\030\004 \001(\r\022\r\n\005rSize\030\005 \001(\r\022\r\n\005wSize\030"
-    "\006 \001(\r\022\r\n\005rIops\030\007 \001(\001\022\r\n\005wIops\030\010 \001(\001"
+    "\r\022\014\n\004wstd\030\004 \001(\r\022\r\n\005rSize\030\005 \002(\r\022\r\n\005wSize\030"
+    "\006 \002(\r\022\r\n\005rIops\030\007 \002(\001\022\r\n\005wIops\030\010 \002(\001"
 };
 static ::absl::once_flag descriptor_table_IoBuffer_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_IoBuffer_2eproto = {
@@ -165,6 +165,9 @@ class Summary::_Internal {
   }
   static void set_has_wiops(HasBits* has_bits) {
     (*has_bits)[0] |= 128u;
+  }
+  static bool MissingRequiredFields(const HasBits& has_bits) {
+    return ((has_bits[0] & 0x000000f0) ^ 0x000000f0) != 0;
   }
 };
 
@@ -284,7 +287,7 @@ const char* Summary::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) 
           goto handle_unusual;
         }
         continue;
-      // optional uint32 rSize = 5;
+      // required uint32 rSize = 5;
       case 5:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 40)) {
           _Internal::set_has_rsize(&has_bits);
@@ -294,7 +297,7 @@ const char* Summary::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) 
           goto handle_unusual;
         }
         continue;
-      // optional uint32 wSize = 6;
+      // required uint32 wSize = 6;
       case 6:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 48)) {
           _Internal::set_has_wsize(&has_bits);
@@ -304,7 +307,7 @@ const char* Summary::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) 
           goto handle_unusual;
         }
         continue;
-      // optional double rIops = 7;
+      // required double rIops = 7;
       case 7:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 57)) {
           _Internal::set_has_riops(&has_bits);
@@ -314,7 +317,7 @@ const char* Summary::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) 
           goto handle_unusual;
         }
         continue;
-      // optional double wIops = 8;
+      // required double wIops = 8;
       case 8:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 65)) {
           _Internal::set_has_wiops(&has_bits);
@@ -383,28 +386,28 @@ failure:
         4, this->_internal_wstd(), target);
   }
 
-  // optional uint32 rSize = 5;
+  // required uint32 rSize = 5;
   if (cached_has_bits & 0x00000010u) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
         5, this->_internal_rsize(), target);
   }
 
-  // optional uint32 wSize = 6;
+  // required uint32 wSize = 6;
   if (cached_has_bits & 0x00000020u) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
         6, this->_internal_wsize(), target);
   }
 
-  // optional double rIops = 7;
+  // required double rIops = 7;
   if (cached_has_bits & 0x00000040u) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteDoubleToArray(
         7, this->_internal_riops(), target);
   }
 
-  // optional double wIops = 8;
+  // required double wIops = 8;
   if (cached_has_bits & 0x00000080u) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteDoubleToArray(
@@ -419,16 +422,62 @@ failure:
   return target;
 }
 
+::size_t Summary::RequiredFieldsByteSizeFallback() const {
+// @@protoc_insertion_point(required_fields_byte_size_fallback_start:IoBuffer.Summary)
+  ::size_t total_size = 0;
+
+  if ((_impl_._has_bits_[0] & 0x00000010u) != 0) {
+    // required uint32 rSize = 5;
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+        this->_internal_rsize());
+  }
+
+  if ((_impl_._has_bits_[0] & 0x00000020u) != 0) {
+    // required uint32 wSize = 6;
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+        this->_internal_wsize());
+  }
+
+  if ((_impl_._has_bits_[0] & 0x00000040u) != 0) {
+    // required double rIops = 7;
+    total_size += 9;
+  }
+
+  if ((_impl_._has_bits_[0] & 0x00000080u) != 0) {
+    // required double wIops = 8;
+    total_size += 9;
+  }
+
+  return total_size;
+}
 ::size_t Summary::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:IoBuffer.Summary)
   ::size_t total_size = 0;
 
+  if (((_impl_._has_bits_[0] & 0x000000f0) ^ 0x000000f0) == 0) {  // All required fields are present.
+    // required uint32 rSize = 5;
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+        this->_internal_rsize());
+
+    // required uint32 wSize = 6;
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+        this->_internal_wsize());
+
+    // required double rIops = 7;
+    total_size += 9;
+
+    // required double wIops = 8;
+    total_size += 9;
+
+  } else {
+    total_size += RequiredFieldsByteSizeFallback();
+  }
   ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x000000ffu) {
+  if (cached_has_bits & 0x0000000fu) {
     // optional uint32 rAvrg = 1;
     if (cached_has_bits & 0x00000001u) {
       total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
@@ -451,28 +500,6 @@ failure:
     if (cached_has_bits & 0x00000008u) {
       total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
           this->_internal_wstd());
-    }
-
-    // optional uint32 rSize = 5;
-    if (cached_has_bits & 0x00000010u) {
-      total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
-          this->_internal_rsize());
-    }
-
-    // optional uint32 wSize = 6;
-    if (cached_has_bits & 0x00000020u) {
-      total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
-          this->_internal_wsize());
-    }
-
-    // optional double rIops = 7;
-    if (cached_has_bits & 0x00000040u) {
-      total_size += 9;
-    }
-
-    // optional double wIops = 8;
-    if (cached_has_bits & 0x00000080u) {
-      total_size += 9;
     }
 
   }
@@ -533,6 +560,7 @@ void Summary::CopyFrom(const Summary& from) {
 }
 
 bool Summary::IsInitialized() const {
+  if (_Internal::MissingRequiredFields(_impl_._has_bits_)) return false;
   return true;
 }
 
