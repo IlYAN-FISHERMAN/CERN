@@ -12,3 +12,24 @@ message Summary {
   required double rIops = 7;
   required double wIops = 8;
 }
+
+message appMap{
+  required string name = 1;
+  required Summary summary = 2;
+}
+
+message uidMap{
+  required uint64 uid = 1;
+  required Summary summary = 2;
+}
+
+message gidMap{
+  required uint64 gid = 1;
+  required Summary summary = 2;
+}
+
+message data{
+  repeated appMap apps = 1;
+  repeated uidMap uids = 2;
+  repeated gidMap gids = 3;
+}

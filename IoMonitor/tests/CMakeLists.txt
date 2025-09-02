@@ -4,7 +4,7 @@ enable_testing()
 find_package(GTest REQUIRED)
 
 add_executable(monitor testMain.cc testIoStat.cc testIoMap.cc
-                       testIoAggregateMap.cc)
+                       testIoAggregateMap.cc testIoBuffer.cc)
 
 target_link_libraries(monitor io_monitor GTest::gtest GTest::gtest_main pthread)
 

@@ -149,25 +149,37 @@ struct IoStatSummary {
 			clock_gettime(CLOCK_REALTIME, &io_time);
 		}
 
-	void Serialize(IoBuffer::Summary &sum) const{
-		sum.set_ravrg(readBandwidth->first);
-		sum.set_rstd(readBandwidth->second);
-		sum.set_wavrg(writeBandwidth->first);
-		sum.set_wstd(writeBandwidth->second);
+	IoBuffer::Summary& Serialize(IoBuffer::Summary &sum){
+		if (readBandwidth.has_value()){
+			sum.set_ravrg(readBandwidth->first);
+			sum.set_rstd(readBandwidth->second);
+		}
+		if (writeBandwidth.has_value()){
+			sum.set_wavrg(writeBandwidth->first);
+			sum.set_wstd(writeBandwidth->second);
+		}
 		sum.set_rsize(rSize);
 		sum.set_wsize(wSize);
 		sum.set_riops(rIops);
 		sum.set_wiops(wIops);
+
+		return sum;
 	};
 
-	void Deserialize(const IoBuffer::Summary &sum){
-		readBandwidth->first = sum.ravrg();
-		readBandwidth->second = sum.rstd();
-		writeBandwidth->first = sum.wavrg();
-		writeBandwidth->second = sum.wstd();
+	IoStatSummary* Deserialize(const IoBuffer::Summary &sum){
+		if (readBandwidth.has_value()){
+			readBandwidth->first = sum.ravrg();
+			readBandwidth->second = sum.rstd();
+		}
+		if (writeBandwidth.has_value()){
+			writeBandwidth->first = sum.wavrg();
+			writeBandwidth->second = sum.wstd();
+		}
 		rSize = sum.rsize();
 		wSize = sum.wsize();
 		rIops = sum.riops();
 		wIops = sum.wiops();
+
+		return this;
 	};
 };

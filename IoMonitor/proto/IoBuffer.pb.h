@@ -54,10 +54,30 @@ namespace IoBuffer {
 class Summary;
 struct SummaryDefaultTypeInternal;
 extern SummaryDefaultTypeInternal _Summary_default_instance_;
+class appMap;
+struct appMapDefaultTypeInternal;
+extern appMapDefaultTypeInternal _appMap_default_instance_;
+class data;
+struct dataDefaultTypeInternal;
+extern dataDefaultTypeInternal _data_default_instance_;
+class gidMap;
+struct gidMapDefaultTypeInternal;
+extern gidMapDefaultTypeInternal _gidMap_default_instance_;
+class uidMap;
+struct uidMapDefaultTypeInternal;
+extern uidMapDefaultTypeInternal _uidMap_default_instance_;
 }  // namespace IoBuffer
 PROTOBUF_NAMESPACE_OPEN
 template <>
 ::IoBuffer::Summary* Arena::CreateMaybeMessage<::IoBuffer::Summary>(Arena*);
+template <>
+::IoBuffer::appMap* Arena::CreateMaybeMessage<::IoBuffer::appMap>(Arena*);
+template <>
+::IoBuffer::data* Arena::CreateMaybeMessage<::IoBuffer::data>(Arena*);
+template <>
+::IoBuffer::gidMap* Arena::CreateMaybeMessage<::IoBuffer::gidMap>(Arena*);
+template <>
+::IoBuffer::uidMap* Arena::CreateMaybeMessage<::IoBuffer::uidMap>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 
 namespace IoBuffer {
@@ -316,6 +336,753 @@ class Summary final :
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_IoBuffer_2eproto;
+};// -------------------------------------------------------------------
+
+class appMap final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:IoBuffer.appMap) */ {
+ public:
+  inline appMap() : appMap(nullptr) {}
+  ~appMap() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR appMap(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  appMap(const appMap& from);
+  appMap(appMap&& from) noexcept
+    : appMap() {
+    *this = ::std::move(from);
+  }
+
+  inline appMap& operator=(const appMap& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline appMap& operator=(appMap&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const appMap& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const appMap* internal_default_instance() {
+    return reinterpret_cast<const appMap*>(
+               &_appMap_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    1;
+
+  friend void swap(appMap& a, appMap& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(appMap* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(appMap* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  appMap* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<appMap>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const appMap& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const appMap& from) {
+    appMap::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(appMap* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "IoBuffer.appMap";
+  }
+  protected:
+  explicit appMap(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kNameFieldNumber = 1,
+    kSummaryFieldNumber = 2,
+  };
+  // required string name = 1;
+  bool has_name() const;
+  void clear_name() ;
+  const std::string& name() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_name(Arg_&& arg, Args_... args);
+  std::string* mutable_name();
+  PROTOBUF_NODISCARD std::string* release_name();
+  void set_allocated_name(std::string* ptr);
+
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(
+      const std::string& value);
+  std::string* _internal_mutable_name();
+
+  public:
+  // required .IoBuffer.Summary summary = 2;
+  bool has_summary() const;
+  void clear_summary() ;
+  const ::IoBuffer::Summary& summary() const;
+  PROTOBUF_NODISCARD ::IoBuffer::Summary* release_summary();
+  ::IoBuffer::Summary* mutable_summary();
+  void set_allocated_summary(::IoBuffer::Summary* summary);
+  private:
+  const ::IoBuffer::Summary& _internal_summary() const;
+  ::IoBuffer::Summary* _internal_mutable_summary();
+  public:
+  void unsafe_arena_set_allocated_summary(
+      ::IoBuffer::Summary* summary);
+  ::IoBuffer::Summary* unsafe_arena_release_summary();
+  // @@protoc_insertion_point(class_scope:IoBuffer.appMap)
+ private:
+  class _Internal;
+
+  // helper for ByteSizeLong()
+  ::size_t RequiredFieldsByteSizeFallback() const;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
+    ::IoBuffer::Summary* summary_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_IoBuffer_2eproto;
+};// -------------------------------------------------------------------
+
+class uidMap final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:IoBuffer.uidMap) */ {
+ public:
+  inline uidMap() : uidMap(nullptr) {}
+  ~uidMap() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR uidMap(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  uidMap(const uidMap& from);
+  uidMap(uidMap&& from) noexcept
+    : uidMap() {
+    *this = ::std::move(from);
+  }
+
+  inline uidMap& operator=(const uidMap& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline uidMap& operator=(uidMap&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const uidMap& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const uidMap* internal_default_instance() {
+    return reinterpret_cast<const uidMap*>(
+               &_uidMap_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    2;
+
+  friend void swap(uidMap& a, uidMap& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(uidMap* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(uidMap* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  uidMap* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<uidMap>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const uidMap& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const uidMap& from) {
+    uidMap::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(uidMap* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "IoBuffer.uidMap";
+  }
+  protected:
+  explicit uidMap(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kSummaryFieldNumber = 2,
+    kUidFieldNumber = 1,
+  };
+  // required .IoBuffer.Summary summary = 2;
+  bool has_summary() const;
+  void clear_summary() ;
+  const ::IoBuffer::Summary& summary() const;
+  PROTOBUF_NODISCARD ::IoBuffer::Summary* release_summary();
+  ::IoBuffer::Summary* mutable_summary();
+  void set_allocated_summary(::IoBuffer::Summary* summary);
+  private:
+  const ::IoBuffer::Summary& _internal_summary() const;
+  ::IoBuffer::Summary* _internal_mutable_summary();
+  public:
+  void unsafe_arena_set_allocated_summary(
+      ::IoBuffer::Summary* summary);
+  ::IoBuffer::Summary* unsafe_arena_release_summary();
+  // required uint64 uid = 1;
+  bool has_uid() const;
+  void clear_uid() ;
+  ::uint64_t uid() const;
+  void set_uid(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_uid() const;
+  void _internal_set_uid(::uint64_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:IoBuffer.uidMap)
+ private:
+  class _Internal;
+
+  // helper for ByteSizeLong()
+  ::size_t RequiredFieldsByteSizeFallback() const;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::IoBuffer::Summary* summary_;
+    ::uint64_t uid_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_IoBuffer_2eproto;
+};// -------------------------------------------------------------------
+
+class gidMap final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:IoBuffer.gidMap) */ {
+ public:
+  inline gidMap() : gidMap(nullptr) {}
+  ~gidMap() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR gidMap(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  gidMap(const gidMap& from);
+  gidMap(gidMap&& from) noexcept
+    : gidMap() {
+    *this = ::std::move(from);
+  }
+
+  inline gidMap& operator=(const gidMap& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline gidMap& operator=(gidMap&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const gidMap& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const gidMap* internal_default_instance() {
+    return reinterpret_cast<const gidMap*>(
+               &_gidMap_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(gidMap& a, gidMap& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(gidMap* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(gidMap* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  gidMap* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<gidMap>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const gidMap& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const gidMap& from) {
+    gidMap::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(gidMap* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "IoBuffer.gidMap";
+  }
+  protected:
+  explicit gidMap(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kSummaryFieldNumber = 2,
+    kGidFieldNumber = 1,
+  };
+  // required .IoBuffer.Summary summary = 2;
+  bool has_summary() const;
+  void clear_summary() ;
+  const ::IoBuffer::Summary& summary() const;
+  PROTOBUF_NODISCARD ::IoBuffer::Summary* release_summary();
+  ::IoBuffer::Summary* mutable_summary();
+  void set_allocated_summary(::IoBuffer::Summary* summary);
+  private:
+  const ::IoBuffer::Summary& _internal_summary() const;
+  ::IoBuffer::Summary* _internal_mutable_summary();
+  public:
+  void unsafe_arena_set_allocated_summary(
+      ::IoBuffer::Summary* summary);
+  ::IoBuffer::Summary* unsafe_arena_release_summary();
+  // required uint64 gid = 1;
+  bool has_gid() const;
+  void clear_gid() ;
+  ::uint64_t gid() const;
+  void set_gid(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_gid() const;
+  void _internal_set_gid(::uint64_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:IoBuffer.gidMap)
+ private:
+  class _Internal;
+
+  // helper for ByteSizeLong()
+  ::size_t RequiredFieldsByteSizeFallback() const;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::IoBuffer::Summary* summary_;
+    ::uint64_t gid_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_IoBuffer_2eproto;
+};// -------------------------------------------------------------------
+
+class data final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:IoBuffer.data) */ {
+ public:
+  inline data() : data(nullptr) {}
+  ~data() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR data(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  data(const data& from);
+  data(data&& from) noexcept
+    : data() {
+    *this = ::std::move(from);
+  }
+
+  inline data& operator=(const data& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline data& operator=(data&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const data& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const data* internal_default_instance() {
+    return reinterpret_cast<const data*>(
+               &_data_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(data& a, data& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(data* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(data* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  data* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<data>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const data& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const data& from) {
+    data::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(data* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "IoBuffer.data";
+  }
+  protected:
+  explicit data(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kAppsFieldNumber = 1,
+    kUidsFieldNumber = 2,
+    kGidsFieldNumber = 3,
+  };
+  // repeated .IoBuffer.appMap apps = 1;
+  int apps_size() const;
+  private:
+  int _internal_apps_size() const;
+
+  public:
+  void clear_apps() ;
+  ::IoBuffer::appMap* mutable_apps(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::appMap >*
+      mutable_apps();
+  private:
+  const ::IoBuffer::appMap& _internal_apps(int index) const;
+  ::IoBuffer::appMap* _internal_add_apps();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::appMap>& _internal_apps() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::appMap>* _internal_mutable_apps();
+  public:
+  const ::IoBuffer::appMap& apps(int index) const;
+  ::IoBuffer::appMap* add_apps();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::appMap >&
+      apps() const;
+  // repeated .IoBuffer.uidMap uids = 2;
+  int uids_size() const;
+  private:
+  int _internal_uids_size() const;
+
+  public:
+  void clear_uids() ;
+  ::IoBuffer::uidMap* mutable_uids(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::uidMap >*
+      mutable_uids();
+  private:
+  const ::IoBuffer::uidMap& _internal_uids(int index) const;
+  ::IoBuffer::uidMap* _internal_add_uids();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::uidMap>& _internal_uids() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::uidMap>* _internal_mutable_uids();
+  public:
+  const ::IoBuffer::uidMap& uids(int index) const;
+  ::IoBuffer::uidMap* add_uids();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::uidMap >&
+      uids() const;
+  // repeated .IoBuffer.gidMap gids = 3;
+  int gids_size() const;
+  private:
+  int _internal_gids_size() const;
+
+  public:
+  void clear_gids() ;
+  ::IoBuffer::gidMap* mutable_gids(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::gidMap >*
+      mutable_gids();
+  private:
+  const ::IoBuffer::gidMap& _internal_gids(int index) const;
+  ::IoBuffer::gidMap* _internal_add_gids();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::gidMap>& _internal_gids() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::gidMap>* _internal_mutable_gids();
+  public:
+  const ::IoBuffer::gidMap& gids(int index) const;
+  ::IoBuffer::gidMap* add_gids();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::gidMap >&
+      gids() const;
+  // @@protoc_insertion_point(class_scope:IoBuffer.data)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::appMap > apps_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::uidMap > uids_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::gidMap > gids_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_IoBuffer_2eproto;
 };
 
 // ===================================================================
@@ -532,6 +1299,542 @@ inline double Summary::_internal_wiops() const {
 inline void Summary::_internal_set_wiops(double value) {
   _impl_._has_bits_[0] |= 0x00000080u;
   _impl_.wiops_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// appMap
+
+// required string name = 1;
+inline bool appMap::has_name() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline void appMap::clear_name() {
+  _impl_.name_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& appMap::name() const {
+  // @@protoc_insertion_point(field_get:IoBuffer.appMap.name)
+  return _internal_name();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void appMap::set_name(Arg_&& arg,
+                                                     Args_... args) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.name_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:IoBuffer.appMap.name)
+}
+inline std::string* appMap::mutable_name() {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:IoBuffer.appMap.name)
+  return _s;
+}
+inline const std::string& appMap::_internal_name() const {
+  return _impl_.name_.Get();
+}
+inline void appMap::_internal_set_name(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+
+
+  _impl_.name_.Set(value, GetArenaForAllocation());
+}
+inline std::string* appMap::_internal_mutable_name() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.name_.Mutable( GetArenaForAllocation());
+}
+inline std::string* appMap::release_name() {
+  // @@protoc_insertion_point(field_release:IoBuffer.appMap.name)
+  if ((_impl_._has_bits_[0] & 0x00000001u) == 0) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* released = _impl_.name_.Release();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.name_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return released;
+}
+inline void appMap::set_allocated_name(std::string* value) {
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.name_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.name_.IsDefault()) {
+          _impl_.name_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:IoBuffer.appMap.name)
+}
+
+// required .IoBuffer.Summary summary = 2;
+inline bool appMap::has_summary() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.summary_ != nullptr);
+  return value;
+}
+inline void appMap::clear_summary() {
+  if (_impl_.summary_ != nullptr) _impl_.summary_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline const ::IoBuffer::Summary& appMap::_internal_summary() const {
+  const ::IoBuffer::Summary* p = _impl_.summary_;
+  return p != nullptr ? *p : reinterpret_cast<const ::IoBuffer::Summary&>(
+      ::IoBuffer::_Summary_default_instance_);
+}
+inline const ::IoBuffer::Summary& appMap::summary() const {
+  // @@protoc_insertion_point(field_get:IoBuffer.appMap.summary)
+  return _internal_summary();
+}
+inline void appMap::unsafe_arena_set_allocated_summary(
+    ::IoBuffer::Summary* summary) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.summary_);
+  }
+  _impl_.summary_ = summary;
+  if (summary) {
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:IoBuffer.appMap.summary)
+}
+inline ::IoBuffer::Summary* appMap::release_summary() {
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  ::IoBuffer::Summary* temp = _impl_.summary_;
+  _impl_.summary_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::IoBuffer::Summary* appMap::unsafe_arena_release_summary() {
+  // @@protoc_insertion_point(field_release:IoBuffer.appMap.summary)
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  ::IoBuffer::Summary* temp = _impl_.summary_;
+  _impl_.summary_ = nullptr;
+  return temp;
+}
+inline ::IoBuffer::Summary* appMap::_internal_mutable_summary() {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  if (_impl_.summary_ == nullptr) {
+    auto* p = CreateMaybeMessage<::IoBuffer::Summary>(GetArenaForAllocation());
+    _impl_.summary_ = p;
+  }
+  return _impl_.summary_;
+}
+inline ::IoBuffer::Summary* appMap::mutable_summary() {
+  ::IoBuffer::Summary* _msg = _internal_mutable_summary();
+  // @@protoc_insertion_point(field_mutable:IoBuffer.appMap.summary)
+  return _msg;
+}
+inline void appMap::set_allocated_summary(::IoBuffer::Summary* summary) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.summary_;
+  }
+  if (summary) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(summary);
+    if (message_arena != submessage_arena) {
+      summary = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, summary, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  _impl_.summary_ = summary;
+  // @@protoc_insertion_point(field_set_allocated:IoBuffer.appMap.summary)
+}
+
+// -------------------------------------------------------------------
+
+// uidMap
+
+// required uint64 uid = 1;
+inline bool uidMap::has_uid() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline void uidMap::clear_uid() {
+  _impl_.uid_ = ::uint64_t{0u};
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline ::uint64_t uidMap::uid() const {
+  // @@protoc_insertion_point(field_get:IoBuffer.uidMap.uid)
+  return _internal_uid();
+}
+inline void uidMap::set_uid(::uint64_t value) {
+  _internal_set_uid(value);
+  // @@protoc_insertion_point(field_set:IoBuffer.uidMap.uid)
+}
+inline ::uint64_t uidMap::_internal_uid() const {
+  return _impl_.uid_;
+}
+inline void uidMap::_internal_set_uid(::uint64_t value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.uid_ = value;
+}
+
+// required .IoBuffer.Summary summary = 2;
+inline bool uidMap::has_summary() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.summary_ != nullptr);
+  return value;
+}
+inline void uidMap::clear_summary() {
+  if (_impl_.summary_ != nullptr) _impl_.summary_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const ::IoBuffer::Summary& uidMap::_internal_summary() const {
+  const ::IoBuffer::Summary* p = _impl_.summary_;
+  return p != nullptr ? *p : reinterpret_cast<const ::IoBuffer::Summary&>(
+      ::IoBuffer::_Summary_default_instance_);
+}
+inline const ::IoBuffer::Summary& uidMap::summary() const {
+  // @@protoc_insertion_point(field_get:IoBuffer.uidMap.summary)
+  return _internal_summary();
+}
+inline void uidMap::unsafe_arena_set_allocated_summary(
+    ::IoBuffer::Summary* summary) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.summary_);
+  }
+  _impl_.summary_ = summary;
+  if (summary) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:IoBuffer.uidMap.summary)
+}
+inline ::IoBuffer::Summary* uidMap::release_summary() {
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::IoBuffer::Summary* temp = _impl_.summary_;
+  _impl_.summary_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::IoBuffer::Summary* uidMap::unsafe_arena_release_summary() {
+  // @@protoc_insertion_point(field_release:IoBuffer.uidMap.summary)
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::IoBuffer::Summary* temp = _impl_.summary_;
+  _impl_.summary_ = nullptr;
+  return temp;
+}
+inline ::IoBuffer::Summary* uidMap::_internal_mutable_summary() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  if (_impl_.summary_ == nullptr) {
+    auto* p = CreateMaybeMessage<::IoBuffer::Summary>(GetArenaForAllocation());
+    _impl_.summary_ = p;
+  }
+  return _impl_.summary_;
+}
+inline ::IoBuffer::Summary* uidMap::mutable_summary() {
+  ::IoBuffer::Summary* _msg = _internal_mutable_summary();
+  // @@protoc_insertion_point(field_mutable:IoBuffer.uidMap.summary)
+  return _msg;
+}
+inline void uidMap::set_allocated_summary(::IoBuffer::Summary* summary) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.summary_;
+  }
+  if (summary) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(summary);
+    if (message_arena != submessage_arena) {
+      summary = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, summary, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.summary_ = summary;
+  // @@protoc_insertion_point(field_set_allocated:IoBuffer.uidMap.summary)
+}
+
+// -------------------------------------------------------------------
+
+// gidMap
+
+// required uint64 gid = 1;
+inline bool gidMap::has_gid() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline void gidMap::clear_gid() {
+  _impl_.gid_ = ::uint64_t{0u};
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline ::uint64_t gidMap::gid() const {
+  // @@protoc_insertion_point(field_get:IoBuffer.gidMap.gid)
+  return _internal_gid();
+}
+inline void gidMap::set_gid(::uint64_t value) {
+  _internal_set_gid(value);
+  // @@protoc_insertion_point(field_set:IoBuffer.gidMap.gid)
+}
+inline ::uint64_t gidMap::_internal_gid() const {
+  return _impl_.gid_;
+}
+inline void gidMap::_internal_set_gid(::uint64_t value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.gid_ = value;
+}
+
+// required .IoBuffer.Summary summary = 2;
+inline bool gidMap::has_summary() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.summary_ != nullptr);
+  return value;
+}
+inline void gidMap::clear_summary() {
+  if (_impl_.summary_ != nullptr) _impl_.summary_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const ::IoBuffer::Summary& gidMap::_internal_summary() const {
+  const ::IoBuffer::Summary* p = _impl_.summary_;
+  return p != nullptr ? *p : reinterpret_cast<const ::IoBuffer::Summary&>(
+      ::IoBuffer::_Summary_default_instance_);
+}
+inline const ::IoBuffer::Summary& gidMap::summary() const {
+  // @@protoc_insertion_point(field_get:IoBuffer.gidMap.summary)
+  return _internal_summary();
+}
+inline void gidMap::unsafe_arena_set_allocated_summary(
+    ::IoBuffer::Summary* summary) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.summary_);
+  }
+  _impl_.summary_ = summary;
+  if (summary) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:IoBuffer.gidMap.summary)
+}
+inline ::IoBuffer::Summary* gidMap::release_summary() {
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::IoBuffer::Summary* temp = _impl_.summary_;
+  _impl_.summary_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::IoBuffer::Summary* gidMap::unsafe_arena_release_summary() {
+  // @@protoc_insertion_point(field_release:IoBuffer.gidMap.summary)
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::IoBuffer::Summary* temp = _impl_.summary_;
+  _impl_.summary_ = nullptr;
+  return temp;
+}
+inline ::IoBuffer::Summary* gidMap::_internal_mutable_summary() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  if (_impl_.summary_ == nullptr) {
+    auto* p = CreateMaybeMessage<::IoBuffer::Summary>(GetArenaForAllocation());
+    _impl_.summary_ = p;
+  }
+  return _impl_.summary_;
+}
+inline ::IoBuffer::Summary* gidMap::mutable_summary() {
+  ::IoBuffer::Summary* _msg = _internal_mutable_summary();
+  // @@protoc_insertion_point(field_mutable:IoBuffer.gidMap.summary)
+  return _msg;
+}
+inline void gidMap::set_allocated_summary(::IoBuffer::Summary* summary) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.summary_;
+  }
+  if (summary) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(summary);
+    if (message_arena != submessage_arena) {
+      summary = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, summary, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.summary_ = summary;
+  // @@protoc_insertion_point(field_set_allocated:IoBuffer.gidMap.summary)
+}
+
+// -------------------------------------------------------------------
+
+// data
+
+// repeated .IoBuffer.appMap apps = 1;
+inline int data::_internal_apps_size() const {
+  return _impl_.apps_.size();
+}
+inline int data::apps_size() const {
+  return _internal_apps_size();
+}
+inline void data::clear_apps() {
+  _internal_mutable_apps()->Clear();
+}
+inline ::IoBuffer::appMap* data::mutable_apps(int index) {
+  // @@protoc_insertion_point(field_mutable:IoBuffer.data.apps)
+  return _internal_mutable_apps()->Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::appMap >*
+data::mutable_apps() {
+  // @@protoc_insertion_point(field_mutable_list:IoBuffer.data.apps)
+  return _internal_mutable_apps();
+}
+inline const ::IoBuffer::appMap& data::_internal_apps(int index) const {
+  return _internal_apps().Get(index);
+}
+inline const ::IoBuffer::appMap& data::apps(int index) const {
+  // @@protoc_insertion_point(field_get:IoBuffer.data.apps)
+  return _internal_apps(index);
+}
+inline ::IoBuffer::appMap* data::_internal_add_apps() {
+  return _internal_mutable_apps()->Add();
+}
+inline ::IoBuffer::appMap* data::add_apps() {
+  ::IoBuffer::appMap* _add = _internal_add_apps();
+  // @@protoc_insertion_point(field_add:IoBuffer.data.apps)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::appMap >&
+data::apps() const {
+  // @@protoc_insertion_point(field_list:IoBuffer.data.apps)
+  return _internal_apps();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::appMap>&
+data::_internal_apps() const {
+  return _impl_.apps_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::appMap>*
+data::_internal_mutable_apps() {
+  return &_impl_.apps_;
+}
+
+// repeated .IoBuffer.uidMap uids = 2;
+inline int data::_internal_uids_size() const {
+  return _impl_.uids_.size();
+}
+inline int data::uids_size() const {
+  return _internal_uids_size();
+}
+inline void data::clear_uids() {
+  _internal_mutable_uids()->Clear();
+}
+inline ::IoBuffer::uidMap* data::mutable_uids(int index) {
+  // @@protoc_insertion_point(field_mutable:IoBuffer.data.uids)
+  return _internal_mutable_uids()->Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::uidMap >*
+data::mutable_uids() {
+  // @@protoc_insertion_point(field_mutable_list:IoBuffer.data.uids)
+  return _internal_mutable_uids();
+}
+inline const ::IoBuffer::uidMap& data::_internal_uids(int index) const {
+  return _internal_uids().Get(index);
+}
+inline const ::IoBuffer::uidMap& data::uids(int index) const {
+  // @@protoc_insertion_point(field_get:IoBuffer.data.uids)
+  return _internal_uids(index);
+}
+inline ::IoBuffer::uidMap* data::_internal_add_uids() {
+  return _internal_mutable_uids()->Add();
+}
+inline ::IoBuffer::uidMap* data::add_uids() {
+  ::IoBuffer::uidMap* _add = _internal_add_uids();
+  // @@protoc_insertion_point(field_add:IoBuffer.data.uids)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::uidMap >&
+data::uids() const {
+  // @@protoc_insertion_point(field_list:IoBuffer.data.uids)
+  return _internal_uids();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::uidMap>&
+data::_internal_uids() const {
+  return _impl_.uids_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::uidMap>*
+data::_internal_mutable_uids() {
+  return &_impl_.uids_;
+}
+
+// repeated .IoBuffer.gidMap gids = 3;
+inline int data::_internal_gids_size() const {
+  return _impl_.gids_.size();
+}
+inline int data::gids_size() const {
+  return _internal_gids_size();
+}
+inline void data::clear_gids() {
+  _internal_mutable_gids()->Clear();
+}
+inline ::IoBuffer::gidMap* data::mutable_gids(int index) {
+  // @@protoc_insertion_point(field_mutable:IoBuffer.data.gids)
+  return _internal_mutable_gids()->Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::gidMap >*
+data::mutable_gids() {
+  // @@protoc_insertion_point(field_mutable_list:IoBuffer.data.gids)
+  return _internal_mutable_gids();
+}
+inline const ::IoBuffer::gidMap& data::_internal_gids(int index) const {
+  return _internal_gids().Get(index);
+}
+inline const ::IoBuffer::gidMap& data::gids(int index) const {
+  // @@protoc_insertion_point(field_get:IoBuffer.data.gids)
+  return _internal_gids(index);
+}
+inline ::IoBuffer::gidMap* data::_internal_add_gids() {
+  return _internal_mutable_gids()->Add();
+}
+inline ::IoBuffer::gidMap* data::add_gids() {
+  ::IoBuffer::gidMap* _add = _internal_add_gids();
+  // @@protoc_insertion_point(field_add:IoBuffer.data.gids)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::gidMap >&
+data::gids() const {
+  // @@protoc_insertion_point(field_list:IoBuffer.data.gids)
+  return _internal_gids();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::gidMap>&
+data::_internal_gids() const {
+  return _impl_.gids_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::gidMap>*
+data::_internal_mutable_gids() {
+  return &_impl_.gids_;
 }
 
 #ifdef __GNUC__

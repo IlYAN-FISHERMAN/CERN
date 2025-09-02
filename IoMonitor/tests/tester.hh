@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <iostream>
 #include "../include/IoAggregateMap.hh"
+#include <google/protobuf/util/json_util.h>
 
 int testIoStatFillData();
 int testIoStatCleaning();

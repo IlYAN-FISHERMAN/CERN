@@ -91,7 +91,7 @@ int main(int ac, char **av) {
 	// code = testIoStatCopy();
 	// code = testIoMapCopy();
 	// code = testIoAggregateMapCopy();
-	// std::cout << "code: " << code << std::endl;
+	std::cout << "code: " << code << std::endl;
     // ::testing::InitGoogleTest(&ac, av);
     // return RUN_ALL_TESTS();
 }
