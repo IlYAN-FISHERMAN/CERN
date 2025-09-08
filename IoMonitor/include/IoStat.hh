@@ -35,14 +35,14 @@
 #define IOSTAT_NAME "IoStat"
 
 class IoStat {
-	//--------------------------------------------
-	/// Enumerator that allows to keep the context
-	/// of READ or WRITE to avoid duplicate functions
-	//--------------------------------------------
-public: enum class Marks : uint8_t{
-		READ,
-		WRITE
-	};
+		//--------------------------------------------
+		/// Enumerator that allows to keep the context
+		/// of READ or WRITE to avoid duplicate functions
+		//--------------------------------------------
+		public: enum class Marks : uint8_t{
+			READ,
+			WRITE
+		};
 
 	private:
 		//--------------------------------------------

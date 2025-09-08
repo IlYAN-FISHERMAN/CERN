@@ -26,72 +26,75 @@
 int testIoBuffer(){
 	IoAggregateMap map;
 	IoBuffer::data proto;
+	std::vector<IoStatSummary> apps;
+	std::vector<IoStatSummary> uids;
+	std::vector<IoStatSummary> gids;
 	
 	// Add window
 	map.addWindow(3600);
 
 	// set Tracks
 	map.setTrack(3600, "eos");
-	map.setTrack(3600, io::TYPE::UID, 12);
-	map.setTrack(3600, io::TYPE::GID, 11);
+	size_t idU = std::abs(rand() % 100);
+	size_t idG = std::abs(rand() % 100);
+	map.setTrack(3600, io::TYPE::UID, idU);
+	map.setTrack(3600, io::TYPE::GID, idG);
 
-	map.setTrack(3600, "eos");
+	for (size_t win = 0; win < 5; win++){
+		std::cout << "Add summarys[" << (win + 1) << "/" << 5 << "]" << std::endl << std::endl;
+		for (size_t i = 0; i < 10; i++){
+			for (size_t j = (std::abs(rand()) % 100); j < 100; j++){
+				map.addRead(1, "eos", idU, idG, std::abs(rand()) % 10000);
+				map.addRead(1, "mgm", 12, 12, std::abs(rand()) % 10000);
 
-	for (size_t i = 0; i < 11; i++){
-		map.addWrite(1, "eos", 12, 11, std::abs(rand())%10000);
-		map.addWrite(1, "eos", 1, 11, std::abs(rand())%10000);
-		map.addWrite(1, "mgm", 1, 11, std::abs(rand())%10000);
-		map.addWrite(1, "fdf", 12, 1, std::abs(rand())%10000);
-		map.addRead(1, "eos", 12, 11, std::abs(rand())%10000);
-		map.addRead(1, "eos", 1, 11, std::abs(rand())%10000);
-		map.addRead(1, "mgm", 1, 11, std::abs(rand())%10000);
-		map.addRead(1, "fdf", 12, 1, std::abs(rand())%10000);
-		std::cout << "fill sleep" << std::endl;
-		std::this_thread::sleep_for(std::chrono::seconds(1));
+				map.addRead(1, "eos", idU, idG, std::abs(rand()) % 10000);
+				map.addRead(1, "eos", 12, idG, std::abs(rand()) % 10000);
+				map.addRead(1, "eawdos", 133, idG, std::abs(rand()) % 10000);
+			}
+			// std::cout << "\033[F\033[K";
+			std::cout << "\tfill the map[" << (i + 1) << "/" << 10 << "]" << std::endl;
+			std::this_thread::sleep_for(std::chrono::seconds(1));
+		}
+		{
+			auto eos(map.getSummary(3600, "eos"));
+			if (!eos.has_value()){
+				std::cerr << "appName no value" << std::endl;
+				return -1;
+			}
+			apps.push_back(eos.value());
+		}
+		{
+			auto uid(map.getSummary(3600, io::TYPE::UID, idU));
+			if (!uid.has_value()){
+				std::cerr << "uids no value" << std::endl;
+				return -1;
+			}
+			uids.push_back(uid.value());
+		}
+		{
+			auto gid(map.getSummary(3600, io::TYPE::GID, idG));
+			if (!gid.has_value()){
+				std::cerr << "gids no value" << std::endl;
+				return -1;
+			}
+			gids.push_back(gid.value());
+		}
+		// std::cout << "\033[F\033[K";
+		// std::cout << "\033[F\033[K";
+		// std::cout << map << std::endl;
 	}
+	// std::cout << std::endl << "window end: " << iopsTotal / 20 << " iops for eos" << std::endl;
+	// for (auto &it : apps){
+	// 	std::cout << it << std::endl;
+	// }
 
-
-	for (size_t i = 0; i < 2; i++){
-		{
-			IoBuffer::Summary *protoBuf = new IoBuffer::Summary();
-			auto &&eos(map.getSummary(3600, "eos"));
-
-			proto.add_apps();
-			auto *index = proto.mutable_apps(i);
-			index->set_name("eos");
-			if (eos.has_value())
-				index->set_allocated_summary(&eos->Serialize(*protoBuf));
-			else
-				return -1;
-		}
-		{
-			IoBuffer::Summary *protoBuf = new IoBuffer::Summary();
-			auto &&uid(map.getSummary(3600, io::TYPE::UID, 12));
-
-			proto.add_uids();
-			auto *index = proto.mutable_uids(i);
-			index->set_uid(12);
-			if (uid.has_value())
-				index->set_allocated_summary(&uid->Serialize(*protoBuf));
-			else
-				return -1;
-		}
-		{
-			IoBuffer::Summary *protoBuf = new IoBuffer::Summary();
-			auto &&gid(map.getSummary(3600, io::TYPE::GID, 11));
-
-			proto.add_gids();
-			auto *index = proto.mutable_gids(i);
-			index->set_gid(12);
-			if (gid.has_value())
-				index->set_allocated_summary(&gid->Serialize(*protoBuf));
-			else
-				return -1;
-		}
-		std::cout << "proto sleep" << std::endl;
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-	}
 	// std::cout << "DEBUG: "<< proto.DebugString() << std::endl;
+	IoBuffer::Summary protoBuf;
+	proto.mutable_apps()->emplace("eos", IoAggregate::summaryWeighted(apps, 3600)->Serialize(protoBuf));
+	protoBuf.Clear();
+	proto.mutable_uids()->emplace(12, IoAggregate::summaryWeighted(uids, 3600)->Serialize(protoBuf));
+	protoBuf.Clear();
+	proto.mutable_gids()->emplace(11, IoAggregate::summaryWeighted(gids, 3600)->Serialize(protoBuf));
 
 	std::string output;
 	{
@@ -104,17 +107,15 @@ int testIoBuffer(){
 			return -1;
 		std::cout << "JSON:" << std::endl << output << std::endl;
 	}
-	// {
-	// 	IoBuffer::data back;
-	// 	google::protobuf::util::JsonParseOptions options2;
-	// 	auto ite = google::protobuf::util::JsonStringToMessage(output, &back, options2);
-	// 	if (!ite.ok())
-	// 		return -1;
-	// 	std::cout << back.DebugString() << std::endl;
-	//
-	// }
+	{
+		IoBuffer::data back;
+		google::protobuf::util::JsonParseOptions options;
+		auto it = google::protobuf::util::JsonStringToMessage(output, &back, options);
+		if (!it.ok())
+			return -1;
+		// std::cout << "JSON DEBUG:" << std::endl << back.DebugString() << std::endl;
+	}
 
-	std::cout << "end" << std::endl;
 	google::protobuf::ShutdownProtobufLibrary();
 	return 0;
 }

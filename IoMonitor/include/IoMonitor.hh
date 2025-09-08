@@ -133,19 +133,25 @@ struct IoStatSummary {
 	struct timespec io_time;
 
 	//--------------------------------------------
+	// Keep the time of class creation
+	//--------------------------------------------
+	size_t winTime;
+
+	//--------------------------------------------
 	/// Default constructor to initialize the class
 	//--------------------------------------------
 	IoStatSummary() :
 		readBandwidth(std::pair<double, double>(0,0)),
 		writeBandwidth(std::pair<double, double>(0, 0)),
-		rSize(0), wSize(0), rIops(0), wIops(0){
+		rSize(0), wSize(0), rIops(0), wIops(0), winTime(0){
 			clock_gettime(CLOCK_REALTIME, &io_time);
 		}
 
 	IoStatSummary(const IoBuffer::Summary &sum) :
 		readBandwidth({sum.ravrg(), sum.rstd()}),
 		writeBandwidth({sum.wavrg(), sum.wstd()}),
-		rSize(sum.rsize()), wSize(sum.wsize()), rIops(sum.riops()), wIops(sum.wiops()){
+		rSize(sum.rsize()), wSize(sum.wsize()), rIops(sum.riops()), wIops(sum.wiops()),
+		winTime(sum.wintime()){
 			clock_gettime(CLOCK_REALTIME, &io_time);
 		}
 
@@ -162,6 +168,7 @@ struct IoStatSummary {
 		sum.set_wsize(wSize);
 		sum.set_riops(rIops);
 		sum.set_wiops(wIops);
+		sum.set_wintime(winTime);
 
 		return sum;
 	};

@@ -412,13 +412,13 @@ class IoMap {
 						/// Get read bandwidth and size
 						readData.insert({it.second->bandWidth(IoStat::Marks::READ, &size, seconds), size});
 						summary.rSize += size;
-						summary.rIops += it.second->getIOPS(IoStat::Marks::READ, seconds) * size;
+						summary.rIops += it.second->getIOPS(IoStat::Marks::READ, seconds);
 						size = 0;
 
 						/// Get write bandwidth and size
 						writeData.insert({it.second->bandWidth(IoStat::Marks::WRITE, &size, seconds), size});
 						summary.wSize += size;
-						summary.wIops += it.second->getIOPS(IoStat::Marks::WRITE, seconds) * size;
+						summary.wIops += it.second->getIOPS(IoStat::Marks::WRITE, seconds);
 						size = 0;
 					}
 				}
@@ -443,10 +443,10 @@ class IoMap {
 				summary.writeBandwidth = calculeWeighted(writeData);
 
 			/// Calcule read/write IOPS
-			if (summary.rSize > 0)
-				summary.rIops /= summary.rSize;
-			if (summary.wSize > 0)
-				summary.wIops /= summary.wSize;
+			// if (summary.rSize > 0)
+			// 	summary.rIops /= summary.rSize;
+			// if (summary.wSize > 0)
+			// 	summary.wIops /= summary.wSize;
 
 			if (io::IoMapDebug)
 				printInfo(std::cout, "GetSummary succeeded");
@@ -493,13 +493,14 @@ class IoMap {
 				std::string id(index);
 				for (auto it : _filesMap){
 					if (it.second->getApp() == id){
-						/// Get read bandwidth and size
+						/// Get read bandwidth/IOPS and size
 						readData.insert({it.second->bandWidth(IoStat::Marks::READ, &size, seconds), size});
 						summary.rSize += size;
 						summary.rIops += it.second->getIOPS(IoStat::Marks::READ, seconds) * size;
+						std::cout << "Iops: " << it.second->getIOPS(IoStat::Marks::READ, seconds) << std::endl;
 						size = 0;
 
-						/// Get write bandwidth and size
+						/// Get write bandwidth/IOPS and size
 						writeData.insert({it.second->bandWidth(IoStat::Marks::WRITE, &size, seconds), size});
 						summary.wSize += size;
 						summary.wIops += it.second->getIOPS(IoStat::Marks::WRITE, seconds) * size;

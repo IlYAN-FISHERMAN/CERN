@@ -73,7 +73,6 @@ int main(int ac, char **av) {
 	(void)av;
 	(void)code;
 	
-	// std::cout << "test\n";
 	// code = testIoStatExactValue();
 	// code = testIoStatIOPS();
 
@@ -85,12 +84,13 @@ int main(int ac, char **av) {
 
 	// code = testIoAggregateMapWindow();
 	// code = testIoAggregateMap();
-	code = testIoBuffer();
-	// code = testIoAggregateMapInteract();
 	// code = testInteractiveIoMap();
 	// code = testIoStatCopy();
 	// code = testIoMapCopy();
 	// code = testIoAggregateMapCopy();
+	// code = testIoStatIOPS();
+	// code = testIoAggregateMapInteract();
+	code = testIoBuffer();
 	std::cout << "code: " << code << std::endl;
     // ::testing::InitGoogleTest(&ac, av);
     // return RUN_ALL_TESTS();

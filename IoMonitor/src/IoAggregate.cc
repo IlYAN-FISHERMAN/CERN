@@ -136,7 +136,7 @@ int IoAggregate::shiftWindow(const size_t index){
 /// Condenses a vector of IoStatSummary
 /// into a single one
 //--------------------------------------------
-std::optional<IoStatSummary> IoAggregate::summaryWeighted(const std::vector<IoStatSummary> &summarys){
+std::optional<IoStatSummary> IoAggregate::summaryWeighted(const std::vector<IoStatSummary> &summarys, size_t winTime){
 	size_t rDivisor = 0;
 	size_t wDivisor = 0;
 	IoStatSummary weighted;
@@ -199,6 +199,7 @@ std::optional<IoStatSummary> IoAggregate::summaryWeighted(const std::vector<IoSt
 	if (weighted.wSize == 0)
 		weighted.writeBandwidth = std::nullopt;
 
+	weighted.winTime = winTime;
 	return weighted;
 }
 

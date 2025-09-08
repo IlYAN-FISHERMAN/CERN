@@ -127,7 +127,6 @@ int fillDataInteract(T &map){
 	for (size_t i = 0; i < nbrOfLoop; i++){
 		uid = std::abs(rand() % 100);
 		gid = std::abs(rand() % 100);
-		std::cout << "std::abs(rand()) % maxByte: " << std::abs(rand()) % maxByte << std::endl;
 		for (size_t j = (std::abs(rand()) % maxInteraction); j < maxInteraction; j++){
 			if (!rw)
 				map.addRead(fileId, appName, uid, gid, std::abs(rand()) % maxByte);

@@ -175,7 +175,7 @@ class IoAggregate{
 		/// or the summary is completely empty else
 		/// a IoStatSummary
 		//--------------------------------------------
-		static std::optional<IoStatSummary> summaryWeighted(const std::vector<IoStatSummary> &summarys);
+		static std::optional<IoStatSummary> summaryWeighted(const std::vector<IoStatSummary> &summarys, size_t winTime = 0);
 
 		//--------------------------------------------
 		/// Get current index

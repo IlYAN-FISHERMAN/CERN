@@ -30,6 +30,9 @@
 #include "google/protobuf/message.h"
 #include "google/protobuf/repeated_field.h"  // IWYU pragma: export
 #include "google/protobuf/extension_set.h"  // IWYU pragma: export
+#include "google/protobuf/map.h"  // IWYU pragma: export
+#include "google/protobuf/map_entry.h"
+#include "google/protobuf/map_field_inl.h"
 #include "google/protobuf/unknown_field_set.h"
 // @@protoc_insertion_point(includes)
 
@@ -54,30 +57,30 @@ namespace IoBuffer {
 class Summary;
 struct SummaryDefaultTypeInternal;
 extern SummaryDefaultTypeInternal _Summary_default_instance_;
-class appMap;
-struct appMapDefaultTypeInternal;
-extern appMapDefaultTypeInternal _appMap_default_instance_;
 class data;
 struct dataDefaultTypeInternal;
 extern dataDefaultTypeInternal _data_default_instance_;
-class gidMap;
-struct gidMapDefaultTypeInternal;
-extern gidMapDefaultTypeInternal _gidMap_default_instance_;
-class uidMap;
-struct uidMapDefaultTypeInternal;
-extern uidMapDefaultTypeInternal _uidMap_default_instance_;
+class data_AppsEntry_DoNotUse;
+struct data_AppsEntry_DoNotUseDefaultTypeInternal;
+extern data_AppsEntry_DoNotUseDefaultTypeInternal _data_AppsEntry_DoNotUse_default_instance_;
+class data_GidsEntry_DoNotUse;
+struct data_GidsEntry_DoNotUseDefaultTypeInternal;
+extern data_GidsEntry_DoNotUseDefaultTypeInternal _data_GidsEntry_DoNotUse_default_instance_;
+class data_UidsEntry_DoNotUse;
+struct data_UidsEntry_DoNotUseDefaultTypeInternal;
+extern data_UidsEntry_DoNotUseDefaultTypeInternal _data_UidsEntry_DoNotUse_default_instance_;
 }  // namespace IoBuffer
 PROTOBUF_NAMESPACE_OPEN
 template <>
 ::IoBuffer::Summary* Arena::CreateMaybeMessage<::IoBuffer::Summary>(Arena*);
 template <>
-::IoBuffer::appMap* Arena::CreateMaybeMessage<::IoBuffer::appMap>(Arena*);
-template <>
 ::IoBuffer::data* Arena::CreateMaybeMessage<::IoBuffer::data>(Arena*);
 template <>
-::IoBuffer::gidMap* Arena::CreateMaybeMessage<::IoBuffer::gidMap>(Arena*);
+::IoBuffer::data_AppsEntry_DoNotUse* Arena::CreateMaybeMessage<::IoBuffer::data_AppsEntry_DoNotUse>(Arena*);
 template <>
-::IoBuffer::uidMap* Arena::CreateMaybeMessage<::IoBuffer::uidMap>(Arena*);
+::IoBuffer::data_GidsEntry_DoNotUse* Arena::CreateMaybeMessage<::IoBuffer::data_GidsEntry_DoNotUse>(Arena*);
+template <>
+::IoBuffer::data_UidsEntry_DoNotUse* Arena::CreateMaybeMessage<::IoBuffer::data_UidsEntry_DoNotUse>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 
 namespace IoBuffer {
@@ -216,13 +219,14 @@ class Summary final :
 
   enum : int {
     kRAvrgFieldNumber = 1,
-    kRstdFieldNumber = 2,
+    kRStdFieldNumber = 2,
     kWAvrgFieldNumber = 3,
-    kWstdFieldNumber = 4,
+    kWStdFieldNumber = 4,
     kRSizeFieldNumber = 5,
     kWSizeFieldNumber = 6,
     kRIopsFieldNumber = 7,
     kWIopsFieldNumber = 8,
+    kWinTimeFieldNumber = 9,
   };
   // optional uint32 rAvrg = 1;
   bool has_ravrg() const;
@@ -235,7 +239,7 @@ class Summary final :
   void _internal_set_ravrg(::uint32_t value);
 
   public:
-  // optional uint32 rstd = 2;
+  // optional uint32 rStd = 2;
   bool has_rstd() const;
   void clear_rstd() ;
   ::uint32_t rstd() const;
@@ -257,7 +261,7 @@ class Summary final :
   void _internal_set_wavrg(::uint32_t value);
 
   public:
-  // optional uint32 wstd = 4;
+  // optional uint32 wStd = 4;
   bool has_wstd() const;
   void clear_wstd() ;
   ::uint32_t wstd() const;
@@ -268,8 +272,7 @@ class Summary final :
   void _internal_set_wstd(::uint32_t value);
 
   public:
-  // required uint32 rSize = 5;
-  bool has_rsize() const;
+  // uint32 rSize = 5;
   void clear_rsize() ;
   ::uint32_t rsize() const;
   void set_rsize(::uint32_t value);
@@ -279,8 +282,7 @@ class Summary final :
   void _internal_set_rsize(::uint32_t value);
 
   public:
-  // required uint32 wSize = 6;
-  bool has_wsize() const;
+  // uint32 wSize = 6;
   void clear_wsize() ;
   ::uint32_t wsize() const;
   void set_wsize(::uint32_t value);
@@ -290,8 +292,7 @@ class Summary final :
   void _internal_set_wsize(::uint32_t value);
 
   public:
-  // required double rIops = 7;
-  bool has_riops() const;
+  // double rIops = 7;
   void clear_riops() ;
   double riops() const;
   void set_riops(double value);
@@ -301,8 +302,7 @@ class Summary final :
   void _internal_set_riops(double value);
 
   public:
-  // required double wIops = 8;
-  bool has_wiops() const;
+  // double wIops = 8;
   void clear_wiops() ;
   double wiops() const;
   void set_wiops(double value);
@@ -312,12 +312,20 @@ class Summary final :
   void _internal_set_wiops(double value);
 
   public:
+  // optional uint64 winTime = 9;
+  bool has_wintime() const;
+  void clear_wintime() ;
+  ::uint64_t wintime() const;
+  void set_wintime(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_wintime() const;
+  void _internal_set_wintime(::uint64_t value);
+
+  public:
   // @@protoc_insertion_point(class_scope:IoBuffer.Summary)
  private:
   class _Internal;
-
-  // helper for ByteSizeLong()
-  ::size_t RequiredFieldsByteSizeFallback() const;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
@@ -333,548 +341,85 @@ class Summary final :
     ::uint32_t wsize_;
     double riops_;
     double wiops_;
+    ::uint64_t wintime_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_IoBuffer_2eproto;
 };// -------------------------------------------------------------------
 
-class appMap final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:IoBuffer.appMap) */ {
- public:
-  inline appMap() : appMap(nullptr) {}
-  ~appMap() override;
-  template<typename = void>
-  explicit PROTOBUF_CONSTEXPR appMap(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  appMap(const appMap& from);
-  appMap(appMap&& from) noexcept
-    : appMap() {
-    *this = ::std::move(from);
-  }
-
-  inline appMap& operator=(const appMap& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline appMap& operator=(appMap&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
-  }
-  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const appMap& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const appMap* internal_default_instance() {
-    return reinterpret_cast<const appMap*>(
-               &_appMap_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    1;
-
-  friend void swap(appMap& a, appMap& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(appMap* other) {
-    if (other == this) return;
-  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() != nullptr &&
-        GetOwningArena() == other->GetOwningArena()) {
-   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() == other->GetOwningArena()) {
-  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(appMap* other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  appMap* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<appMap>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const appMap& from);
+class data_AppsEntry_DoNotUse final : public ::PROTOBUF_NAMESPACE_ID::internal::MapEntry<data_AppsEntry_DoNotUse, 
+    std::string, ::IoBuffer::Summary,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_STRING,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_MESSAGE> {
+public:
+  typedef ::PROTOBUF_NAMESPACE_ID::internal::MapEntry<data_AppsEntry_DoNotUse, 
+    std::string, ::IoBuffer::Summary,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_STRING,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_MESSAGE> SuperType;
+  data_AppsEntry_DoNotUse();
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR data_AppsEntry_DoNotUse(
+      ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  explicit data_AppsEntry_DoNotUse(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void MergeFrom(const data_AppsEntry_DoNotUse& other);
+  static const data_AppsEntry_DoNotUse* internal_default_instance() { return reinterpret_cast<const data_AppsEntry_DoNotUse*>(&_data_AppsEntry_DoNotUse_default_instance_); }
+  static bool ValidateKey(std::string* s) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(s->data(), static_cast<int>(s->size()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::PARSE, "IoBuffer.data.AppsEntry.key");
+ }
+  static bool ValidateValue(void*) { return true; }
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const appMap& from) {
-    appMap::MergeImpl(*this, from);
-  }
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  ::size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(appMap* other);
-
-  private:
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::absl::string_view FullMessageName() {
-    return "IoBuffer.appMap";
-  }
-  protected:
-  explicit appMap(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
   ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kNameFieldNumber = 1,
-    kSummaryFieldNumber = 2,
-  };
-  // required string name = 1;
-  bool has_name() const;
-  void clear_name() ;
-  const std::string& name() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_name(Arg_&& arg, Args_... args);
-  std::string* mutable_name();
-  PROTOBUF_NODISCARD std::string* release_name();
-  void set_allocated_name(std::string* ptr);
-
-  private:
-  const std::string& _internal_name() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(
-      const std::string& value);
-  std::string* _internal_mutable_name();
-
-  public:
-  // required .IoBuffer.Summary summary = 2;
-  bool has_summary() const;
-  void clear_summary() ;
-  const ::IoBuffer::Summary& summary() const;
-  PROTOBUF_NODISCARD ::IoBuffer::Summary* release_summary();
-  ::IoBuffer::Summary* mutable_summary();
-  void set_allocated_summary(::IoBuffer::Summary* summary);
-  private:
-  const ::IoBuffer::Summary& _internal_summary() const;
-  ::IoBuffer::Summary* _internal_mutable_summary();
-  public:
-  void unsafe_arena_set_allocated_summary(
-      ::IoBuffer::Summary* summary);
-  ::IoBuffer::Summary* unsafe_arena_release_summary();
-  // @@protoc_insertion_point(class_scope:IoBuffer.appMap)
- private:
-  class _Internal;
-
-  // helper for ByteSizeLong()
-  ::size_t RequiredFieldsByteSizeFallback() const;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
-    ::IoBuffer::Summary* summary_;
-  };
-  union { Impl_ _impl_; };
   friend struct ::TableStruct_IoBuffer_2eproto;
-};// -------------------------------------------------------------------
+};
+// -------------------------------------------------------------------
 
-class uidMap final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:IoBuffer.uidMap) */ {
- public:
-  inline uidMap() : uidMap(nullptr) {}
-  ~uidMap() override;
-  template<typename = void>
-  explicit PROTOBUF_CONSTEXPR uidMap(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  uidMap(const uidMap& from);
-  uidMap(uidMap&& from) noexcept
-    : uidMap() {
-    *this = ::std::move(from);
-  }
-
-  inline uidMap& operator=(const uidMap& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline uidMap& operator=(uidMap&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
-  }
-  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const uidMap& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const uidMap* internal_default_instance() {
-    return reinterpret_cast<const uidMap*>(
-               &_uidMap_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    2;
-
-  friend void swap(uidMap& a, uidMap& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(uidMap* other) {
-    if (other == this) return;
-  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() != nullptr &&
-        GetOwningArena() == other->GetOwningArena()) {
-   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() == other->GetOwningArena()) {
-  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(uidMap* other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  uidMap* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<uidMap>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const uidMap& from);
+class data_UidsEntry_DoNotUse final : public ::PROTOBUF_NAMESPACE_ID::internal::MapEntry<data_UidsEntry_DoNotUse, 
+    ::uint64_t, ::IoBuffer::Summary,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_UINT64,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_MESSAGE> {
+public:
+  typedef ::PROTOBUF_NAMESPACE_ID::internal::MapEntry<data_UidsEntry_DoNotUse, 
+    ::uint64_t, ::IoBuffer::Summary,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_UINT64,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_MESSAGE> SuperType;
+  data_UidsEntry_DoNotUse();
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR data_UidsEntry_DoNotUse(
+      ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  explicit data_UidsEntry_DoNotUse(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void MergeFrom(const data_UidsEntry_DoNotUse& other);
+  static const data_UidsEntry_DoNotUse* internal_default_instance() { return reinterpret_cast<const data_UidsEntry_DoNotUse*>(&_data_UidsEntry_DoNotUse_default_instance_); }
+  static bool ValidateKey(void*) { return true; }
+  static bool ValidateValue(void*) { return true; }
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const uidMap& from) {
-    uidMap::MergeImpl(*this, from);
-  }
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  ::size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(uidMap* other);
-
-  private:
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::absl::string_view FullMessageName() {
-    return "IoBuffer.uidMap";
-  }
-  protected:
-  explicit uidMap(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
   ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kSummaryFieldNumber = 2,
-    kUidFieldNumber = 1,
-  };
-  // required .IoBuffer.Summary summary = 2;
-  bool has_summary() const;
-  void clear_summary() ;
-  const ::IoBuffer::Summary& summary() const;
-  PROTOBUF_NODISCARD ::IoBuffer::Summary* release_summary();
-  ::IoBuffer::Summary* mutable_summary();
-  void set_allocated_summary(::IoBuffer::Summary* summary);
-  private:
-  const ::IoBuffer::Summary& _internal_summary() const;
-  ::IoBuffer::Summary* _internal_mutable_summary();
-  public:
-  void unsafe_arena_set_allocated_summary(
-      ::IoBuffer::Summary* summary);
-  ::IoBuffer::Summary* unsafe_arena_release_summary();
-  // required uint64 uid = 1;
-  bool has_uid() const;
-  void clear_uid() ;
-  ::uint64_t uid() const;
-  void set_uid(::uint64_t value);
-
-  private:
-  ::uint64_t _internal_uid() const;
-  void _internal_set_uid(::uint64_t value);
-
-  public:
-  // @@protoc_insertion_point(class_scope:IoBuffer.uidMap)
- private:
-  class _Internal;
-
-  // helper for ByteSizeLong()
-  ::size_t RequiredFieldsByteSizeFallback() const;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-    ::IoBuffer::Summary* summary_;
-    ::uint64_t uid_;
-  };
-  union { Impl_ _impl_; };
   friend struct ::TableStruct_IoBuffer_2eproto;
-};// -------------------------------------------------------------------
+};
+// -------------------------------------------------------------------
 
-class gidMap final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:IoBuffer.gidMap) */ {
- public:
-  inline gidMap() : gidMap(nullptr) {}
-  ~gidMap() override;
-  template<typename = void>
-  explicit PROTOBUF_CONSTEXPR gidMap(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  gidMap(const gidMap& from);
-  gidMap(gidMap&& from) noexcept
-    : gidMap() {
-    *this = ::std::move(from);
-  }
-
-  inline gidMap& operator=(const gidMap& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline gidMap& operator=(gidMap&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
-  }
-  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const gidMap& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const gidMap* internal_default_instance() {
-    return reinterpret_cast<const gidMap*>(
-               &_gidMap_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    3;
-
-  friend void swap(gidMap& a, gidMap& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(gidMap* other) {
-    if (other == this) return;
-  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() != nullptr &&
-        GetOwningArena() == other->GetOwningArena()) {
-   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() == other->GetOwningArena()) {
-  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(gidMap* other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  gidMap* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<gidMap>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const gidMap& from);
+class data_GidsEntry_DoNotUse final : public ::PROTOBUF_NAMESPACE_ID::internal::MapEntry<data_GidsEntry_DoNotUse, 
+    ::uint64_t, ::IoBuffer::Summary,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_UINT64,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_MESSAGE> {
+public:
+  typedef ::PROTOBUF_NAMESPACE_ID::internal::MapEntry<data_GidsEntry_DoNotUse, 
+    ::uint64_t, ::IoBuffer::Summary,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_UINT64,
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_MESSAGE> SuperType;
+  data_GidsEntry_DoNotUse();
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR data_GidsEntry_DoNotUse(
+      ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  explicit data_GidsEntry_DoNotUse(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void MergeFrom(const data_GidsEntry_DoNotUse& other);
+  static const data_GidsEntry_DoNotUse* internal_default_instance() { return reinterpret_cast<const data_GidsEntry_DoNotUse*>(&_data_GidsEntry_DoNotUse_default_instance_); }
+  static bool ValidateKey(void*) { return true; }
+  static bool ValidateValue(void*) { return true; }
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const gidMap& from) {
-    gidMap::MergeImpl(*this, from);
-  }
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  ::size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(gidMap* other);
-
-  private:
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::absl::string_view FullMessageName() {
-    return "IoBuffer.gidMap";
-  }
-  protected:
-  explicit gidMap(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
   ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kSummaryFieldNumber = 2,
-    kGidFieldNumber = 1,
-  };
-  // required .IoBuffer.Summary summary = 2;
-  bool has_summary() const;
-  void clear_summary() ;
-  const ::IoBuffer::Summary& summary() const;
-  PROTOBUF_NODISCARD ::IoBuffer::Summary* release_summary();
-  ::IoBuffer::Summary* mutable_summary();
-  void set_allocated_summary(::IoBuffer::Summary* summary);
-  private:
-  const ::IoBuffer::Summary& _internal_summary() const;
-  ::IoBuffer::Summary* _internal_mutable_summary();
-  public:
-  void unsafe_arena_set_allocated_summary(
-      ::IoBuffer::Summary* summary);
-  ::IoBuffer::Summary* unsafe_arena_release_summary();
-  // required uint64 gid = 1;
-  bool has_gid() const;
-  void clear_gid() ;
-  ::uint64_t gid() const;
-  void set_gid(::uint64_t value);
-
-  private:
-  ::uint64_t _internal_gid() const;
-  void _internal_set_gid(::uint64_t value);
-
-  public:
-  // @@protoc_insertion_point(class_scope:IoBuffer.gidMap)
- private:
-  class _Internal;
-
-  // helper for ByteSizeLong()
-  ::size_t RequiredFieldsByteSizeFallback() const;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-    ::IoBuffer::Summary* summary_;
-    ::uint64_t gid_;
-  };
-  union { Impl_ _impl_; };
   friend struct ::TableStruct_IoBuffer_2eproto;
-};// -------------------------------------------------------------------
+};
+// -------------------------------------------------------------------
 
 class data final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:IoBuffer.data) */ {
@@ -1001,6 +546,7 @@ class data final :
 
   // nested types ----------------------------------------------------
 
+
   // accessors -------------------------------------------------------
 
   enum : int {
@@ -1008,66 +554,57 @@ class data final :
     kUidsFieldNumber = 2,
     kGidsFieldNumber = 3,
   };
-  // repeated .IoBuffer.appMap apps = 1;
+  // map<string, .IoBuffer.Summary> apps = 1;
   int apps_size() const;
   private:
   int _internal_apps_size() const;
 
   public:
   void clear_apps() ;
-  ::IoBuffer::appMap* mutable_apps(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::appMap >*
-      mutable_apps();
   private:
-  const ::IoBuffer::appMap& _internal_apps(int index) const;
-  ::IoBuffer::appMap* _internal_add_apps();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::appMap>& _internal_apps() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::appMap>* _internal_mutable_apps();
+  const ::PROTOBUF_NAMESPACE_ID::Map< std::string, ::IoBuffer::Summary >&
+      _internal_apps() const;
+  ::PROTOBUF_NAMESPACE_ID::Map< std::string, ::IoBuffer::Summary >*
+      _internal_mutable_apps();
   public:
-  const ::IoBuffer::appMap& apps(int index) const;
-  ::IoBuffer::appMap* add_apps();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::appMap >&
+  const ::PROTOBUF_NAMESPACE_ID::Map< std::string, ::IoBuffer::Summary >&
       apps() const;
-  // repeated .IoBuffer.uidMap uids = 2;
+  ::PROTOBUF_NAMESPACE_ID::Map< std::string, ::IoBuffer::Summary >*
+      mutable_apps();
+  // map<uint64, .IoBuffer.Summary> uids = 2;
   int uids_size() const;
   private:
   int _internal_uids_size() const;
 
   public:
   void clear_uids() ;
-  ::IoBuffer::uidMap* mutable_uids(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::uidMap >*
-      mutable_uids();
   private:
-  const ::IoBuffer::uidMap& _internal_uids(int index) const;
-  ::IoBuffer::uidMap* _internal_add_uids();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::uidMap>& _internal_uids() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::uidMap>* _internal_mutable_uids();
+  const ::PROTOBUF_NAMESPACE_ID::Map< ::uint64_t, ::IoBuffer::Summary >&
+      _internal_uids() const;
+  ::PROTOBUF_NAMESPACE_ID::Map< ::uint64_t, ::IoBuffer::Summary >*
+      _internal_mutable_uids();
   public:
-  const ::IoBuffer::uidMap& uids(int index) const;
-  ::IoBuffer::uidMap* add_uids();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::uidMap >&
+  const ::PROTOBUF_NAMESPACE_ID::Map< ::uint64_t, ::IoBuffer::Summary >&
       uids() const;
-  // repeated .IoBuffer.gidMap gids = 3;
+  ::PROTOBUF_NAMESPACE_ID::Map< ::uint64_t, ::IoBuffer::Summary >*
+      mutable_uids();
+  // map<uint64, .IoBuffer.Summary> gids = 3;
   int gids_size() const;
   private:
   int _internal_gids_size() const;
 
   public:
   void clear_gids() ;
-  ::IoBuffer::gidMap* mutable_gids(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::gidMap >*
-      mutable_gids();
   private:
-  const ::IoBuffer::gidMap& _internal_gids(int index) const;
-  ::IoBuffer::gidMap* _internal_add_gids();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::gidMap>& _internal_gids() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::gidMap>* _internal_mutable_gids();
+  const ::PROTOBUF_NAMESPACE_ID::Map< ::uint64_t, ::IoBuffer::Summary >&
+      _internal_gids() const;
+  ::PROTOBUF_NAMESPACE_ID::Map< ::uint64_t, ::IoBuffer::Summary >*
+      _internal_mutable_gids();
   public:
-  const ::IoBuffer::gidMap& gids(int index) const;
-  ::IoBuffer::gidMap* add_gids();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::gidMap >&
+  const ::PROTOBUF_NAMESPACE_ID::Map< ::uint64_t, ::IoBuffer::Summary >&
       gids() const;
+  ::PROTOBUF_NAMESPACE_ID::Map< ::uint64_t, ::IoBuffer::Summary >*
+      mutable_gids();
   // @@protoc_insertion_point(class_scope:IoBuffer.data)
  private:
   class _Internal;
@@ -1076,9 +613,21 @@ class data final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::appMap > apps_;
-    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::uidMap > uids_;
-    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::gidMap > gids_;
+    ::PROTOBUF_NAMESPACE_ID::internal::MapField<
+        data_AppsEntry_DoNotUse,
+        std::string, ::IoBuffer::Summary,
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_STRING,
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_MESSAGE> apps_;
+    ::PROTOBUF_NAMESPACE_ID::internal::MapField<
+        data_UidsEntry_DoNotUse,
+        ::uint64_t, ::IoBuffer::Summary,
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_UINT64,
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_MESSAGE> uids_;
+    ::PROTOBUF_NAMESPACE_ID::internal::MapField<
+        data_GidsEntry_DoNotUse,
+        ::uint64_t, ::IoBuffer::Summary,
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_UINT64,
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_MESSAGE> gids_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1126,7 +675,7 @@ inline void Summary::_internal_set_ravrg(::uint32_t value) {
   _impl_.ravrg_ = value;
 }
 
-// optional uint32 rstd = 2;
+// optional uint32 rStd = 2;
 inline bool Summary::has_rstd() const {
   bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
   return value;
@@ -1136,12 +685,12 @@ inline void Summary::clear_rstd() {
   _impl_._has_bits_[0] &= ~0x00000002u;
 }
 inline ::uint32_t Summary::rstd() const {
-  // @@protoc_insertion_point(field_get:IoBuffer.Summary.rstd)
+  // @@protoc_insertion_point(field_get:IoBuffer.Summary.rStd)
   return _internal_rstd();
 }
 inline void Summary::set_rstd(::uint32_t value) {
   _internal_set_rstd(value);
-  // @@protoc_insertion_point(field_set:IoBuffer.Summary.rstd)
+  // @@protoc_insertion_point(field_set:IoBuffer.Summary.rStd)
 }
 inline ::uint32_t Summary::_internal_rstd() const {
   return _impl_.rstd_;
@@ -1176,7 +725,7 @@ inline void Summary::_internal_set_wavrg(::uint32_t value) {
   _impl_.wavrg_ = value;
 }
 
-// optional uint32 wstd = 4;
+// optional uint32 wStd = 4;
 inline bool Summary::has_wstd() const {
   bool value = (_impl_._has_bits_[0] & 0x00000008u) != 0;
   return value;
@@ -1186,12 +735,12 @@ inline void Summary::clear_wstd() {
   _impl_._has_bits_[0] &= ~0x00000008u;
 }
 inline ::uint32_t Summary::wstd() const {
-  // @@protoc_insertion_point(field_get:IoBuffer.Summary.wstd)
+  // @@protoc_insertion_point(field_get:IoBuffer.Summary.wStd)
   return _internal_wstd();
 }
 inline void Summary::set_wstd(::uint32_t value) {
   _internal_set_wstd(value);
-  // @@protoc_insertion_point(field_set:IoBuffer.Summary.wstd)
+  // @@protoc_insertion_point(field_set:IoBuffer.Summary.wStd)
 }
 inline ::uint32_t Summary::_internal_wstd() const {
   return _impl_.wstd_;
@@ -1201,14 +750,9 @@ inline void Summary::_internal_set_wstd(::uint32_t value) {
   _impl_.wstd_ = value;
 }
 
-// required uint32 rSize = 5;
-inline bool Summary::has_rsize() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000010u) != 0;
-  return value;
-}
+// uint32 rSize = 5;
 inline void Summary::clear_rsize() {
   _impl_.rsize_ = 0u;
-  _impl_._has_bits_[0] &= ~0x00000010u;
 }
 inline ::uint32_t Summary::rsize() const {
   // @@protoc_insertion_point(field_get:IoBuffer.Summary.rSize)
@@ -1222,18 +766,13 @@ inline ::uint32_t Summary::_internal_rsize() const {
   return _impl_.rsize_;
 }
 inline void Summary::_internal_set_rsize(::uint32_t value) {
-  _impl_._has_bits_[0] |= 0x00000010u;
+  ;
   _impl_.rsize_ = value;
 }
 
-// required uint32 wSize = 6;
-inline bool Summary::has_wsize() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000020u) != 0;
-  return value;
-}
+// uint32 wSize = 6;
 inline void Summary::clear_wsize() {
   _impl_.wsize_ = 0u;
-  _impl_._has_bits_[0] &= ~0x00000020u;
 }
 inline ::uint32_t Summary::wsize() const {
   // @@protoc_insertion_point(field_get:IoBuffer.Summary.wSize)
@@ -1247,18 +786,13 @@ inline ::uint32_t Summary::_internal_wsize() const {
   return _impl_.wsize_;
 }
 inline void Summary::_internal_set_wsize(::uint32_t value) {
-  _impl_._has_bits_[0] |= 0x00000020u;
+  ;
   _impl_.wsize_ = value;
 }
 
-// required double rIops = 7;
-inline bool Summary::has_riops() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000040u) != 0;
-  return value;
-}
+// double rIops = 7;
 inline void Summary::clear_riops() {
   _impl_.riops_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000040u;
 }
 inline double Summary::riops() const {
   // @@protoc_insertion_point(field_get:IoBuffer.Summary.rIops)
@@ -1272,18 +806,13 @@ inline double Summary::_internal_riops() const {
   return _impl_.riops_;
 }
 inline void Summary::_internal_set_riops(double value) {
-  _impl_._has_bits_[0] |= 0x00000040u;
+  ;
   _impl_.riops_ = value;
 }
 
-// required double wIops = 8;
-inline bool Summary::has_wiops() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000080u) != 0;
-  return value;
-}
+// double wIops = 8;
 inline void Summary::clear_wiops() {
   _impl_.wiops_ = 0;
-  _impl_._has_bits_[0] &= ~0x00000080u;
 }
 inline double Summary::wiops() const {
   // @@protoc_insertion_point(field_get:IoBuffer.Summary.wIops)
@@ -1297,403 +826,46 @@ inline double Summary::_internal_wiops() const {
   return _impl_.wiops_;
 }
 inline void Summary::_internal_set_wiops(double value) {
-  _impl_._has_bits_[0] |= 0x00000080u;
+  ;
   _impl_.wiops_ = value;
 }
 
-// -------------------------------------------------------------------
-
-// appMap
-
-// required string name = 1;
-inline bool appMap::has_name() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+// optional uint64 winTime = 9;
+inline bool Summary::has_wintime() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000010u) != 0;
   return value;
 }
-inline void appMap::clear_name() {
-  _impl_.name_.ClearToEmpty();
-  _impl_._has_bits_[0] &= ~0x00000001u;
+inline void Summary::clear_wintime() {
+  _impl_.wintime_ = ::uint64_t{0u};
+  _impl_._has_bits_[0] &= ~0x00000010u;
 }
-inline const std::string& appMap::name() const {
-  // @@protoc_insertion_point(field_get:IoBuffer.appMap.name)
-  return _internal_name();
+inline ::uint64_t Summary::wintime() const {
+  // @@protoc_insertion_point(field_get:IoBuffer.Summary.winTime)
+  return _internal_wintime();
 }
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void appMap::set_name(Arg_&& arg,
-                                                     Args_... args) {
-  _impl_._has_bits_[0] |= 0x00000001u;
-  _impl_.name_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:IoBuffer.appMap.name)
+inline void Summary::set_wintime(::uint64_t value) {
+  _internal_set_wintime(value);
+  // @@protoc_insertion_point(field_set:IoBuffer.Summary.winTime)
 }
-inline std::string* appMap::mutable_name() {
-  std::string* _s = _internal_mutable_name();
-  // @@protoc_insertion_point(field_mutable:IoBuffer.appMap.name)
-  return _s;
+inline ::uint64_t Summary::_internal_wintime() const {
+  return _impl_.wintime_;
 }
-inline const std::string& appMap::_internal_name() const {
-  return _impl_.name_.Get();
-}
-inline void appMap::_internal_set_name(const std::string& value) {
-  _impl_._has_bits_[0] |= 0x00000001u;
-
-
-  _impl_.name_.Set(value, GetArenaForAllocation());
-}
-inline std::string* appMap::_internal_mutable_name() {
-  _impl_._has_bits_[0] |= 0x00000001u;
-  return _impl_.name_.Mutable( GetArenaForAllocation());
-}
-inline std::string* appMap::release_name() {
-  // @@protoc_insertion_point(field_release:IoBuffer.appMap.name)
-  if ((_impl_._has_bits_[0] & 0x00000001u) == 0) {
-    return nullptr;
-  }
-  _impl_._has_bits_[0] &= ~0x00000001u;
-  auto* released = _impl_.name_.Release();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  _impl_.name_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  return released;
-}
-inline void appMap::set_allocated_name(std::string* value) {
-  if (value != nullptr) {
-    _impl_._has_bits_[0] |= 0x00000001u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000001u;
-  }
-  _impl_.name_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.name_.IsDefault()) {
-          _impl_.name_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:IoBuffer.appMap.name)
-}
-
-// required .IoBuffer.Summary summary = 2;
-inline bool appMap::has_summary() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
-  PROTOBUF_ASSUME(!value || _impl_.summary_ != nullptr);
-  return value;
-}
-inline void appMap::clear_summary() {
-  if (_impl_.summary_ != nullptr) _impl_.summary_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000002u;
-}
-inline const ::IoBuffer::Summary& appMap::_internal_summary() const {
-  const ::IoBuffer::Summary* p = _impl_.summary_;
-  return p != nullptr ? *p : reinterpret_cast<const ::IoBuffer::Summary&>(
-      ::IoBuffer::_Summary_default_instance_);
-}
-inline const ::IoBuffer::Summary& appMap::summary() const {
-  // @@protoc_insertion_point(field_get:IoBuffer.appMap.summary)
-  return _internal_summary();
-}
-inline void appMap::unsafe_arena_set_allocated_summary(
-    ::IoBuffer::Summary* summary) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.summary_);
-  }
-  _impl_.summary_ = summary;
-  if (summary) {
-    _impl_._has_bits_[0] |= 0x00000002u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000002u;
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:IoBuffer.appMap.summary)
-}
-inline ::IoBuffer::Summary* appMap::release_summary() {
-  _impl_._has_bits_[0] &= ~0x00000002u;
-  ::IoBuffer::Summary* temp = _impl_.summary_;
-  _impl_.summary_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
-}
-inline ::IoBuffer::Summary* appMap::unsafe_arena_release_summary() {
-  // @@protoc_insertion_point(field_release:IoBuffer.appMap.summary)
-  _impl_._has_bits_[0] &= ~0x00000002u;
-  ::IoBuffer::Summary* temp = _impl_.summary_;
-  _impl_.summary_ = nullptr;
-  return temp;
-}
-inline ::IoBuffer::Summary* appMap::_internal_mutable_summary() {
-  _impl_._has_bits_[0] |= 0x00000002u;
-  if (_impl_.summary_ == nullptr) {
-    auto* p = CreateMaybeMessage<::IoBuffer::Summary>(GetArenaForAllocation());
-    _impl_.summary_ = p;
-  }
-  return _impl_.summary_;
-}
-inline ::IoBuffer::Summary* appMap::mutable_summary() {
-  ::IoBuffer::Summary* _msg = _internal_mutable_summary();
-  // @@protoc_insertion_point(field_mutable:IoBuffer.appMap.summary)
-  return _msg;
-}
-inline void appMap::set_allocated_summary(::IoBuffer::Summary* summary) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete _impl_.summary_;
-  }
-  if (summary) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(summary);
-    if (message_arena != submessage_arena) {
-      summary = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, summary, submessage_arena);
-    }
-    _impl_._has_bits_[0] |= 0x00000002u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000002u;
-  }
-  _impl_.summary_ = summary;
-  // @@protoc_insertion_point(field_set_allocated:IoBuffer.appMap.summary)
+inline void Summary::_internal_set_wintime(::uint64_t value) {
+  _impl_._has_bits_[0] |= 0x00000010u;
+  _impl_.wintime_ = value;
 }
 
 // -------------------------------------------------------------------
 
-// uidMap
-
-// required uint64 uid = 1;
-inline bool uidMap::has_uid() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
-  return value;
-}
-inline void uidMap::clear_uid() {
-  _impl_.uid_ = ::uint64_t{0u};
-  _impl_._has_bits_[0] &= ~0x00000002u;
-}
-inline ::uint64_t uidMap::uid() const {
-  // @@protoc_insertion_point(field_get:IoBuffer.uidMap.uid)
-  return _internal_uid();
-}
-inline void uidMap::set_uid(::uint64_t value) {
-  _internal_set_uid(value);
-  // @@protoc_insertion_point(field_set:IoBuffer.uidMap.uid)
-}
-inline ::uint64_t uidMap::_internal_uid() const {
-  return _impl_.uid_;
-}
-inline void uidMap::_internal_set_uid(::uint64_t value) {
-  _impl_._has_bits_[0] |= 0x00000002u;
-  _impl_.uid_ = value;
-}
-
-// required .IoBuffer.Summary summary = 2;
-inline bool uidMap::has_summary() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
-  PROTOBUF_ASSUME(!value || _impl_.summary_ != nullptr);
-  return value;
-}
-inline void uidMap::clear_summary() {
-  if (_impl_.summary_ != nullptr) _impl_.summary_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000001u;
-}
-inline const ::IoBuffer::Summary& uidMap::_internal_summary() const {
-  const ::IoBuffer::Summary* p = _impl_.summary_;
-  return p != nullptr ? *p : reinterpret_cast<const ::IoBuffer::Summary&>(
-      ::IoBuffer::_Summary_default_instance_);
-}
-inline const ::IoBuffer::Summary& uidMap::summary() const {
-  // @@protoc_insertion_point(field_get:IoBuffer.uidMap.summary)
-  return _internal_summary();
-}
-inline void uidMap::unsafe_arena_set_allocated_summary(
-    ::IoBuffer::Summary* summary) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.summary_);
-  }
-  _impl_.summary_ = summary;
-  if (summary) {
-    _impl_._has_bits_[0] |= 0x00000001u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000001u;
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:IoBuffer.uidMap.summary)
-}
-inline ::IoBuffer::Summary* uidMap::release_summary() {
-  _impl_._has_bits_[0] &= ~0x00000001u;
-  ::IoBuffer::Summary* temp = _impl_.summary_;
-  _impl_.summary_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
-}
-inline ::IoBuffer::Summary* uidMap::unsafe_arena_release_summary() {
-  // @@protoc_insertion_point(field_release:IoBuffer.uidMap.summary)
-  _impl_._has_bits_[0] &= ~0x00000001u;
-  ::IoBuffer::Summary* temp = _impl_.summary_;
-  _impl_.summary_ = nullptr;
-  return temp;
-}
-inline ::IoBuffer::Summary* uidMap::_internal_mutable_summary() {
-  _impl_._has_bits_[0] |= 0x00000001u;
-  if (_impl_.summary_ == nullptr) {
-    auto* p = CreateMaybeMessage<::IoBuffer::Summary>(GetArenaForAllocation());
-    _impl_.summary_ = p;
-  }
-  return _impl_.summary_;
-}
-inline ::IoBuffer::Summary* uidMap::mutable_summary() {
-  ::IoBuffer::Summary* _msg = _internal_mutable_summary();
-  // @@protoc_insertion_point(field_mutable:IoBuffer.uidMap.summary)
-  return _msg;
-}
-inline void uidMap::set_allocated_summary(::IoBuffer::Summary* summary) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete _impl_.summary_;
-  }
-  if (summary) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(summary);
-    if (message_arena != submessage_arena) {
-      summary = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, summary, submessage_arena);
-    }
-    _impl_._has_bits_[0] |= 0x00000001u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000001u;
-  }
-  _impl_.summary_ = summary;
-  // @@protoc_insertion_point(field_set_allocated:IoBuffer.uidMap.summary)
-}
-
 // -------------------------------------------------------------------
 
-// gidMap
-
-// required uint64 gid = 1;
-inline bool gidMap::has_gid() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
-  return value;
-}
-inline void gidMap::clear_gid() {
-  _impl_.gid_ = ::uint64_t{0u};
-  _impl_._has_bits_[0] &= ~0x00000002u;
-}
-inline ::uint64_t gidMap::gid() const {
-  // @@protoc_insertion_point(field_get:IoBuffer.gidMap.gid)
-  return _internal_gid();
-}
-inline void gidMap::set_gid(::uint64_t value) {
-  _internal_set_gid(value);
-  // @@protoc_insertion_point(field_set:IoBuffer.gidMap.gid)
-}
-inline ::uint64_t gidMap::_internal_gid() const {
-  return _impl_.gid_;
-}
-inline void gidMap::_internal_set_gid(::uint64_t value) {
-  _impl_._has_bits_[0] |= 0x00000002u;
-  _impl_.gid_ = value;
-}
-
-// required .IoBuffer.Summary summary = 2;
-inline bool gidMap::has_summary() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
-  PROTOBUF_ASSUME(!value || _impl_.summary_ != nullptr);
-  return value;
-}
-inline void gidMap::clear_summary() {
-  if (_impl_.summary_ != nullptr) _impl_.summary_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000001u;
-}
-inline const ::IoBuffer::Summary& gidMap::_internal_summary() const {
-  const ::IoBuffer::Summary* p = _impl_.summary_;
-  return p != nullptr ? *p : reinterpret_cast<const ::IoBuffer::Summary&>(
-      ::IoBuffer::_Summary_default_instance_);
-}
-inline const ::IoBuffer::Summary& gidMap::summary() const {
-  // @@protoc_insertion_point(field_get:IoBuffer.gidMap.summary)
-  return _internal_summary();
-}
-inline void gidMap::unsafe_arena_set_allocated_summary(
-    ::IoBuffer::Summary* summary) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.summary_);
-  }
-  _impl_.summary_ = summary;
-  if (summary) {
-    _impl_._has_bits_[0] |= 0x00000001u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000001u;
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:IoBuffer.gidMap.summary)
-}
-inline ::IoBuffer::Summary* gidMap::release_summary() {
-  _impl_._has_bits_[0] &= ~0x00000001u;
-  ::IoBuffer::Summary* temp = _impl_.summary_;
-  _impl_.summary_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
-}
-inline ::IoBuffer::Summary* gidMap::unsafe_arena_release_summary() {
-  // @@protoc_insertion_point(field_release:IoBuffer.gidMap.summary)
-  _impl_._has_bits_[0] &= ~0x00000001u;
-  ::IoBuffer::Summary* temp = _impl_.summary_;
-  _impl_.summary_ = nullptr;
-  return temp;
-}
-inline ::IoBuffer::Summary* gidMap::_internal_mutable_summary() {
-  _impl_._has_bits_[0] |= 0x00000001u;
-  if (_impl_.summary_ == nullptr) {
-    auto* p = CreateMaybeMessage<::IoBuffer::Summary>(GetArenaForAllocation());
-    _impl_.summary_ = p;
-  }
-  return _impl_.summary_;
-}
-inline ::IoBuffer::Summary* gidMap::mutable_summary() {
-  ::IoBuffer::Summary* _msg = _internal_mutable_summary();
-  // @@protoc_insertion_point(field_mutable:IoBuffer.gidMap.summary)
-  return _msg;
-}
-inline void gidMap::set_allocated_summary(::IoBuffer::Summary* summary) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete _impl_.summary_;
-  }
-  if (summary) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(summary);
-    if (message_arena != submessage_arena) {
-      summary = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, summary, submessage_arena);
-    }
-    _impl_._has_bits_[0] |= 0x00000001u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000001u;
-  }
-  _impl_.summary_ = summary;
-  // @@protoc_insertion_point(field_set_allocated:IoBuffer.gidMap.summary)
-}
+// -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
 
 // data
 
-// repeated .IoBuffer.appMap apps = 1;
+// map<string, .IoBuffer.Summary> apps = 1;
 inline int data::_internal_apps_size() const {
   return _impl_.apps_.size();
 }
@@ -1701,47 +873,28 @@ inline int data::apps_size() const {
   return _internal_apps_size();
 }
 inline void data::clear_apps() {
-  _internal_mutable_apps()->Clear();
+  _impl_.apps_.Clear();
 }
-inline ::IoBuffer::appMap* data::mutable_apps(int index) {
-  // @@protoc_insertion_point(field_mutable:IoBuffer.data.apps)
-  return _internal_mutable_apps()->Mutable(index);
+inline const ::PROTOBUF_NAMESPACE_ID::Map< std::string, ::IoBuffer::Summary >&
+data::_internal_apps() const {
+  return _impl_.apps_.GetMap();
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::appMap >*
-data::mutable_apps() {
-  // @@protoc_insertion_point(field_mutable_list:IoBuffer.data.apps)
-  return _internal_mutable_apps();
-}
-inline const ::IoBuffer::appMap& data::_internal_apps(int index) const {
-  return _internal_apps().Get(index);
-}
-inline const ::IoBuffer::appMap& data::apps(int index) const {
-  // @@protoc_insertion_point(field_get:IoBuffer.data.apps)
-  return _internal_apps(index);
-}
-inline ::IoBuffer::appMap* data::_internal_add_apps() {
-  return _internal_mutable_apps()->Add();
-}
-inline ::IoBuffer::appMap* data::add_apps() {
-  ::IoBuffer::appMap* _add = _internal_add_apps();
-  // @@protoc_insertion_point(field_add:IoBuffer.data.apps)
-  return _add;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::appMap >&
+inline const ::PROTOBUF_NAMESPACE_ID::Map< std::string, ::IoBuffer::Summary >&
 data::apps() const {
-  // @@protoc_insertion_point(field_list:IoBuffer.data.apps)
+  // @@protoc_insertion_point(field_map:IoBuffer.data.apps)
   return _internal_apps();
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::appMap>&
-data::_internal_apps() const {
-  return _impl_.apps_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::appMap>*
+inline ::PROTOBUF_NAMESPACE_ID::Map< std::string, ::IoBuffer::Summary >*
 data::_internal_mutable_apps() {
-  return &_impl_.apps_;
+  return _impl_.apps_.MutableMap();
+}
+inline ::PROTOBUF_NAMESPACE_ID::Map< std::string, ::IoBuffer::Summary >*
+data::mutable_apps() {
+  // @@protoc_insertion_point(field_mutable_map:IoBuffer.data.apps)
+  return _internal_mutable_apps();
 }
 
-// repeated .IoBuffer.uidMap uids = 2;
+// map<uint64, .IoBuffer.Summary> uids = 2;
 inline int data::_internal_uids_size() const {
   return _impl_.uids_.size();
 }
@@ -1749,47 +902,28 @@ inline int data::uids_size() const {
   return _internal_uids_size();
 }
 inline void data::clear_uids() {
-  _internal_mutable_uids()->Clear();
+  _impl_.uids_.Clear();
 }
-inline ::IoBuffer::uidMap* data::mutable_uids(int index) {
-  // @@protoc_insertion_point(field_mutable:IoBuffer.data.uids)
-  return _internal_mutable_uids()->Mutable(index);
+inline const ::PROTOBUF_NAMESPACE_ID::Map< ::uint64_t, ::IoBuffer::Summary >&
+data::_internal_uids() const {
+  return _impl_.uids_.GetMap();
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::uidMap >*
-data::mutable_uids() {
-  // @@protoc_insertion_point(field_mutable_list:IoBuffer.data.uids)
-  return _internal_mutable_uids();
-}
-inline const ::IoBuffer::uidMap& data::_internal_uids(int index) const {
-  return _internal_uids().Get(index);
-}
-inline const ::IoBuffer::uidMap& data::uids(int index) const {
-  // @@protoc_insertion_point(field_get:IoBuffer.data.uids)
-  return _internal_uids(index);
-}
-inline ::IoBuffer::uidMap* data::_internal_add_uids() {
-  return _internal_mutable_uids()->Add();
-}
-inline ::IoBuffer::uidMap* data::add_uids() {
-  ::IoBuffer::uidMap* _add = _internal_add_uids();
-  // @@protoc_insertion_point(field_add:IoBuffer.data.uids)
-  return _add;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::uidMap >&
+inline const ::PROTOBUF_NAMESPACE_ID::Map< ::uint64_t, ::IoBuffer::Summary >&
 data::uids() const {
-  // @@protoc_insertion_point(field_list:IoBuffer.data.uids)
+  // @@protoc_insertion_point(field_map:IoBuffer.data.uids)
   return _internal_uids();
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::uidMap>&
-data::_internal_uids() const {
-  return _impl_.uids_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::uidMap>*
+inline ::PROTOBUF_NAMESPACE_ID::Map< ::uint64_t, ::IoBuffer::Summary >*
 data::_internal_mutable_uids() {
-  return &_impl_.uids_;
+  return _impl_.uids_.MutableMap();
+}
+inline ::PROTOBUF_NAMESPACE_ID::Map< ::uint64_t, ::IoBuffer::Summary >*
+data::mutable_uids() {
+  // @@protoc_insertion_point(field_mutable_map:IoBuffer.data.uids)
+  return _internal_mutable_uids();
 }
 
-// repeated .IoBuffer.gidMap gids = 3;
+// map<uint64, .IoBuffer.Summary> gids = 3;
 inline int data::_internal_gids_size() const {
   return _impl_.gids_.size();
 }
@@ -1797,44 +931,25 @@ inline int data::gids_size() const {
   return _internal_gids_size();
 }
 inline void data::clear_gids() {
-  _internal_mutable_gids()->Clear();
+  _impl_.gids_.Clear();
 }
-inline ::IoBuffer::gidMap* data::mutable_gids(int index) {
-  // @@protoc_insertion_point(field_mutable:IoBuffer.data.gids)
-  return _internal_mutable_gids()->Mutable(index);
+inline const ::PROTOBUF_NAMESPACE_ID::Map< ::uint64_t, ::IoBuffer::Summary >&
+data::_internal_gids() const {
+  return _impl_.gids_.GetMap();
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::gidMap >*
-data::mutable_gids() {
-  // @@protoc_insertion_point(field_mutable_list:IoBuffer.data.gids)
-  return _internal_mutable_gids();
-}
-inline const ::IoBuffer::gidMap& data::_internal_gids(int index) const {
-  return _internal_gids().Get(index);
-}
-inline const ::IoBuffer::gidMap& data::gids(int index) const {
-  // @@protoc_insertion_point(field_get:IoBuffer.data.gids)
-  return _internal_gids(index);
-}
-inline ::IoBuffer::gidMap* data::_internal_add_gids() {
-  return _internal_mutable_gids()->Add();
-}
-inline ::IoBuffer::gidMap* data::add_gids() {
-  ::IoBuffer::gidMap* _add = _internal_add_gids();
-  // @@protoc_insertion_point(field_add:IoBuffer.data.gids)
-  return _add;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::IoBuffer::gidMap >&
+inline const ::PROTOBUF_NAMESPACE_ID::Map< ::uint64_t, ::IoBuffer::Summary >&
 data::gids() const {
-  // @@protoc_insertion_point(field_list:IoBuffer.data.gids)
+  // @@protoc_insertion_point(field_map:IoBuffer.data.gids)
   return _internal_gids();
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::gidMap>&
-data::_internal_gids() const {
-  return _impl_.gids_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::IoBuffer::gidMap>*
+inline ::PROTOBUF_NAMESPACE_ID::Map< ::uint64_t, ::IoBuffer::Summary >*
 data::_internal_mutable_gids() {
-  return &_impl_.gids_;
+  return _impl_.gids_.MutableMap();
+}
+inline ::PROTOBUF_NAMESPACE_ID::Map< ::uint64_t, ::IoBuffer::Summary >*
+data::mutable_gids() {
+  // @@protoc_insertion_point(field_mutable_map:IoBuffer.data.gids)
+  return _internal_mutable_gids();
 }
 
 #ifdef __GNUC__
