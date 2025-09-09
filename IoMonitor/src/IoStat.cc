@@ -38,7 +38,7 @@ const char* getCurrentTime(){
 //--------------------------------------------
 /// Main constructor
 //--------------------------------------------
-IoStat::IoStat(uint64_t fileId, const std::string& app, uid_t uid, gid_t gid) :
+IoStat::IoStat(uint64_t fileId, std::string app, uid_t uid, gid_t gid) :
 	_fileId(fileId), _app(app), _uid(uid), _gid(gid){
 }
 

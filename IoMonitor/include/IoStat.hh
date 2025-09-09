@@ -51,10 +51,10 @@ class IoStat {
 		/// of the app it came from, the user ID and
 		/// the group ID
 		//--------------------------------------------
-		uint64_t _fileId;
-		std::string _app;
-		uid_t _uid;
-		gid_t _gid;
+		uint64_t	_fileId;
+		std::string	_app;
+		uid_t		_uid;
+		gid_t		_gid;
 
 		//--------------------------------------------
 		/// Read deque that keeps track all of read
@@ -103,7 +103,7 @@ class IoStat {
 		/// @param	uid		Id of the user
 		/// @param	gid		Id of the group
 		//--------------------------------------------
-		IoStat(uint64_t fileId, const std::string& app, uid_t uid, gid_t gid);
+		IoStat(uint64_t fileId, std::string app, uid_t uid, gid_t gid);
 
 		//--------------------------------------------
 		/// @brief Add bytes to the corresponding Read/Write deque

@@ -64,7 +64,7 @@ TEST(IoAggregateMap, exactValue) {
 /// Only for debugging, interaction mode with command line
 // TEST(IoMap, testWithInteraction) {
 // 	EXPECT_EQ(testIoAggregateMapInteract(), 0);
-// }
+// 
 
 int main(int ac, char **av) {
 	srand(static_cast<unsigned int>(time(NULL)));
@@ -89,9 +89,10 @@ int main(int ac, char **av) {
 	// code = testIoMapCopy();
 	// code = testIoAggregateMapCopy();
 	// code = testIoStatIOPS();
-	// code = testIoAggregateMapInteract();
-	code = testIoBuffer();
+	code = testIoAggregateMapInteract();
+	// code = testIoBuffer();
 	std::cout << "code: " << code << std::endl;
+	google::protobuf::ShutdownProtobufLibrary();
     // ::testing::InitGoogleTest(&ac, av);
     // return RUN_ALL_TESTS();
 }

@@ -248,24 +248,26 @@ static void printUsage(){
 
 	std::cout << "COMMANDS" << std::endl;
 	std::cout << "  add [window], \t\t\t\tadd a window to the map" << std::endl;
-	std::cout << "  set [window][track][...], \t\t\tset track to a window, multiple track can be set" << std::endl;
+	std::cout << "  set [window][tracks][...], \t\t\tset track to a window, multiple track can be set" << std::endl;
 	std::cout << "  r [fileId][appName][uid][gid][bytes], \tadd a read input to the map" << std::endl;
 	std::cout << "  w [fileId][appName][uid][gid][bytes], \tadd a write input to the map" << std::endl;
 	std::cout << "  m, \t\t\t\t\t\tprint the IoAggregate map" << std::endl;
 	std::cout << "  p [window][track], \t\t\t\tprint the summary of a track" << std::endl;
 	std::cout << "  fill, \t\t\t\t\tfill the map with I/O" << std::endl;
+	std::cout << "  s [index], \t\t\t\t\tshift the window to the next Bin, or to the index given as a parametre" << std::endl;
 	std::cout << "  c, \t\t\t\t\t\tclear the terminal" << std::endl;
 	std::cout << "  exit, \t\t\t\t\texit monitor" << std::endl;
 	std::cout << std::endl;
 
 	std::cout << "OPTIONS" << std::endl;
-	std::cout << "  window, \tsize_t number" << std::endl;
-	std::cout << "  track, \ttrack can be a appName/uid/gid, if it's a uid/gid you have to specify it" << std::endl;
-	std::cout << "  fileId, \tsize_t number" << std::endl;
-	std::cout << "  appName, \tstring" << std::endl;
-	std::cout << "  uid, \t\tuid_t number" << std::endl;
-	std::cout << "  gid, \t\tgid_t number" << std::endl;
-	std::cout << "  bytes, \tsize_t number" << std::endl;
+	std::cout << "  window, \t\tsize_t number" << std::endl;
+	std::cout << "  track, \t\ttrack can be a appName/uid/gid, if it's a uid/gid you have to specify it" << std::endl;
+	std::cout << "  fileId, \t\tsize_t number" << std::endl;
+	std::cout << "  appName, \t\tstring" << std::endl;
+	std::cout << "  uid, \t\t\tuid_t number" << std::endl;
+	std::cout << "  gid, \t\t\tgid_t number" << std::endl;
+	std::cout << "  bytes, \t\tsize_t number" << std::endl;
+	std::cout << "  index, \t\tindex of the Bin you want to go" << std::endl;
 	std::cout << std::endl;
 
 	std::cout << "EXEMPLE" << std::endl;
@@ -285,13 +287,14 @@ static void printUsage(){
 	std::cout << std::endl;
 }
 
-int setTrack(IoAggregateMap &map, std::stringstream &stream){
+int setTrack(IoAggregateMap &map, std::stringstream &stream, std::mutex &mutex){
 	int code = 0;
 	size_t winTime = 0;
 	size_t uid = 0;
 	size_t gid = 0;
 	std::string cmd;
 
+	std::lock_guard<std::mutex> lock(mutex);
 	if (stream >> winTime){
 		while (stream >> cmd){
 			if (cmd == "uid"){
@@ -323,11 +326,12 @@ int setTrack(IoAggregateMap &map, std::stringstream &stream){
 	return 0;
 }
 
-int addWindow(IoAggregateMap &map, std::stringstream &stream){
+int addWindow(IoAggregateMap &map, std::stringstream &stream, std::mutex & mutex){
 	char *tmp = NULL;
 	long winTime = 0;
 	std::string cmd;
 
+	std::lock_guard<std::mutex> lock(mutex);
 	while (stream >> cmd){
 		winTime = std::strtol(cmd.c_str(), &tmp, 10);
 		if (!*tmp){
@@ -341,13 +345,14 @@ int addWindow(IoAggregateMap &map, std::stringstream &stream){
 	return 0;
 }
 
-int printSums(IoAggregateMap &map, std::stringstream &stream){
+int printSums(IoAggregateMap &map, std::stringstream &stream, std::mutex & mutex){
 	size_t winTime = 0;
 	std::string cmd;
 	int code = 0;
 	size_t uid = 0;
 	size_t gid = 0;
 
+	std::lock_guard<std::mutex> lock(mutex);
 	while (true){
 		if (stream >> winTime >> cmd){
 			if (cmd == "uid" && stream >> uid)
@@ -370,13 +375,16 @@ int printSums(IoAggregateMap &map, std::stringstream &stream){
 
 int testIoAggregateMapInteract(){
 	IoAggregateMap map;
+	std::mutex mutex;
 
 	while(true){
 		std::string input;
 		std::cout << "[IoMonitor]-> ";
 		std::getline(std::cin, input);
-		if (input == "m")
+		if (input == "m"){
+			std::lock_guard<std::mutex> lock(mutex);
 			std::cout << map << std::endl;
+		}
 		else if (input == "c")
 			std::cout << "\033c";
 		else if (input == "exit"){
@@ -392,13 +400,13 @@ int testIoAggregateMapInteract(){
 				gid_t gid = 0;
 				size_t bytes = 0;
 				if (cmd == "set"){
-					if (!setTrack(map, stream))
+					if (!setTrack(map, stream, mutex))
 						std::cout << "track successfully set" << std::endl;
 					else
 						std::cout << "track set failed" << std::endl;
 				}
 				else if (cmd == "add"){
-					if (!addWindow(map, stream))
+					if (!addWindow(map, stream, mutex))
 						std::cout << "window successfully set" << std::endl;
 					else
 						std::cout << "window set failed" << std::endl;
@@ -407,6 +415,7 @@ int testIoAggregateMapInteract(){
 					int fileId = 0;
 					std::string appName;
 					if (stream >> fileId >> appName >> uid >> gid >> bytes){
+						std::lock_guard<std::mutex> lock(mutex);
 						map.addRead(fileId, appName, uid, gid, bytes);
 						std::cout << "add read succeed" << std::endl;
 					}
@@ -417,6 +426,7 @@ int testIoAggregateMapInteract(){
 					int fileId = 0;
 					std::string appName;
 					if (stream >> fileId >> appName >> uid >> gid >> bytes){
+						std::lock_guard<std::mutex> lock(mutex);
 						map.addWrite(fileId, appName, uid, gid, bytes);
 						std::cout << "add write succeed" << std::endl;
 					}
@@ -424,7 +434,7 @@ int testIoAggregateMapInteract(){
 						std::cout << "add write failed" << std::endl;
 				}
 				else if (cmd == "p"){
-					if (!printSums(map, stream))
+					if (!printSums(map, stream, mutex))
 						std::cout << "print Summary succeed" << std::endl;
 					else
 						std::cout << "print Summary failed" << std::endl;
@@ -433,6 +443,7 @@ int testIoAggregateMapInteract(){
 					long index = 0;
 					if (stream >> winTime){
 						if (stream >> index){
+							std::lock_guard<std::mutex> lock(mutex);
 							index = map.shiftWindow(winTime, index);
 							if (index == -1)
 								std::cout << "shift window " << winTime << " failed" << std::endl;
@@ -440,6 +451,7 @@ int testIoAggregateMapInteract(){
 								std::cout << "shift window " << winTime << " at " << index << std::endl;
 						}
 						else{
+							std::lock_guard<std::mutex> lock(mutex);
 							index = map.shiftWindow(winTime);
 							if (index == -1)
 								std::cout << "shift window " << winTime << " failed" << std::endl;
@@ -452,7 +464,7 @@ int testIoAggregateMapInteract(){
 					if (stream >> cmd)
 						std::cout << "Monitor: command not found: " << input << std::endl;
 					else{
-						if (!fillDataInteract(map))
+						if (!fillDataInteract(map, mutex))
 							std::cout << "fill map succeed" << std::endl;
 						else
 							std::cout << "fill map failed" << std::endl;

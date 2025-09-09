@@ -50,8 +50,9 @@ void print(IoMap *map){
 	}
 }
 
-void fill(IoMap &map){
+void fill(IoMap &map, std::mutex &mutex){
 	std::string input;
+
 	while (true){
 		std::cout << "fill with interaction? [y/n]: ";
 		std::getline(std::cin, input);
@@ -62,7 +63,7 @@ void fill(IoMap &map){
 			std::cout << "fill data succeed" << std::endl;
 		}
 		else if (input == "y"){
-			if (!fillDataInteract(map))
+			if (!fillDataInteract(map, mutex))
 				std::cout << "fill data interact succeed" << std::endl;
 			else
 				std::cout << "fill data interact failed" << std::endl;
@@ -99,7 +100,7 @@ static void printUsage(){
 	std::cout << std::endl;
 }
 
-int execCmd(std::string &input, IoMap *map, bool &isMultiT){
+int execCmd(std::string &input, IoMap *map, bool &isMultiT, std::mutex &mutex){
 	std::stringstream os(input);
 	std::string cmd;
 	os >> cmd;
@@ -113,7 +114,7 @@ int execCmd(std::string &input, IoMap *map, bool &isMultiT){
 		if (os >> cmd)
 			std::cerr << "IoMap: " << input << " :command not found" << std::endl;
 		else
-			fill(*map);
+			fill(*map, mutex);
 	}
 	else if (cmd == "clear" || cmd == "c")
 		std::cout << "\033c";
@@ -131,6 +132,7 @@ int execCmd(std::string &input, IoMap *map, bool &isMultiT){
 int testInteractiveIoMap(){
 	IoMap *map;
 	bool isMultiT = false;
+	std::mutex mutex;
 
 	while (true){
 		std::lock_guard<std::mutex> lock(IoMap::_osMutex);
@@ -153,7 +155,7 @@ int testInteractiveIoMap(){
 		if (isMultiT)
 			lock.unlock();
 		prompt(isMultiT, input);
-		if (execCmd(input, map, isMultiT) == 1)
+		if (execCmd(input, map, isMultiT, mutex) == 1)
 			break ;
 	}
 	delete map;
