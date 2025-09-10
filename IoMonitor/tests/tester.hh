@@ -85,6 +85,28 @@ void fillThread(T &map, std::mutex &mutex,
 }
 
 template<typename T>
+int fillProtoBuff(T &map, IoBuffer::data &buffer, std::mutex &mutex, std::atomic<bool> &running){
+	while (running.load()){
+		std::unique_lock<std::mutex> lock(mutex);
+
+		std::this_thread::sleep_for(lock, std::chrono::seconds(TIME_TO_FILL), [&](){ return !running.load();});
+		if (!running.load())
+			break;
+
+		auto mapp = static_cast<IoAggregateMap>(map);
+		auto beg = mapp.getAvailableWindows();
+		if (beg.has_value()){
+			for (size_t winTime : beg.value()){
+				auto apps = mapp[winTime]->getApps();
+				auto uids = mapp[winTime]->getUids();
+				auto gids = mapp[winTime]->getGids();
+			}
+		}
+	}
+	return 0;
+}
+
+template<typename T>
 int fillDataInteract(T &map, std::mutex &mutex){
 	std::string input;
 	std::string appName;
