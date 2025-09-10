@@ -239,7 +239,7 @@ int testIoAggregateMapCopy(){
 
 static void printUsage(){
 	std::cout << "Usage:" << std::endl;
-	std::cout << "./monitor [command] [options...]" << std::endl;
+	std::cout << "$ [command] [options...]" << std::endl;
 	std::cout << std::endl;
 
 	std::cout << "META OPTIONS" << std::endl;
@@ -249,9 +249,10 @@ static void printUsage(){
 	std::cout << "COMMANDS" << std::endl;
 	std::cout << "  add [window], \t\t\t\tadd a window to the map" << std::endl;
 	std::cout << "  set [window][tracks][...], \t\t\tset track to a window, multiple track can be set" << std::endl;
+	std::cout << "  proto [window][tracks][...], \t\t\tprint ProtoBuff JSON format of given tracks (get directly the summary)" << std::endl;
 	std::cout << "  r [fileId][appName][uid][gid][bytes], \tadd a read input to the map" << std::endl;
 	std::cout << "  w [fileId][appName][uid][gid][bytes], \tadd a write input to the map" << std::endl;
-	std::cout << "  m, \t\t\t\t\t\tprint the IoAggregate map" << std::endl;
+	std::cout << "  m [...], \t\t\t\t\tprint the IoAggregate map, can add a number to print the map N seconds" << std::endl;
 	std::cout << "  p [window][track], \t\t\t\tprint the summary of a track" << std::endl;
 	std::cout << "  fill, \t\t\t\t\tfill the map with I/O" << std::endl;
 	std::cout << "  s [index], \t\t\t\t\tshift the window to the next Bin, or to the index given as a parametre" << std::endl;
@@ -460,11 +461,17 @@ int testIoAggregateMapInteract(){
 				}
 				else if (cmd == "m"){
 					size_t len = 1;
-					stream >> len;
-					for (size_t i = 0; i < len; i++){
-						std::cout << map << std::endl;
-						if (i + 1 < len)
-							std::this_thread::sleep_for(std::chrono::seconds(1));
+					if (stream >> len){
+						if (stream >> cmd){
+							std::cout << "print map failed" << std::endl;
+							continue;
+						} else{
+							for (size_t i = 0; i < len; i++){
+								std::cout << map << std::endl;
+								if (i + 1 < len)
+									std::this_thread::sleep_for(std::chrono::seconds(1));
+							}
+						}
 					}
 				}
 				else if (cmd == "add"){

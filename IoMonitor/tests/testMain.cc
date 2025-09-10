@@ -89,8 +89,8 @@ int main(int ac, char **av) {
 	// code = testIoMapCopy();
 	// code = testIoAggregateMapCopy();
 	// code = testIoStatIOPS();
-	// code = testIoAggregateMapInteract();
-	code = testIoBuffer();
+	code = testIoAggregateMapInteract();
+	// code = testIoBuffer();
 	std::cout << "code: " << code << std::endl;
 	google::protobuf::ShutdownProtobufLibrary();
     // ::testing::InitGoogleTest(&ac, av);
