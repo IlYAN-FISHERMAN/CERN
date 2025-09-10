@@ -178,11 +178,6 @@ class IoAggregate{
 		static std::optional<IoStatSummary> summaryWeighted(const std::vector<IoStatSummary> &summarys, size_t winTime = 0);
 
 		//--------------------------------------------
-		/// Get current index
-		//--------------------------------------------
-		size_t getIndex() const;
-
-		//--------------------------------------------
 		/// Template
 		/// @brief Add an app name to the set that
 		/// would be tracked
@@ -323,6 +318,25 @@ class IoAggregate{
 			}
 		}
 
+		//--------------------------------------------
+		/// Get current index
+		//--------------------------------------------
+		size_t getIndex() const;
+
+		//--------------------------------------------
+		/// Get available apps
+		//--------------------------------------------
+		std::vector<std::string> getApps() const;
+
+		//--------------------------------------------
+		/// Get available uids
+		//--------------------------------------------
+		std::vector<uid_t> getUids() const;
+
+		//--------------------------------------------
+		/// Get available gids
+		//--------------------------------------------
+		std::vector<gid_t> getGids() const;
 
 		//--------------------------------------------
 		/// Template

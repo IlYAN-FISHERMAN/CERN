@@ -353,22 +353,79 @@ int printSums(IoAggregateMap &map, std::stringstream &stream, std::mutex & mutex
 	size_t gid = 0;
 
 	std::lock_guard<std::mutex> lock(mutex);
-	while (true){
-		if (stream >> winTime >> cmd){
-			if (cmd == "uid" && stream >> uid)
-				code = printSummary(map, winTime, io::TYPE::UID, uid);
-			else if (cmd == "gid" && stream >> gid)
-				code = printSummary(map, winTime, io::TYPE::GID, gid);
-			else
-				code = printSummary(map, winTime, cmd);
-			if (code)
+	if (stream >> winTime){
+		while (true){
+			if (stream >> cmd){
+				if (cmd == "uid" && stream >> uid)
+					code = printSummary(map, winTime, io::TYPE::UID, uid);
+				else if (cmd == "gid" && stream >> gid)
+					code = printSummary(map, winTime, io::TYPE::GID, gid);
+				else
+					code = printSummary(map, winTime, cmd);
+				if (code)
+					return -1;
+			}
+			else if (!stream.eof())
 				return -1;
+			else
+				break;
 		}
-		else if (!stream.eof())
-			return -1;
-		else
-			break;
 	}
+	else
+		return -1;
+
+	return 0;
+}
+
+int printProto(IoAggregateMap &map, std::stringstream &stream, std::mutex & mutex){
+	size_t winTime = 0;
+	std::string cmd;
+	size_t uid = 0;
+	size_t gid = 0;
+	IoBuffer::Summary sum;
+	google::protobuf::util::JsonPrintOptions options;
+	options.add_whitespace = true;
+	options.always_print_primitive_fields = true;
+	options.preserve_proto_field_names = true;
+
+	std::lock_guard<std::mutex> lock(mutex);
+	if (stream >> winTime){
+		while (true){
+			if (stream >> cmd){
+				if (cmd == "uid" && stream >> uid){
+					auto summary(map.getSummary(winTime, io::TYPE::UID, uid));
+					if (summary.has_value()){
+						summary->winTime = winTime;
+						summary->Serialize(sum);
+					}
+				}
+				else if (cmd == "gid" && stream >> gid){
+					auto summary(map.getSummary(winTime, io::TYPE::GID, gid));
+					if (summary.has_value()){
+						summary->winTime = winTime;
+						summary->Serialize(sum);
+					}
+				}
+				else{
+					auto summary(map.getSummary(winTime, cmd));
+					if (summary.has_value()){
+						summary->winTime = winTime;
+						summary->Serialize(sum);
+					}
+				}
+				auto it = google::protobuf::util::MessageToJsonString(sum, &cmd, options);
+				if (!it.ok())
+					return -1;
+				std::cout << "Protobuf JSON:" << std::endl << cmd << std::endl;
+				sum.Clear();
+			}
+			else if (!stream.eof())
+				return -1;
+			else
+				break;
+		}
+	} else
+		return -1;
 
 	return 0;
 }
@@ -376,16 +433,12 @@ int printSums(IoAggregateMap &map, std::stringstream &stream, std::mutex & mutex
 int testIoAggregateMapInteract(){
 	IoAggregateMap map;
 	std::mutex mutex;
+	std::string input;
 
 	while(true){
-		std::string input;
 		std::cout << "[IoMonitor]-> ";
 		std::getline(std::cin, input);
-		if (input == "m"){
-			std::lock_guard<std::mutex> lock(mutex);
-			std::cout << map << std::endl;
-		}
-		else if (input == "c")
+		if (input == "c")
 			std::cout << "\033c";
 		else if (input == "exit"){
 			std::cout << "exit" << std::endl;
@@ -404,6 +457,15 @@ int testIoAggregateMapInteract(){
 						std::cout << "track successfully set" << std::endl;
 					else
 						std::cout << "track set failed" << std::endl;
+				}
+				else if (cmd == "m"){
+					size_t len = 1;
+					stream >> len;
+					for (size_t i = 0; i < len; i++){
+						std::cout << map << std::endl;
+						if (i + 1 < len)
+							std::this_thread::sleep_for(std::chrono::seconds(1));
+					}
 				}
 				else if (cmd == "add"){
 					if (!addWindow(map, stream, mutex))
@@ -472,10 +534,15 @@ int testIoAggregateMapInteract(){
 				}
 				else if (cmd == "h" || cmd == "help")
 					printUsage();
+				else if (cmd == "proto"){
+					if (printProto(map, stream, mutex) < 0)
+						std::cout << "protobuf conversion failed" << std::endl;
+				}
 				else
 					std::cout << "Monitor: command not found: " << input << std::endl;
 			}
 		}
+		input.clear();
 	}
 	return 0;
 }

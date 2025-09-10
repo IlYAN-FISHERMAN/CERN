@@ -106,6 +106,11 @@ class IoAggregateMap{
 		IoAggregateMap& operator=(const IoAggregateMap &other);
 
 		//--------------------------------------------
+		/// Overload the operator []
+		//--------------------------------------------
+		std::unique_ptr<IoAggregate>& operator[](size_t);
+
+		//--------------------------------------------
 		/// @brief Optional constructor
 		///
 		/// @details

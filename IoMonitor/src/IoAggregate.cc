@@ -204,6 +204,27 @@ std::optional<IoStatSummary> IoAggregate::summaryWeighted(const std::vector<IoSt
 }
 
 //--------------------------------------------
+/// Get available apps
+//--------------------------------------------
+std::vector<std::string> IoAggregate::getApps() const{
+	return (std::vector(_apps.begin(), _apps.end()));
+}
+
+//--------------------------------------------
+/// IoAggregateMap::Get available uids
+//--------------------------------------------
+std::vector<uid_t> IoAggregate::getUids() const{
+	return (std::vector(_uids.begin(), _uids.end()));
+}
+
+//--------------------------------------------
+/// IoAggregateMap::Get available gids
+//--------------------------------------------
+std::vector<gid_t> IoAggregate::getGids() const{
+	return (std::vector(_gids.begin(), _gids.end()));
+}
+
+//--------------------------------------------
 /// Get current index
 //--------------------------------------------
 size_t IoAggregate::getIndex() const{ return _currentIndex;}

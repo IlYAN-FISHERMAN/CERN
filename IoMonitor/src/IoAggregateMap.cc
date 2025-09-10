@@ -76,6 +76,13 @@ IoAggregateMap& IoAggregateMap::operator=(const IoAggregateMap &other){
 }
 
 //--------------------------------------------
+/// Overload the operator []
+//--------------------------------------------
+std::unique_ptr<IoAggregate>& IoAggregateMap::operator[](size_t winTime){
+	return (_aggregates[winTime]);
+}
+
+//--------------------------------------------
 /// Destructor
 //--------------------------------------------
 IoAggregateMap::~IoAggregateMap(){

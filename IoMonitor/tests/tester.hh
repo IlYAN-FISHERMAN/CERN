@@ -4,6 +4,8 @@
 #include "../include/IoAggregateMap.hh"
 #include <google/protobuf/util/json_util.h>
 
+#define TIME_TO_FILL 5
+
 int testIoStatFillData();
 int testIoStatCleaning();
 int testIoStatExactValue();
@@ -84,8 +86,6 @@ void fillThread(T &map, std::mutex &mutex,
 
 template<typename T>
 int fillDataInteract(T &map, std::mutex &mutex){
-	srand((unsigned int)time(NULL));
-
 	std::string input;
 	std::string appName;
 	size_t fileId = 0;
@@ -98,7 +98,7 @@ int fillDataInteract(T &map, std::mutex &mutex){
 	bool bg = false;
 	std::thread bgThread;
 
-	std::cout << "Write ran for random data" << std::endl << std::endl;
+	std::cout << "Write ran for random data";
 	while (true){
 		try {
 			std::cout << "fileId: ";
@@ -147,6 +147,8 @@ int fillDataInteract(T &map, std::mutex &mutex){
 				maxByte = std::stoi(input);
 			std::cout << "\033[F\033[K";
 			std::cout << "Read or Write[r/w]: ";
+
+
 			while (std::getline(std::cin, input)){
 				if (input == "r" || input == "w"){
 					if (input == "r")
