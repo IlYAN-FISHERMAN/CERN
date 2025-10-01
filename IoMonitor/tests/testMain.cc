@@ -81,18 +81,18 @@ int main(int ac, char **av) {
 	// code = testIoMapBigVolume();
 	// code = testIoMapExactValue();
 	// code = testIoMapIds();
+	// code = testInteractiveIoMap();
 
 	// code = testIoAggregateMapWindow();
-	// code = testIoAggregateMap();
-	// code = testInteractiveIoMap();
+	code = testIoAggregateMap();
 	// code = testIoStatCopy();
 	// code = testIoMapCopy();
 	// code = testIoAggregateMapCopy();
 	// code = testIoStatIOPS();
-	code = testIoAggregateMapInteract();
+	// code = testIoAggregateMapInteract();
 	// code = testIoBuffer();
 	std::cout << "code: " << code << std::endl;
-	google::protobuf::ShutdownProtobufLibrary();
-    // ::testing::InitGoogleTest(&ac, av);
+ //    ::testing::InitGoogleTest(&ac, av);
+	// google::protobuf::ShutdownProtobufLibrary();
     // return RUN_ALL_TESTS();
 }

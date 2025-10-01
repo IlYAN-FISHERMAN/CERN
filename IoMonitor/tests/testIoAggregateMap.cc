@@ -153,6 +153,26 @@ int testIoAggregateMap(){
 		|| uid->rSize < 40 || uid->wSize < 40
 		|| gid->rSize < 60 || gid->wSize < 60)
 		return -1;
+
+	if (!map.containe(3600, "eos")
+	|| !map.containe(3600, io::TYPE::UID, 12)
+	|| !map.containe(3600, io::TYPE::GID, 11))
+		return -1;
+	if (map.containe(3600, "notrack"))
+		return -1;
+
+	auto apps(map.getApps(3600));
+	for (auto it : apps){
+		std::cout << it << std::endl;
+	}
+	auto uids(map.getUids(3600));
+	for (auto it : uids){
+		std::cout << it << std::endl;
+	}
+	auto gids(map.getUids(3600));
+	for (auto it : gids){
+		std::cout << it << std::endl;
+	}
 	return 0;
 }
 

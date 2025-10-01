@@ -181,6 +181,27 @@ class IoAggregateMap{
 		const IoMap& getIoMap() const;
 
 		//--------------------------------------------
+		/// Get available apps
+		///
+		/// @param winTime The targeted window
+		//--------------------------------------------
+		std::vector<std::string> getApps(size_t wintime) const;
+
+		//--------------------------------------------
+		/// Get available uids
+		///
+		/// @param winTime The targeted window
+		//--------------------------------------------
+		std::vector<uid_t> getUids(size_t wintime) const;
+
+		//--------------------------------------------
+		/// Get available gids
+		///
+		/// @param winTime The targeted window
+		//--------------------------------------------
+		std::vector<gid_t> getGids(size_t wintime) const;
+
+		//--------------------------------------------
 		/// @brief Return true if the window exists,
 		/// otherwise returns false
 		///
@@ -189,6 +210,27 @@ class IoAggregateMap{
 		/// @return bool
 		//--------------------------------------------
 		bool containe(size_t winTime) const;
+
+		//--------------------------------------------
+		/// @brief Return true if the track exists in the window,
+		/// otherwise returns false
+		///
+		/// @param winTime The targeted window
+		/// @param app the app name
+		///
+		/// @return bool
+		//--------------------------------------------
+		bool containe(size_t winTime, std::string appName) const;
+
+		//--------------------------------------------
+		/// @brief Return true if the window exists,
+		/// otherwise returns false
+		///
+		/// @param winTime The targeted window
+		///
+		/// @return bool
+		//--------------------------------------------
+		bool containe(size_t winTime, io::TYPE type, size_t id) const;
 
 		//--------------------------------------------
 		/// @brief Returns a iterator that points to the

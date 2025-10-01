@@ -169,12 +169,68 @@ int IoAggregateMap::addWindow(size_t winTime){
 }
 
 //--------------------------------------------
+/// Get available apps
+//--------------------------------------------
+std::vector<std::string> IoAggregateMap::getApps(size_t winTime) const{
+	std::lock_guard<std::mutex> lock(_mutex);
+	if (_aggregates.find(winTime) == _aggregates.end())
+		return (std::vector<std::string>());
+	return (_aggregates.at(winTime)->getApps());
+}
+
+//--------------------------------------------
+/// Get available uids
+//--------------------------------------------
+std::vector<uid_t> IoAggregateMap::getUids(size_t winTime) const{
+	std::lock_guard<std::mutex> lock(_mutex);
+	if (_aggregates.find(winTime) == _aggregates.end())
+		return (std::vector<uid_t>());
+	return (_aggregates.at(winTime)->getUids());
+}
+
+//--------------------------------------------
+/// Get available gids
+//--------------------------------------------
+std::vector<gid_t> IoAggregateMap::getGids(size_t winTime) const{
+	std::lock_guard<std::mutex> lock(_mutex);
+	if (_aggregates.find(winTime) == _aggregates.end())
+		return (std::vector<gid_t>());
+	return (_aggregates.at(winTime)->getGids());
+}
+
+//--------------------------------------------
 /// Return true if the window exists,
 /// otherwise returns false
 //--------------------------------------------
 bool IoAggregateMap::containe(size_t winTime) const {
 	std::lock_guard<std::mutex> lock(_mutex);
 	return (_aggregates.find(winTime) != _aggregates.end());
+}
+
+//--------------------------------------------
+/// Return true if the thack exists in the window,
+/// otherwise returns false
+//--------------------------------------------
+bool IoAggregateMap::containe(size_t winTime, std::string appName) const {
+	std::lock_guard<std::mutex> lock(_mutex);
+	if (_aggregates.find(winTime) == _aggregates.end())
+		return false;
+	auto apps(_aggregates.at(winTime)->getApps());
+	return (std::find(apps.cbegin(), apps.cend(), appName) != apps.end());
+}
+
+//--------------------------------------------
+/// Return true if the thack exists in the window,
+/// otherwise returns false
+//--------------------------------------------
+bool IoAggregateMap::containe(size_t winTime, io::TYPE type, size_t id) const {
+	std::lock_guard<std::mutex> lock(_mutex);
+	if ((_aggregates.find(winTime) == _aggregates.end())
+		|| (type != io::TYPE::UID && type != io::TYPE::GID))
+		return false;
+	auto ids(type == io::TYPE::UID ? _aggregates.at(winTime)->getUids()
+										: _aggregates.at(winTime)->getGids());
+	return (std::find(ids.cbegin(), ids.cend(), id) != ids.end());
 }
 
 //--------------------------------------------
