@@ -82,26 +82,23 @@ void IoAggregate::update(const IoMap &maps){
 	
 		for (auto it = _apps.begin(); it != _apps.end(); it++){
 			auto summary = maps.getSummary(*it, _intervalSec);
-			if (summary.has_value())
-				addSample(*it, summary.value());
-			else if constexpr (io::IoAggregateDebug)
-				printInfo(std::cout, "No summary to add for " + std::string(*it));
+			if (!summary.has_value())
+				summary.emplace(IoStatSummary());
+			addSample(*it, summary.value());
 		}
 
 		for (auto it = _uids.begin(); it != _uids.end(); it++){
 			auto summary = maps.getSummary(io::TYPE::UID, *it, _intervalSec);
-			if (summary.has_value())
-				addSample(io::TYPE::UID, *it, summary.value());
-			else if constexpr (io::IoAggregateDebug)
-				printInfo(std::cout, "No summary to add for " + std::to_string(*it));
+			if (!summary.has_value())
+				summary.emplace(IoStatSummary());
+			addSample(io::TYPE::UID, *it, summary.value());
 		}
 
 		for (auto it = _gids.begin(); it != _gids.end(); it++){
 			auto summary = maps.getSummary(io::TYPE::GID, *it, _intervalSec);
-			if (summary.has_value())
-				addSample(io::TYPE::GID, *it, summary.value());
-			else if constexpr (io::IoAggregateDebug)
-				printInfo(std::cout, "No summary to add for " + std::to_string(*it));
+			if (!summary.has_value())
+				summary.emplace(IoStatSummary());
+			addSample(io::TYPE::GID, *it, summary.value());
 		}
 		_currentTime = std::chrono::system_clock::now();
 	}

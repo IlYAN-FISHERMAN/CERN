@@ -492,7 +492,8 @@ int testIoAggregateMapInteract(){
 									std::this_thread::sleep_for(std::chrono::seconds(1));
 							}
 						}
-					}
+					} else
+						std::cout << map << std::endl;
 				}
 				else if (cmd == "add"){
 					if (!addWindow(map, stream, mutex))
