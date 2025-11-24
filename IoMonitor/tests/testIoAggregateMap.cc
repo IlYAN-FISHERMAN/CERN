@@ -268,6 +268,7 @@ static void printUsage(){
 
 	std::cout << "COMMANDS" << std::endl;
 	std::cout << "  add [window], \t\t\t\tadd a window to the map" << std::endl;
+	std::cout << "  rm [window]|[uid/gid/appName], \t\tremove target" << std::endl;
 	std::cout << "  set [window][tracks][...], \t\t\tset track to a window, multiple track can be set" << std::endl;
 	std::cout << "  proto [window][tracks][...], \t\t\tprint ProtoBuff JSON format of given tracks (get directly the summary)" << std::endl;
 	std::cout << "  r [fileId][appName][uid][gid][bytes], \tadd a read input to the map" << std::endl;
@@ -275,7 +276,7 @@ static void printUsage(){
 	std::cout << "  m [...], \t\t\t\t\tprint the IoAggregate map, can add a number to print the map N seconds" << std::endl;
 	std::cout << "  p [window][track], \t\t\t\tprint the summary of a track" << std::endl;
 	std::cout << "  fill, \t\t\t\t\tfill the map with I/O" << std::endl;
-	std::cout << "  s [index], \t\t\t\t\tshift the window to the next Bin, or to the index given as a parametre" << std::endl;
+	std::cout << "  s [window][index], \t\t\t\tshift the window to the next Bin, or to the index given as a parametre" << std::endl;
 	std::cout << "  c, \t\t\t\t\t\tclear the terminal" << std::endl;
 	std::cout << "  exit, \t\t\t\t\texit monitor" << std::endl;
 	std::cout << std::endl;
@@ -451,6 +452,28 @@ int printProto(IoAggregateMap &map, std::stringstream &stream, std::mutex & mute
 	return 0;
 }
 
+static int rm(IoAggregateMap &map, std::stringstream &os){
+	std::string cmd;
+	uid_t uid = 0;
+	uid_t gid = 0;
+	size_t winTime = 0;
+
+	if (os >> winTime){
+		if (os >> cmd){
+			if (cmd == "uid" && os >> uid && os.eof())
+				return map.rm(winTime, io::TYPE::UID, uid);
+			if (cmd == "gid" && os >> gid && os.eof())
+				return map.rm(winTime, io::TYPE::GID, gid);
+			else if (os.eof())
+				return map.rm(winTime, cmd);
+		}
+		else if (os.eof())
+			return map.rm(winTime);
+	}
+
+	return -1;
+}
+
 int testIoAggregateMapInteract(){
 	IoAggregateMap map;
 	std::mutex mutex;
@@ -566,11 +589,62 @@ int testIoAggregateMapInteract(){
 					if (printProto(map, stream, mutex) < 0)
 						std::cout << "protobuf conversion failed" << std::endl;
 				}
+				else if (cmd == "rm")
+					std::cout << "rm : " << rm(map, stream) << std::endl;
 				else
 					std::cout << "Monitor: command not found: " << input << std::endl;
 			}
 		}
 		input.clear();
 	}
+	return 0;
+}
+
+int testIoAggregateMapDelete(){
+	IoAggregateMap map;
+	std::mutex mutex;
+
+	map.addWindow(300);
+	map.addWindow(500);
+
+	map.setTrack(300, "eos");
+	map.setTrack(300, io::TYPE::UID, 10);
+	map.setTrack(300, io::TYPE::GID, 7);
+	map.setTrack(300, io::TYPE::GID, 1);
+	map.setTrack(300, io::TYPE::UID, 1);
+
+	map.setTrack(500, "eos");
+	map.setTrack(500, io::TYPE::UID, 10);
+	map.setTrack(500, io::TYPE::GID, 7);
+	map.setTrack(500, io::TYPE::GID, 1);
+	map.setTrack(500, io::TYPE::UID, 1);
+
+	fillDataInteract(map, mutex);
+
+	std::cout << map << std::endl;
+
+	map = IoAggregateMap();
+
+	std::cout << map << std::endl;
+
+	map.addWindow(300);
+	map.addWindow(500);
+
+	map.setTrack(300, "eos");
+	map.setTrack(300, io::TYPE::UID, 10);
+	map.setTrack(300, io::TYPE::GID, 7);
+	map.setTrack(300, io::TYPE::GID, 1);
+	map.setTrack(300, io::TYPE::UID, 1);
+
+	map.setTrack(500, "eos");
+	map.setTrack(500, io::TYPE::UID, 10);
+	map.setTrack(500, io::TYPE::GID, 7);
+	map.setTrack(500, io::TYPE::GID, 1);
+	map.setTrack(500, io::TYPE::UID, 1);
+
+	fillDataInteract(map, mutex);
+
+	std::cout << map << std::endl;
+
 	return 0;
 }

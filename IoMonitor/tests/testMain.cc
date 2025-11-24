@@ -75,6 +75,7 @@ int main(int ac, char **av) {
 	
 	// code = testIoStatExactValue();
 	// code = testIoStatIOPS();
+	// code = testIoStatCopy();
 
 	// code = testIoMapSpecificCase();
 	// code = testIoMapSummary();
@@ -82,14 +83,14 @@ int main(int ac, char **av) {
 	// code = testIoMapExactValue();
 	// code = testIoMapIds();
 	// code = testInteractiveIoMap();
-
-	// code = testIoAggregateMapWindow();
-	// code = testIoAggregateMap();
-	// code = testIoStatCopy();
 	// code = testIoMapCopy();
-	// code = testIoAggregateMapCopy();
-	// code = testIoStatIOPS();
+
+	// code = testIoAggregateMap();
+	// code = testIoAggregateMapWindow();
+	// code = testIoAggregateMapDelete();
 	code = testIoAggregateMapInteract();
+	// code = testIoAggregateMapCopy();
+
 	// code = testIoBuffer();
 	std::cout << "code: " << code << std::endl;
 	google::protobuf::ShutdownProtobufLibrary();
