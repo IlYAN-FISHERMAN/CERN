@@ -115,6 +115,8 @@ bool IoAggregate::rm(std::string &appName){
 		return false;
 
 	_apps.erase(appName);
+	auto appsRange = _bins.at(_currentIndex).appStats.equal_range(appName);
+	_bins.at(_currentIndex).appStats.erase(appsRange.first, appsRange.second);
 	return true;
 }
 
@@ -125,6 +127,9 @@ bool IoAggregate::rm(io::TYPE type, size_t id){
 		return false;
 
 	type == io::TYPE::UID ? _uids.erase(id) : _gids.erase(id);
+
+	auto idRange = (type == io::TYPE::UID ? _bins.at(_currentIndex).uidStats : _bins.at(_currentIndex).gidStats).equal_range(id);
+	(type == io::TYPE::UID ? _bins.at(_currentIndex).uidStats : _bins.at(_currentIndex).gidStats).erase(idRange.first, idRange.second);
 
 	return true;
 }

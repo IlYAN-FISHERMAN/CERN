@@ -106,7 +106,7 @@ static int printSummary(IoAggregateMap &map, size_t winTime, io::TYPE type, cons
 			<< winTime << C_GREEN << "][" << C_CYAN << "summary of gid: " << index
 			<< C_GREEN << "]" << C_RESET << std::endl;
 	else{
-		std::cout << "printSummay failed" << std::endl;
+		std::cout << "print Summay failed" << std::endl;
 		return -1;
 	}
 	std::cout << C_CYAN <<  map.getSummary(winTime, type, index) << C_RESET << std::endl;
@@ -370,7 +370,6 @@ int addWindow(IoAggregateMap &map, std::stringstream &stream, std::mutex & mutex
 int printSums(IoAggregateMap &map, std::stringstream &stream, std::mutex & mutex){
 	size_t winTime = 0;
 	std::string cmd;
-	int code = 0;
 	size_t uid = 0;
 	size_t gid = 0;
 
@@ -379,15 +378,13 @@ int printSums(IoAggregateMap &map, std::stringstream &stream, std::mutex & mutex
 		while (true){
 			if (stream >> cmd){
 				if (cmd == "uid" && stream >> uid)
-					code = printSummary(map, winTime, io::TYPE::UID, uid);
+					return printSummary(map, winTime, io::TYPE::UID, uid);
 				else if (cmd == "gid" && stream >> gid)
-					code = printSummary(map, winTime, io::TYPE::GID, gid);
+					return printSummary(map, winTime, io::TYPE::GID, gid);
 				else
-					code = printSummary(map, winTime, cmd);
-				if (code)
-					return -1;
+					return printSummary(map, winTime, cmd);
 			}
-			else if (!stream.eof())
+			else if (stream.eof())
 				return -1;
 			else
 				break;
