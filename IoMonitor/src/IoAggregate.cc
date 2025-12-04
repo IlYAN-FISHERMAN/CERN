@@ -181,8 +181,8 @@ std::optional<IoStatSummary> IoAggregate::summaryWeighted(const std::vector<IoSt
 			weighted.writeBandwidth->first += (it.writeBandwidth->first * it.wSize);
 			weighted.wIops += it.wIops * it.wSize;
 		}
-		rDivisor += it.rSize;
-		wDivisor += it.wSize;
+		rDivisor += it.rSize == 0 ? 1 : it.rSize;
+		wDivisor += it.wSize == 0 ? 1 : it.wSize;
 	}
 
 	if (rDivisor > 0){
