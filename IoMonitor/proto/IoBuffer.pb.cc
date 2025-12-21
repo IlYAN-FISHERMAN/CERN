@@ -41,6 +41,10 @@ PROTOBUF_CONSTEXPR Summary::Summary(
   , /*decltype(_impl_.wiops_)*/ 0
 
   , /*decltype(_impl_.wintime_)*/ ::uint64_t{0u}
+
+  , /*decltype(_impl_.rlimit_)*/ 0
+
+  , /*decltype(_impl_.wlimit_)*/ 0
 } {}
 struct SummaryDefaultTypeInternal {
   PROTOBUF_CONSTEXPR SummaryDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
@@ -108,8 +112,36 @@ struct dataDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 dataDefaultTypeInternal _data_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR summarys_AggregatedEntry_DoNotUse::summarys_AggregatedEntry_DoNotUse(
+    ::_pbi::ConstantInitialized) {}
+struct summarys_AggregatedEntry_DoNotUseDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR summarys_AggregatedEntry_DoNotUseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~summarys_AggregatedEntry_DoNotUseDefaultTypeInternal() {}
+  union {
+    summarys_AggregatedEntry_DoNotUse _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 summarys_AggregatedEntry_DoNotUseDefaultTypeInternal _summarys_AggregatedEntry_DoNotUse_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR summarys::summarys(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.aggregated_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct summarysDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR summarysDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~summarysDefaultTypeInternal() {}
+  union {
+    summarys _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 summarysDefaultTypeInternal _summarys_default_instance_;
 }  // namespace IoBuffer
-static ::_pb::Metadata file_level_metadata_IoBuffer_2eproto[5];
+static ::_pb::Metadata file_level_metadata_IoBuffer_2eproto[7];
 static constexpr const ::_pb::EnumDescriptor**
     file_level_enum_descriptors_IoBuffer_2eproto = nullptr;
 static constexpr const ::_pb::ServiceDescriptor**
@@ -133,6 +165,8 @@ const ::uint32_t TableStruct_IoBuffer_2eproto::offsets[] PROTOBUF_SECTION_VARIAB
     PROTOBUF_FIELD_OFFSET(::IoBuffer::Summary, _impl_.riops_),
     PROTOBUF_FIELD_OFFSET(::IoBuffer::Summary, _impl_.wiops_),
     PROTOBUF_FIELD_OFFSET(::IoBuffer::Summary, _impl_.wintime_),
+    PROTOBUF_FIELD_OFFSET(::IoBuffer::Summary, _impl_.rlimit_),
+    PROTOBUF_FIELD_OFFSET(::IoBuffer::Summary, _impl_.wlimit_),
     0,
     1,
     2,
@@ -142,6 +176,8 @@ const ::uint32_t TableStruct_IoBuffer_2eproto::offsets[] PROTOBUF_SECTION_VARIAB
     ~0u,
     ~0u,
     4,
+    ~0u,
+    ~0u,
     PROTOBUF_FIELD_OFFSET(::IoBuffer::data_AppsEntry_DoNotUse, _has_bits_),
     PROTOBUF_FIELD_OFFSET(::IoBuffer::data_AppsEntry_DoNotUse, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -189,15 +225,38 @@ const ::uint32_t TableStruct_IoBuffer_2eproto::offsets[] PROTOBUF_SECTION_VARIAB
     PROTOBUF_FIELD_OFFSET(::IoBuffer::data, _impl_.apps_),
     PROTOBUF_FIELD_OFFSET(::IoBuffer::data, _impl_.uids_),
     PROTOBUF_FIELD_OFFSET(::IoBuffer::data, _impl_.gids_),
+    PROTOBUF_FIELD_OFFSET(::IoBuffer::summarys_AggregatedEntry_DoNotUse, _has_bits_),
+    PROTOBUF_FIELD_OFFSET(::IoBuffer::summarys_AggregatedEntry_DoNotUse, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::IoBuffer::summarys_AggregatedEntry_DoNotUse, key_),
+    PROTOBUF_FIELD_OFFSET(::IoBuffer::summarys_AggregatedEntry_DoNotUse, value_),
+    0,
+    1,
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::IoBuffer::summarys, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::IoBuffer::summarys, _impl_.aggregated_),
 };
 
 static const ::_pbi::MigrationSchema
     schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-        { 0, 17, -1, sizeof(::IoBuffer::Summary)},
-        { 26, 36, -1, sizeof(::IoBuffer::data_AppsEntry_DoNotUse)},
-        { 38, 48, -1, sizeof(::IoBuffer::data_UidsEntry_DoNotUse)},
-        { 50, 60, -1, sizeof(::IoBuffer::data_GidsEntry_DoNotUse)},
-        { 62, -1, -1, sizeof(::IoBuffer::data)},
+        { 0, 19, -1, sizeof(::IoBuffer::Summary)},
+        { 30, 40, -1, sizeof(::IoBuffer::data_AppsEntry_DoNotUse)},
+        { 42, 52, -1, sizeof(::IoBuffer::data_UidsEntry_DoNotUse)},
+        { 54, 64, -1, sizeof(::IoBuffer::data_GidsEntry_DoNotUse)},
+        { 66, -1, -1, sizeof(::IoBuffer::data)},
+        { 77, 87, -1, sizeof(::IoBuffer::summarys_AggregatedEntry_DoNotUse)},
+        { 89, -1, -1, sizeof(::IoBuffer::summarys)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -206,35 +265,41 @@ static const ::_pb::Message* const file_default_instances[] = {
     &::IoBuffer::_data_UidsEntry_DoNotUse_default_instance_._instance,
     &::IoBuffer::_data_GidsEntry_DoNotUse_default_instance_._instance,
     &::IoBuffer::_data_default_instance_._instance,
+    &::IoBuffer::_summarys_AggregatedEntry_DoNotUse_default_instance_._instance,
+    &::IoBuffer::_summarys_default_instance_._instance,
 };
 const char descriptor_table_protodef_IoBuffer_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-    "\n\016IoBuffer.proto\022\010IoBuffer\"\333\001\n\007Summary\022\022"
+    "\n\016IoBuffer.proto\022\010IoBuffer\"\373\001\n\007Summary\022\022"
     "\n\005rAvrg\030\001 \001(\rH\000\210\001\001\022\021\n\004rStd\030\002 \001(\rH\001\210\001\001\022\022\n"
     "\005wAvrg\030\003 \001(\rH\002\210\001\001\022\021\n\004wStd\030\004 \001(\rH\003\210\001\001\022\r\n\005"
     "rSize\030\005 \001(\r\022\r\n\005wSize\030\006 \001(\r\022\r\n\005rIops\030\007 \001("
-    "\001\022\r\n\005wIops\030\010 \001(\001\022\024\n\007winTime\030\t \001(\004H\004\210\001\001B\010"
-    "\n\006_rAvrgB\007\n\005_rStdB\010\n\006_wAvrgB\007\n\005_wStdB\n\n\010"
-    "_winTime\"\276\002\n\004data\022&\n\004apps\030\001 \003(\0132\030.IoBuff"
-    "er.data.AppsEntry\022&\n\004uids\030\002 \003(\0132\030.IoBuff"
-    "er.data.UidsEntry\022&\n\004gids\030\003 \003(\0132\030.IoBuff"
-    "er.data.GidsEntry\032>\n\tAppsEntry\022\013\n\003key\030\001 "
-    "\001(\t\022 \n\005value\030\002 \001(\0132\021.IoBuffer.Summary:\0028"
-    "\001\032>\n\tUidsEntry\022\013\n\003key\030\001 \001(\004\022 \n\005value\030\002 \001"
-    "(\0132\021.IoBuffer.Summary:\0028\001\032>\n\tGidsEntry\022\013"
-    "\n\003key\030\001 \001(\004\022 \n\005value\030\002 \001(\0132\021.IoBuffer.Su"
-    "mmary:\0028\001b\006proto3"
+    "\001\022\r\n\005wIops\030\010 \001(\001\022\024\n\007winTime\030\t \001(\004H\004\210\001\001\022\016"
+    "\n\006rLimit\030\n \001(\001\022\016\n\006wLimit\030\013 \001(\001B\010\n\006_rAvrg"
+    "B\007\n\005_rStdB\010\n\006_wAvrgB\007\n\005_wStdB\n\n\010_winTime"
+    "\"\276\002\n\004data\022&\n\004apps\030\001 \003(\0132\030.IoBuffer.data."
+    "AppsEntry\022&\n\004uids\030\002 \003(\0132\030.IoBuffer.data."
+    "UidsEntry\022&\n\004gids\030\003 \003(\0132\030.IoBuffer.data."
+    "GidsEntry\032>\n\tAppsEntry\022\013\n\003key\030\001 \001(\t\022 \n\005v"
+    "alue\030\002 \001(\0132\021.IoBuffer.Summary:\0028\001\032>\n\tUid"
+    "sEntry\022\013\n\003key\030\001 \001(\004\022 \n\005value\030\002 \001(\0132\021.IoB"
+    "uffer.Summary:\0028\001\032>\n\tGidsEntry\022\013\n\003key\030\001 "
+    "\001(\004\022 \n\005value\030\002 \001(\0132\021.IoBuffer.Summary:\0028"
+    "\001\"\205\001\n\010summarys\0226\n\naggregated\030\001 \003(\0132\".IoB"
+    "uffer.summarys.AggregatedEntry\032A\n\017Aggreg"
+    "atedEntry\022\013\n\003key\030\001 \001(\004\022\035\n\005value\030\002 \001(\0132\016."
+    "IoBuffer.data:\0028\001b\006proto3"
 };
 static ::absl::once_flag descriptor_table_IoBuffer_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_IoBuffer_2eproto = {
     false,
     false,
-    577,
+    745,
     descriptor_table_protodef_IoBuffer_2eproto,
     "IoBuffer.proto",
     &descriptor_table_IoBuffer_2eproto_once,
     nullptr,
     0,
-    5,
+    7,
     schemas,
     file_default_instances,
     TableStruct_IoBuffer_2eproto::offsets,
@@ -320,6 +385,10 @@ inline void Summary::SharedCtor(::_pb::Arena* arena) {
 
     , decltype(_impl_.wintime_) { ::uint64_t{0u} }
 
+    , decltype(_impl_.rlimit_) { 0 }
+
+    , decltype(_impl_.wlimit_) { 0 }
+
   };
 }
 
@@ -356,6 +425,9 @@ void Summary::Clear() {
       reinterpret_cast<char*>(&_impl_.wiops_) -
       reinterpret_cast<char*>(&_impl_.rsize_)) + sizeof(_impl_.wiops_));
   _impl_.wintime_ = ::uint64_t{0u};
+  ::memset(&_impl_.rlimit_, 0, static_cast<::size_t>(
+      reinterpret_cast<char*>(&_impl_.wlimit_) -
+      reinterpret_cast<char*>(&_impl_.rlimit_)) + sizeof(_impl_.wlimit_));
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -449,6 +521,24 @@ const char* Summary::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) 
           _Internal::set_has_wintime(&has_bits);
           _impl_.wintime_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // double rLimit = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 81)) {
+          _impl_.rlimit_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          ptr += sizeof(double);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // double wLimit = 11;
+      case 11:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 89)) {
+          _impl_.wlimit_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          ptr += sizeof(double);
         } else {
           goto handle_unusual;
         }
@@ -555,6 +645,28 @@ failure:
         9, this->_internal_wintime(), target);
   }
 
+  // double rLimit = 10;
+  static_assert(sizeof(::uint64_t) == sizeof(double), "Code assumes ::uint64_t and double are the same size.");
+  double tmp_rlimit = this->_internal_rlimit();
+  ::uint64_t raw_rlimit;
+  memcpy(&raw_rlimit, &tmp_rlimit, sizeof(tmp_rlimit));
+  if (raw_rlimit != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        10, this->_internal_rlimit(), target);
+  }
+
+  // double wLimit = 11;
+  static_assert(sizeof(::uint64_t) == sizeof(double), "Code assumes ::uint64_t and double are the same size.");
+  double tmp_wlimit = this->_internal_wlimit();
+  ::uint64_t raw_wlimit;
+  memcpy(&raw_wlimit, &tmp_wlimit, sizeof(tmp_wlimit));
+  if (raw_wlimit != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+        11, this->_internal_wlimit(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -634,6 +746,24 @@ failure:
         this->_internal_wintime());
   }
 
+  // double rLimit = 10;
+  static_assert(sizeof(::uint64_t) == sizeof(double), "Code assumes ::uint64_t and double are the same size.");
+  double tmp_rlimit = this->_internal_rlimit();
+  ::uint64_t raw_rlimit;
+  memcpy(&raw_rlimit, &tmp_rlimit, sizeof(tmp_rlimit));
+  if (raw_rlimit != 0) {
+    total_size += 9;
+  }
+
+  // double wLimit = 11;
+  static_assert(sizeof(::uint64_t) == sizeof(double), "Code assumes ::uint64_t and double are the same size.");
+  double tmp_wlimit = this->_internal_wlimit();
+  ::uint64_t raw_wlimit;
+  memcpy(&raw_wlimit, &tmp_wlimit, sizeof(tmp_wlimit));
+  if (raw_wlimit != 0) {
+    total_size += 9;
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -691,6 +821,20 @@ void Summary::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOB
   if (cached_has_bits & 0x00000010u) {
     _this->_internal_set_wintime(from._internal_wintime());
   }
+  static_assert(sizeof(::uint64_t) == sizeof(double), "Code assumes ::uint64_t and double are the same size.");
+  double tmp_rlimit = from._internal_rlimit();
+  ::uint64_t raw_rlimit;
+  memcpy(&raw_rlimit, &tmp_rlimit, sizeof(tmp_rlimit));
+  if (raw_rlimit != 0) {
+    _this->_internal_set_rlimit(from._internal_rlimit());
+  }
+  static_assert(sizeof(::uint64_t) == sizeof(double), "Code assumes ::uint64_t and double are the same size.");
+  double tmp_wlimit = from._internal_wlimit();
+  ::uint64_t raw_wlimit;
+  memcpy(&raw_wlimit, &tmp_wlimit, sizeof(tmp_wlimit));
+  if (raw_wlimit != 0) {
+    _this->_internal_set_wlimit(from._internal_wlimit());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -710,8 +854,8 @@ void Summary::InternalSwap(Summary* other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(Summary, _impl_.wintime_)
-      + sizeof(Summary::_impl_.wintime_)
+      PROTOBUF_FIELD_OFFSET(Summary, _impl_.wlimit_)
+      + sizeof(Summary::_impl_.wlimit_)
       - PROTOBUF_FIELD_OFFSET(Summary, _impl_.ravrg_)>(
           reinterpret_cast<char*>(&_impl_.ravrg_),
           reinterpret_cast<char*>(&other->_impl_.ravrg_));
@@ -1057,6 +1201,213 @@ void data::InternalSwap(data* other) {
       &descriptor_table_IoBuffer_2eproto_getter, &descriptor_table_IoBuffer_2eproto_once,
       file_level_metadata_IoBuffer_2eproto[4]);
 }
+// ===================================================================
+
+summarys_AggregatedEntry_DoNotUse::summarys_AggregatedEntry_DoNotUse() {}
+summarys_AggregatedEntry_DoNotUse::summarys_AggregatedEntry_DoNotUse(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+    : SuperType(arena) {}
+void summarys_AggregatedEntry_DoNotUse::MergeFrom(const summarys_AggregatedEntry_DoNotUse& other) {
+  MergeFromInternal(other);
+}
+::PROTOBUF_NAMESPACE_ID::Metadata summarys_AggregatedEntry_DoNotUse::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_IoBuffer_2eproto_getter, &descriptor_table_IoBuffer_2eproto_once,
+      file_level_metadata_IoBuffer_2eproto[5]);
+}
+// ===================================================================
+
+class summarys::_Internal {
+ public:
+};
+
+summarys::summarys(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:IoBuffer.summarys)
+}
+summarys::summarys(const summarys& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  summarys* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      /*decltype(_impl_.aggregated_)*/{}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_impl_.aggregated_.MergeFrom(from._impl_.aggregated_);
+  // @@protoc_insertion_point(copy_constructor:IoBuffer.summarys)
+}
+
+inline void summarys::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      /*decltype(_impl_.aggregated_)*/{::_pbi::ArenaInitialized(), arena}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+summarys::~summarys() {
+  // @@protoc_insertion_point(destructor:IoBuffer.summarys)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void summarys::SharedDtor() {
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.aggregated_.~MapField();
+}
+
+void summarys::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void summarys::Clear() {
+// @@protoc_insertion_point(message_clear_start:IoBuffer.summarys)
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.aggregated_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* summarys::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // map<uint64, .IoBuffer.data> aggregated = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(&_impl_.aggregated_, ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::uint8_t* summarys::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:IoBuffer.summarys)
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // map<uint64, .IoBuffer.data> aggregated = 1;
+  if (!this->_internal_aggregated().empty()) {
+    using MapType = ::_pb::Map<::uint64_t, ::IoBuffer::data>;
+    using WireHelper = summarys_AggregatedEntry_DoNotUse::Funcs;
+    const auto& map_field = this->_internal_aggregated();
+
+    if (stream->IsSerializationDeterministic() && map_field.size() > 1) {
+      for (const auto& entry : ::_pbi::MapSorterFlat<MapType>(map_field)) {
+        target = WireHelper::InternalSerialize(1, entry.first, entry.second, target, stream);
+      }
+    } else {
+      for (const auto& entry : map_field) {
+        target = WireHelper::InternalSerialize(1, entry.first, entry.second, target, stream);
+      }
+    }
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:IoBuffer.summarys)
+  return target;
+}
+
+::size_t summarys::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:IoBuffer.summarys)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // map<uint64, .IoBuffer.data> aggregated = 1;
+  total_size += 1 *
+      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(this->_internal_aggregated_size());
+  for (::PROTOBUF_NAMESPACE_ID::Map< ::uint64_t, ::IoBuffer::data >::const_iterator
+      it = this->_internal_aggregated().begin();
+      it != this->_internal_aggregated().end(); ++it) {
+    total_size += summarys_AggregatedEntry_DoNotUse::Funcs::ByteSizeLong(it->first, it->second);
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData summarys::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    summarys::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*summarys::GetClassData() const { return &_class_data_; }
+
+
+void summarys::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<summarys*>(&to_msg);
+  auto& from = static_cast<const summarys&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:IoBuffer.summarys)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  _this->_impl_.aggregated_.MergeFrom(from._impl_.aggregated_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void summarys::CopyFrom(const summarys& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:IoBuffer.summarys)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool summarys::IsInitialized() const {
+  return true;
+}
+
+void summarys::InternalSwap(summarys* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  _impl_.aggregated_.InternalSwap(&other->_impl_.aggregated_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata summarys::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_IoBuffer_2eproto_getter, &descriptor_table_IoBuffer_2eproto_once,
+      file_level_metadata_IoBuffer_2eproto[6]);
+}
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace IoBuffer
 PROTOBUF_NAMESPACE_OPEN
@@ -1079,6 +1430,14 @@ Arena::CreateMaybeMessage< ::IoBuffer::data_GidsEntry_DoNotUse >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::IoBuffer::data*
 Arena::CreateMaybeMessage< ::IoBuffer::data >(Arena* arena) {
   return Arena::CreateMessageInternal< ::IoBuffer::data >(arena);
+}
+template<> PROTOBUF_NOINLINE ::IoBuffer::summarys_AggregatedEntry_DoNotUse*
+Arena::CreateMaybeMessage< ::IoBuffer::summarys_AggregatedEntry_DoNotUse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::IoBuffer::summarys_AggregatedEntry_DoNotUse >(arena);
+}
+template<> PROTOBUF_NOINLINE ::IoBuffer::summarys*
+Arena::CreateMaybeMessage< ::IoBuffer::summarys >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::IoBuffer::summarys >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 // @@protoc_insertion_point(global_scope)

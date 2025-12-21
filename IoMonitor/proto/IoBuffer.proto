@@ -12,10 +12,16 @@ message Summary {
   double rIops = 7;
   double wIops = 8;
   optional uint64 winTime = 9;
+  double rLimit = 10;
+  double wLimit = 11;
 }
 
 message data{
   map<string, Summary> apps = 1;
   map<uint64, Summary> uids = 2;
   map<uint64, Summary> gids = 3;
+}
+
+message summarys{
+  map<uint64, data> aggregated = 1;
 }
